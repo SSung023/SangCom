@@ -1,0 +1,27 @@
+:root{
+    --light-grey-color: #F6F8FA;
+    --white-color: #FFFFFF;
+    --blue-color: #2D81FF;
+    --dark-blue-color: #2473EA;
+    --line-color: #D9D9D9;
+    --txt-color: #444444;
+    --light-txt-color: #ADADAD;
+    
+    --bold: 700;
+    --semi-bold: 600;
+    --medium : 500;
+    --regular: 400;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    font-size: 16px;
+}
+
+body{
+    background-color: var(--white-color);
+    color: var(--txt-color);
+    font-family: 'Roboto';
+}
+
