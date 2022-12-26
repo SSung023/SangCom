@@ -1,0 +1,15 @@
+.main{
+    width: 1006px;
+    display: inline-block;
+}
+
+.section{
+    display: block;
+}
+
+.section-title{
+    display: block;
+    font-size: 20px;
+    font-weight: var(--bold);
+    margin: 30px 0 12px 42px;
+}

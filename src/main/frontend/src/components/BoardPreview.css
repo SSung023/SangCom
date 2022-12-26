@@ -1,0 +1,13 @@
+.preview{
+    display: inline-block;
+    width: 440px;
+    margin-left: 42px;
+    border: 1px solid var(--line-color);
+}
+
+.title{
+    display: block;
+    font-weight: var(--semi-bold);
+    padding: 10px;
+    color: var(--blue-color);
+}
