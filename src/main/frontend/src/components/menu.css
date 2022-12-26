@@ -5,6 +5,11 @@ header .inner {
     justify-content: space-between;
 }
 
+header .logo img{
+    width: 70%;
+
+}
+
 header .mainMenu{
     position: absolute;
     left: 450px;
@@ -15,7 +20,7 @@ header .mainMenu{
 header .mainMenu ul{
     display : flex;
     list-style: none;
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
 }
 
@@ -46,7 +51,7 @@ header .mainMenu ul li a:hover:after{
     display: flex;
     position: absolute;
     left: 1200px;
-    font-size: 50px;
+    font-size: 35px;
     top:10px;
     bottom: 10px;
 }
