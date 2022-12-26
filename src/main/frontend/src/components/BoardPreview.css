@@ -3,6 +3,7 @@
     width: 440px;
     margin-left: 42px;
     border: 1px solid var(--line-color);
+    background-color: var(--light-grey-color);
 }
 
 .title{
@@ -10,4 +11,31 @@
     font-weight: var(--semi-bold);
     padding: 10px;
     color: var(--blue-color);
+    background-color: var(--white-color);
+}
+
+.list{
+    border-bottom: 1px solid var(--line-color);
+}
+
+.list > a {
+    color: var(--txt-color);
+    text-decoration: none;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.board-title{
+    display: inline-block;
+    font-size: 16px;
+    margin: 0;
+}
+
+.time {
+    display: inline-block;
+    font-size: 12px;
+    margin: 3px 0 0 0;
+    color: var(--light-txt-color);
 }
