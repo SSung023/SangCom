@@ -2,10 +2,15 @@ import React from 'react';
 import BoardPreview from './BoardPreview';
 import Class from './Class';
 import './Main.css';
+import Dailycard from "./Dailycard";
 
 export default function Main() {
     return (
         <div className='main'>
+            {/** 카드 일정 **/}
+            <div className='section'>
+                <Dailycard />
+            </div>
             {/** 게시판 미리보기 **/}
             <div className='section'>
                 <p className='section-title'>게시판 미리보기</p>
