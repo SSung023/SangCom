@@ -11,7 +11,6 @@ class Iconmenu extends Component{
                 <a href="/mynotif">
                     <MdCircleNotifications />
                 </a>
-
             </div>
         )
     }

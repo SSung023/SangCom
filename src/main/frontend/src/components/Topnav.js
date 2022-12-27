@@ -9,11 +9,17 @@ class Topnav extends Component {
         return(
             <header>
                 <div className="inner">
-                    <a href="/" className="logo">
-                        <img src={schoolLogo} alt="logo of school"/>
-                    </a>
-                    <Mainmenu></Mainmenu>
-                    <Iconmenu></Iconmenu>
+                    <div className="logo">
+                        <a href="/">
+                            <img src={schoolLogo} alt="logo of school"/>
+                        </a>
+                    </div>
+                    <div className="navMenus">
+                        <div className="flex">
+                            <Mainmenu></Mainmenu>
+                            <Iconmenu></Iconmenu>
+                        </div>
+                    </div>
                 </div>
             </header>
 
