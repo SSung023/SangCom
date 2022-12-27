@@ -1,0 +1,6 @@
+.class{
+    width: 922px;
+    height: 700px;
+    border: 1px solid var(--line-color);
+    margin-left: 42px;
+}
