@@ -23,7 +23,7 @@
     border: 1.5px solid var(--line-color);
     width: 152px;
     height: 38px;
-    margin-top: 18px 0 0 15px;
+    margin: 18px 0 0 15px;
 }
 
 .buttons:hover{
@@ -43,12 +43,15 @@
 .avartar{
     width: 350px;
     position: relative;
+    padding: 0 20px 0 20px;
     margin: auto;
 }
 
 .photo{
+    width: 100%;
     margin-top: 50px;
     border-radius: 50%;
+    box-sizing: border-box;
     border: solid 2px var(--line-color);
 }
 
