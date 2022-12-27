@@ -1,3 +1,16 @@
+.leftSide{
+    width: 450px;
+    height: 100vh;
+    margin-left: 188px;
+    display: inline-block;
+    position: relative;
+    background-color: var(--light-grey-color);
+}
+
+.wrapper{
+    height: 100%;
+}
+
 .buttons{
     color: var(--txt-color);
     text-decoration: none;
@@ -10,8 +23,7 @@
     border: 1.5px solid var(--line-color);
     width: 152px;
     height: 38px;
-    margin-top: 18px;
-    margin-left: 15px;
+    margin-top: 18px 0 0 15px;
 }
 
 .buttons:hover{
@@ -26,14 +38,6 @@
 
 .buttons.highlight:hover {
     background-color: var(--dark-blue-color);
-}
-
-.leftSide{
-    width: 450px;
-    height: 100%;
-    display: inline-block;
-    position: relative;
-    background-color: var(--light-grey-color);
 }
 
 .avartar{
@@ -69,7 +73,7 @@
 
 .menus{
     display: block;
-    margin: 14px 0 50px 0;
+    margin-top: 14px 50px 0 50px;
 }
 
 .menus > a{

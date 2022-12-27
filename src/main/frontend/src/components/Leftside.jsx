@@ -15,9 +15,11 @@ export default function Leftside() {
 
     return (
         <div className="leftSide">
-            {/* 나중에 네트워크 통신으로 user data 받아와서 초기화하는 작업 필요 */}
-            <Avartar photoURL={defaultProfile} user={user}/>
-            <Menus />
+            <div className="wrapper">
+                {/* 나중에 네트워크 통신으로 user data 받아와서 초기화하는 작업 필요 */}
+                <Avartar photoURL={defaultProfile} user={user}/>
+                <Menus />
+            </div>
         </div>
     );
 }
