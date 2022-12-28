@@ -1,20 +1,25 @@
-import React, {Component} from "react";
+import React, {Component,useState} from "react";
 import './Dailycard.css';
+import cafeteria from '../mock/cafeteria.json';
 
-class MealofToday extends Component{
-    render() {
+export default function MealofToday(){
+        const [menus, setMenus] = useState(Object.values(cafeteria));
+
         return(
             <div className="mot">
-                {/*api로 오늘 급식 메뉴 불러오기*/}
                 <div className="cardcontent">
-
+                    {menus[0].map((menu)=>(
+                        <ul className="Listul">
+                            <li>
+                                {`${menu.food}`}
+                            </li>
+                        </ul>
+                    ))}
                 </div>
                 <button type="button">
                     전체보기
                 </button>
-
             </div>
         );
-    }
+
 }
-export default MealofToday;
