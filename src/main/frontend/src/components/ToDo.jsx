@@ -5,8 +5,8 @@ export default function ToDo(){
         const [todos, setTodos] = useState(Object.values(TODOS));
 
         return(
-            <div className="TODO">
-                <div className="cardcontent">
+            <div className="TODO card">
+                <div className="cardcontent todo">
                     {todos[0].map((todo)=>(
                         <ul className="Listul">
                             <li>
@@ -15,9 +15,6 @@ export default function ToDo(){
                         </ul>
                     ))}
                 </div>
-                <button type="button">
-                    할 일 추가
-                </button>
             </div>
         );
 }

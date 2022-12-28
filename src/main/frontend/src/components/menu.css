@@ -5,8 +5,8 @@ header {
 header .inner {
     position: relative;
     display: flex;
+    justify-content: center;
     height: 80px;
-    margin-left: 188px;
 }
 
 header .logo{

@@ -3,7 +3,7 @@ import MealofToday from "./MealofToday";
 import ToDo from "./ToDo";
 import NextClass from "./NextClass";
 import './Dailycard.css';
-import {MdCheck, MdClass, MdRestaurant} from "react-icons/md";
+import CardButton from "./CardButton";
 
 class Dailycard extends Component{
     render() {
@@ -27,25 +27,31 @@ class Dailycard extends Component{
         */
         return(
             <div className="today">
+                {/** title **/}
                 <div className='date'>{`${getCurrentDate()}`}</div>
+
+                {/** cards **/}
                 <div className="content">
                     <div className="mealoft">
                         <div className="todaytitle">
-                            <MdRestaurant></MdRestaurant>오늘의 급식
+                            🥕 오늘의 급식
                         </div>
                         <MealofToday></MealofToday>
+                        <CardButton title="전체 보기" />
                     </div>
                     <div  className="todo">
                         <div className="todaytitle">
-                            <MdCheck></MdCheck>오늘의 할 일
+                            ✔️ 오늘의 할 일
                         </div>
                         <ToDo></ToDo>
+                        <CardButton title="할 일 추가" />
                     </div>
                     <div  className="nextclass">
                         <div className="todaytitle">
-                            <MdClass></MdClass>다음 수업
+                            ✔️ 다음 수업
                         </div>
                         <NextClass></NextClass>
+                        <CardButton title="전체 보기" />
                     </div>
                 </div>
 

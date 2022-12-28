@@ -5,7 +5,7 @@ import Board from '../mock/board.json';
 //import BoardEmpty from '../mock/boardFake.json';
 
 function MakeTitle({ boardKey }){
-    return boardKey === 0 ? <div className='title'>자유게시판</div> : <div className='title'>학생회 공지</div>
+    return boardKey === 0 ? <div className='preview-title'>자유게시판</div> : <div className='preview-title'>학생회 공지</div>
 }
 
 // board 종류별로 key가 있다고 가정. 

@@ -6,7 +6,7 @@ export default function MealofToday(){
         const [menus, setMenus] = useState(Object.values(cafeteria));
 
         return(
-            <div className="mot">
+            <div className="mot card">
                 <div className="cardcontent">
                     {menus[0].map((menu)=>(
                         <ul className="Listul">
@@ -16,9 +16,6 @@ export default function MealofToday(){
                         </ul>
                     ))}
                 </div>
-                <button type="button">
-                    전체보기
-                </button>
             </div>
         );
 

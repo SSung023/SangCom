@@ -1,9 +1,12 @@
 :root{
     --light-grey-color: #F6F8FA;
+    --grey-color: #dadbde;
+    --dark-grey-color: #9B9B9B;
     --white-color: #FFFFFF;
     --blue-color: #2D81FF;
     --dark-blue-color: #2473EA;
     --line-color: #D9D9D9;
+    --btn-bg-color: #F6F8FA;
     --txt-color: #444444;
     --light-txt-color: #ADADAD;
     
@@ -24,8 +27,8 @@ html, body {
 
 .container{
     position: relative;
-    height: auto;
     padding: 0 0 25px 0;
     display: flex;
-    justify-content: flex-start;
+    align-items: flex-start;
+    justify-content: center;
 }

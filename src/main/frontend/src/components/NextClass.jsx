@@ -3,7 +3,7 @@ import React, {Component} from "react";
 class NextClass extends Component{
     render() {
         return(
-            <div className="NEXTCLASS">
+            <div className="NEXTCLASS card">
                 <div className="classtime">
                     {/*시간별 교시 구하기*/}
                     3교시
@@ -14,9 +14,6 @@ class NextClass extends Component{
                         <li>수학</li>
                     </ul>
                 </div>
-                <button type="button">
-                    전체보기
-                </button>
             </div>
 
         );
