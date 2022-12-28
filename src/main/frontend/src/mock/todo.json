@@ -1,0 +1,25 @@
+{
+  "assignments": [
+    {
+      "id" : "1",
+      "title" : "수특 수학 3단원 풀기",
+      "check" : false
+    },
+    {
+      "id" : "2",
+      "title" : "자이스토리 영어 8회",
+      "check" : true
+    },
+    {
+      "id" : "3",
+      "title" : "화학 복습",
+      "check" : true
+    }
+  ,
+    {
+      "id" : "4",
+      "title" : "국어 모의고사 1회",
+      "check" : true
+    }
+  ]
+}
