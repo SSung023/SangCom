@@ -25,12 +25,14 @@ const Body = () => {
                 </thead>
                 <tbody id="month">
                 <tr>
-                    <td className="sun"><div className="datenum">27
-                        <div className="content"></div>
-                    </div></td>
-                    <td className="mon"><div className="datenum">28</div></td>
-                    <td className="tues"><div className="datenum">29</div></td>
-                    <td className="wed"><div className="datenum">30</div></td>
+                    <td className="sun">
+                        <div className="datenum grey">27
+                            <div className="content"></div>
+                        </div>
+                    </td>
+                    <td className="mon"><div className="datenum grey">28</div></td>
+                    <td className="tues"><div className="datenum grey">29</div></td>
+                    <td className="wed"><div className="datenum grey">30</div></td>
                     <td className="thurs"><div className="datenum">1</div></td>
                     <td className="fri"><div className="datenum">2</div></td>
                     <td className="sat"><div className="datenum">3</div></td>
@@ -67,7 +69,7 @@ const Body = () => {
                     <td className="mon"><div className="datenum">26</div></td>
                     <td className="tues"><div className="datenum">27</div></td>
                     <td className="wed"><div className="datenum">28</div></td>
-                    <td className="thurs"><div className="datenum">29</div></td>
+                    <td className="thurs"><div className="datenum today">29</div></td>
                     <td className="fri"><div className="datenum">30</div></td>
                     <td className="sat"><div className="datenum">31</div></td>
                 </tr>

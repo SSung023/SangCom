@@ -1,6 +1,7 @@
 .cafeteria{
-    width: 922px;
+    width: 924px;
     height: 880px;
+    box-sizing: border-box;
     border: 1px solid var(--line-color);
     margin-left: 42px;
     border-collapse: collapse;
@@ -8,20 +9,38 @@
 thead{
     height: 30px;
 }
+
+th{
+    border-right: 1px solid var(--line-color);
+}
+
 td{
+    position: relative;
+    box-sizing: border-box;
     border: 1px solid var(--line-color);
-    width: 100px;
+    width: 132px;
     height: 170px;
 }
 
 .datenum {
+    position: absolute;
+    top: 7px;
+    left: 6px;
     width: 20px;
     height: 20px;
-    margin : 6px 105px 144px 7px;
     border-radius: 50%;
     background-color: #F6F8FA;
     text-align: center;
     font-weight: 400;
     font-size: 12px;
-    line-height: 14px;
+    line-height: 20px;
+}
+
+.grey{
+    color: var(--line-color);
+}
+
+tbody .today{
+    background-color: var(--blue-color);
+    color: var(--white-color);
 }

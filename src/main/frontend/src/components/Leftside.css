@@ -1,6 +1,6 @@
 .leftSide{
     width: 450px;
-    height: 100vh;
+    height: 250vh;
     display: inline-block;
     position: relative;
     background-color: var(--light-grey-color);

@@ -4,6 +4,7 @@ import Class from './Class';
 import './Main.css';
 import Dailycard from "./Dailycard";
 import Cafeteria from "./Cafeteria";
+import Meal from './Meal';
 
 export default function Main() {
     return (
@@ -28,6 +29,10 @@ export default function Main() {
                 <p className="section-title">우리 반</p>
                 <Class />
             </div>
+            {/* <div className='section'>
+                <p className="section-title">급식표 ver2</p>
+                <Meal />
+            </div> */}
         </div>
     );
 }
