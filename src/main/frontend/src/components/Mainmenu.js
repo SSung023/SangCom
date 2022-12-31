@@ -1,9 +1,10 @@
 import React, {Component} from "react";
+import styles from './Menu.module.css';
 
 class Mainmenu extends Component{
     render() {
         return (
-            <div className="mainMenu">
+            <div className={styles.mainMenu}>
                 <ul>
                     <li><a href="/board">게시판</a></li>
                     <li><a href="/studentCouncil">학생회</a></li>

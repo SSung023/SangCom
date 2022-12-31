@@ -1,5 +1,5 @@
 import React from 'react';
-import './Leftside.css';
+import styles from './Leftside.module.css';
 import { useState } from 'react';
 import Avartar from './Avartar';
 import defaultProfile from '../images/defualtProfile.svg';
@@ -14,8 +14,8 @@ export default function Leftside() {
     });
 
     return (
-        <div className="leftSide">
-            <div className="wrapper">
+        <div className={styles.leftSide}>
+            <div className={styles.wrapper}>
                 {/* 나중에 네트워크 통신으로 user data 받아와서 초기화하는 작업 필요 */}
                 <Avartar photoURL={defaultProfile} user={user}/>
                 <Menus />
@@ -27,7 +27,9 @@ export default function Leftside() {
 
 function Menus(){
     return (
-        <div className="menus">
+        <div className={styles.menus}>
+            <div className={styles.horizontalDivider}></div>
+
             <a href="/myarticle">
                 <MdOutlineFormatListBulleted color='2D81FF'/>
                 내가 쓴 글

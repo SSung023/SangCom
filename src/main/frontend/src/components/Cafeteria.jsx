@@ -1,5 +1,5 @@
 import React, {Component,useState} from "react";
-import './cafeteria.css';
+import styles from './Cafeteria.module.css';
 
 export default function Cafeteria(){
         return(
@@ -11,7 +11,7 @@ export default function Cafeteria(){
 const Body = () => {
     return(
         <div className="body">
-            <table className="cafeteria">
+            <table className={styles.cafeteria}>
                 <thead>
                 <tr>
                     <th>일요일</th>
@@ -25,53 +25,53 @@ const Body = () => {
                 </thead>
                 <tbody id="month">
                 <tr>
-                    <td className="sun">
-                        <div className="datenum grey">27
+                    <td className={styles.day}>
+                        <div className={`${styles.datenum} ${styles.grey}`}>27
                             <div className="content"></div>
                         </div>
                     </td>
-                    <td className="mon"><div className="datenum grey">28</div></td>
-                    <td className="tues"><div className="datenum grey">29</div></td>
-                    <td className="wed"><div className="datenum grey">30</div></td>
-                    <td className="thurs"><div className="datenum">1</div></td>
-                    <td className="fri"><div className="datenum">2</div></td>
-                    <td className="sat"><div className="datenum">3</div></td>
+                    <td className={styles.day}><div className={`${styles.datenum} ${styles.grey}`}>28</div></td>
+                    <td className={styles.day}><div className={`${styles.datenum} ${styles.grey}`}>29</div></td>
+                    <td className={styles.day}><div className={`${styles.datenum} ${styles.grey}`}>30</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>1</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>2</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>3</div></td>
                 </tr>
                 <tr>
-                    <td className="sun"><div className="datenum">4</div></td>
-                    <td className="mon"><div className="datenum">5</div></td>
-                    <td className="tues"><div className="datenum">6</div></td>
-                    <td className="wed"><div className="datenum">7</div></td>
-                    <td className="thurs"><div className="datenum">8</div></td>
-                    <td className="fri"><div className="datenum">9</div></td>
-                    <td className="sat"><div className="datenum">10</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>4</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>5</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>6</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>7</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>8</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>9</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>10</div></td>
                 </tr>
                 <tr>
-                    <td className="sun"><div className="datenum">11</div></td>
-                    <td className="mon"><div className="datenum">12</div></td>
-                    <td className="tues"><div className="datenum">13</div></td>
-                    <td className="wed"><div className="datenum">14</div></td>
-                    <td className="thurs"><div className="datenum">15</div></td>
-                    <td className="fri"><div className="datenum">16</div></td>
-                    <td className="sat"><div className="datenum">17</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>11</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>12</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>13</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>14</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>15</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>16</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>17</div></td>
                 </tr>
                 <tr>
-                    <td className="sun"><div className="datenum">18</div></td>
-                    <td className="mon"><div className="datenum">19</div></td>
-                    <td className="tues"><div className="datenum">20</div></td>
-                    <td className="wed"><div className="datenum">21</div></td>
-                    <td className="thurs"><div className="datenum">22</div></td>
-                    <td className="fri"><div className="datenum">23</div></td>
-                    <td className="sat"><div className="datenum">24</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>18</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>19</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>20</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>21</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>22</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>23</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>24</div></td>
                 </tr>
                 <tr>
-                    <td className="sun"><div className="datenum">25</div></td>
-                    <td className="mon"><div className="datenum">26</div></td>
-                    <td className="tues"><div className="datenum">27</div></td>
-                    <td className="wed"><div className="datenum">28</div></td>
-                    <td className="thurs"><div className="datenum today">29</div></td>
-                    <td className="fri"><div className="datenum">30</div></td>
-                    <td className="sat"><div className="datenum">31</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>25</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>26</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>27</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>28</div></td>
+                    <td className={styles.day}><div className={`${styles.datenum} ${styles.today}`}>29</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>30</div></td>
+                    <td className={styles.day}><div className={styles.datenum}>31</div></td>
                 </tr>
                 </tbody>
             </table>
