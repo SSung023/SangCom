@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import styles from './Dailycard.module.css';
 
 export default function CurrentDate(){
         const getCurrentDate = () => { //오늘 날짜 반환하는 함수
@@ -11,6 +12,6 @@ export default function CurrentDate(){
         return dot;
     }
     return(
-        <div className='date'>{`${getCurrentDate()}`}</div>
+        <div className={styles.date}>{`${getCurrentDate()}`}</div>
     );
 }

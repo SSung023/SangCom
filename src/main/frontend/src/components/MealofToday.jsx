@@ -1,15 +1,16 @@
 import React, {Component,useState} from "react";
 import cafeteria from '../mock/cafeteria.json';
 import CardButton from "./CardButton";
+import styles from './Dailycard.module.css';
 
 export default function MealofToday(props){
         const [menus, setMenus] = useState(Object.values(cafeteria));
         return(
-                <div className="mealoft">
-                    <div className="todaytitle">{props.title}</div>
-                        <div className="cardcontent">
+                <div className={styles.mealoft}>
+                    <div className={styles.todaytitle}>{props.title}</div>
+                        <div className={styles.cardcontent}>
                             {menus[0].map((menu)=>(
-                                <ul className="Listul">
+                                <ul className={styles.Listul}>
                                     <li>
                                         {`${menu.food}`}
                                     </li>

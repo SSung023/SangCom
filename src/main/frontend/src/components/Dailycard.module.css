@@ -74,7 +74,7 @@
 }
 
 
-.card-btn{
+.btn{
     position: absolute;
     background-color: var(--btn-bg-color);
     border-radius: 20px;
@@ -88,7 +88,7 @@
     bottom: 10px;
 }
 
-.card-btn:hover{
+.btn:hover{
     color: var(--blue-color);
 }
 
