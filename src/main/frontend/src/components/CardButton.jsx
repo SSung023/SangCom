@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function CardButton({ title }) {
+export default function CardButton(props) {
     return (
         <button type="button" className='card-btn'>
-            { title }
+            {props.title}
         </button>
     );
 }

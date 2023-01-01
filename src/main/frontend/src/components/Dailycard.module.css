@@ -55,6 +55,7 @@
     display: grid;
     height : 120px;
     width: 250px;
+    margin: 10px;
     grid-template-columns: repeat(2,1fr);
 }
 
