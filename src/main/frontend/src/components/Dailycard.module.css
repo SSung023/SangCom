@@ -59,25 +59,22 @@
     grid-template-columns: repeat(2,1fr);
 }
 
-.cardcontenttodo {
-    position: relative;
-    display: grid;
-    height : 120px;
-    width: 250px;
-    margin: 10px;
+.cardcontent.todo {
     grid-template-columns: repeat(1,1fr);
+    border: none;
 }
 
-.cardcontentul{
+.cardcontent ul{
     padding-left: 30px;
     font-weight: var(--regular);
+}
+
+.Listul{
     margin: 0;
 }
 
 
-
-
-.cardbtn{
+.card-btn{
     position: absolute;
     background-color: var(--btn-bg-color);
     border-radius: 20px;
@@ -91,7 +88,7 @@
     bottom: 10px;
 }
 
-.cardbtn:hover{
+.card-btn:hover{
     color: var(--blue-color);
 }
 
