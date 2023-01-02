@@ -1,21 +1,23 @@
 import React, {Component} from "react";
-import './menu.css'
+import styles from './Topnav.module.css';
 import Mainmenu from "./Mainmenu";
 import Iconmenu from "./Iconmenu";
 import schoolLogo from "../images/testLogo.png";
+import { Link } from "react-router-dom";
 
 class Topnav extends Component {
     render() {
         return(
             <header>
-                <div className="inner">
-                    <div className="logo">
-                        <a href="/">
-                            <img src={schoolLogo} alt="logo of school"/>
-                        </a>
+                <div className={styles.inner}>
+                    <div className={styles.logo}>
+                        <Link to="/main">
+                            <img src={schoolLogo} alt="logo of school"/>                          
+                        </Link>
+
                     </div>
-                    <div className="navMenus">
-                        <div className="flex">
+                    <div className={styles.navMenus}>
+                        <div className={styles.flex}>
                             <Mainmenu></Mainmenu>
                             <Iconmenu></Iconmenu>
                         </div>
