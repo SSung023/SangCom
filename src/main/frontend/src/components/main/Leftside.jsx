@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Leftside.module.css';
 import { useState } from 'react';
 import Avartar from './Avartar';
-import defaultProfile from '../images/defualtProfile.svg';
+import defaultProfile from '../../images/defualtProfile.svg';
 import {MdOutlineFormatListBulleted, MdOutlineModeComment, MdOutlineBookmarks} from "react-icons/md";
 
 export default function Leftside() {

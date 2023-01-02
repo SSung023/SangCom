@@ -1,5 +1,5 @@
 import React, {Component,useState} from "react";
-import cafeteria from '../mock/cafeteria.json';
+import cafeteria from '../../mock/cafeteria.json';
 import CardButton from "./CardButton";
 import styles from './Dailycard.module.css';
 

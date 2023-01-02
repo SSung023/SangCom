@@ -44,23 +44,23 @@ header .mainMenu ul{
     margin: 0;
 }
 
-a{
+.item{
     text-decoration: none;
 }
 
-header .mainMenu ul li a{
+header .mainMenu ul li .item{
     font-size: 18px;
     display: block;
     color: #444444;
     margin: 20px 30px 0 30px;
 }
 
-header .mainMenu ul li a:hover{
+header .mainMenu ul li .item:hover{
     color: var(--blue-color);
     transition: transform 250ms ease-in-out;
 }
 
-header .mainMenu ul li a:after{
+header .mainMenu ul li .item:after{
     box-sizing: border-box;
     margin-top: 18px;
     display: block;
@@ -70,7 +70,7 @@ header .mainMenu ul li a:after{
     transition: transform 250ms ease-in-out;
 }
 
-header .mainMenu ul li a:hover:after{
+header .mainMenu ul li .item:hover:after{
     box-sizing: border-box;
     transform: scaleX(1);
 }

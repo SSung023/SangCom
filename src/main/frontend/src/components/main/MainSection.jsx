@@ -1,12 +1,12 @@
 import React from 'react';
 import BoardPreview from './BoardPreview';
 import Class from './Class';
-import styles from './Main.module.css';
+import styles from './MainSection.module.css';
 import Dailycard from "./Dailycard";
 import Cafeteria from "./Cafeteria";
-import Meal from './Meal';
+//import Meal from './Meal';
 
-export default function Main() {
+export default function MainSection() {
     return (
         <div className={styles.main}>
             {/** 카드 일정 **/}

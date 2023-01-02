@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import styles from './BoardPreview.module.css';
-import Board from '../mock/board.json';
+import Board from '../../mock/board.json';
 //import BoardEmpty from '../mock/boardFake.json';
 
 function MakeTitle({ boardKey }){

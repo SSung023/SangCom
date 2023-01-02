@@ -1,13 +1,34 @@
 import './App.css';
-import Topnav from "./components/Topnav";
-import Container from "./components/Container";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Root from './pages/Root';
+import Login from './pages/Login';
+import Main from './pages/Main';
+import Board from './pages/Board';
+import TimeTable from './pages/TimeTable';
+import NotFound from './pages/NotFound';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Login />,
+    errorElement: <NotFound />,
+  },
+  {
+    path: '/main',
+    element: <Root />,
+    errorElement: <NotFound />,
+    children: [
+     { index: true, element: <Main /> } ,
+     { path: 'board', element: <Board />},
+     { path: 'timetable', element: <TimeTable />},
+    ],
+  },
+]);
 
 function App() {
   return (
     <>
-      <Topnav />
-      {/* 나중에 Routing을 위해 leftside와 main을 감싸는 컴포넌트가 하나 더 있어야 함. */}
-      <Container />
+      <RouterProvider router={router}/>
     </>
   );
 }

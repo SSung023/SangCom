@@ -59,9 +59,13 @@
     grid-template-columns: repeat(2,1fr);
 }
 
-.cardcontent.todo {
+.cardcontenttodo {
+    position: relative;
+    display: grid;
+    height : 120px;
+    width: 250px;
+    margin: 10px;
     grid-template-columns: repeat(1,1fr);
-    border: none;
 }
 
 .cardcontent ul{
