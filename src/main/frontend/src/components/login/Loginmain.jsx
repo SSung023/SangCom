@@ -25,7 +25,7 @@ export default function Loginmain (props){
                     <button
                         type="button"
                         className={style.loginbtn}>
-                        <span>로그인</span>
+                        로그인
                     </button>
                     <button
                         type="button"
