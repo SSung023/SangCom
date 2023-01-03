@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>OAuth login</title>
+</head>
+<body>
+<div align="center">
+    <h2>Kakao social login</h2>
+    <form th:action="@{/auth/logout}" method="post">
+        <input type="submit" value="Logout" />
+    </form>
+</div>
+</body>
+</html>
