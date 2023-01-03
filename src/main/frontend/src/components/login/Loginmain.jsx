@@ -34,7 +34,7 @@ export default function Loginmain (props){
                         <img
                             className={style.kakaoIcon}
                             src={props.kakaoIcon}/>
-                        <span>카카오 로그인</span>
+                        카카오 로그인
                     </button>
                     <a href="./changePw" className={style.changepw}>
                         비밀번호 재설정
