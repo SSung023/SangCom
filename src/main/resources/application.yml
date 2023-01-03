@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sangcom23?serverTimezone=UTC&characterEncoding=UTF-8
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Fermat0635@
+
+
+## Kakao
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 4ff6e74791ce00ee3f567ce4c403c8de
+            client-secret: 3ZlHXFyUX8blRk1Kd4w6Ig7LPGBzf7KU
+            redirect-uri: http://localhost:3000/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope:
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id

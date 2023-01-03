@@ -25,6 +25,10 @@ html, body {
     font-family: 'Roboto';
 }
 
+a {
+    text-decoration: none;
+}
+
 .container{
     position: relative;
     padding: 0 0 25px 0;
