@@ -32,6 +32,8 @@ public class User {
     @NotNull
     private String email;
 
+    private String username;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private Role role;

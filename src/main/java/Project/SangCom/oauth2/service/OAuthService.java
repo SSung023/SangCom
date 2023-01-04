@@ -60,6 +60,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         User user;
         Optional<User> optionalUser = repository.findByEmail(email);
         String accessToken = userRequest.getAccessToken().getTokenValue();
+        log.info(accessToken);
 
         //
         if (optionalUser.isPresent()){
@@ -73,6 +74,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                     .build();
             repository.save(user);
         }
+        // localhost:3000/main
 
         httpSession.setAttribute("user", new SessionUser(user));
         httpSession.setAttribute("access_token", accessToken);
@@ -84,3 +86,5 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                 ,userNameAttributeName);
     }
 }
+// localhost:3000/register
+// localhost:8080/register
