@@ -6,7 +6,6 @@ import kakaoIcon from '../images/kakaoIcon.svg';
 export default function Login() {
     return (
         <div>
-            {/*Login Page!*/}
             <Loginmain
                 logoImg = {loginImage}
                 kakaoIcon = {kakaoIcon}
