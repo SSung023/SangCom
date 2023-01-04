@@ -4,7 +4,7 @@ import Class from './Class';
 import styles from './MainSection.module.css';
 import Dailycard from "./Dailycard";
 import Cafeteria from "./Cafeteria";
-//import Meal from './Meal';
+import Meal from './Meal';
 
 export default function MainSection() {
     return (
@@ -29,10 +29,10 @@ export default function MainSection() {
                 <p className={styles.title}>우리 반</p>
                 <Class />
             </div>
-            {/* <div className={styles.section}>
+            <div className={styles.section}>
                 <p className={styles.title}>급식표 ver2</p>
                 <Meal />
-            </div> */}
+            </div>
         </div>
     );
 }
