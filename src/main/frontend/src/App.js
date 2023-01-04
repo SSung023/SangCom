@@ -19,10 +19,10 @@ const router = createBrowserRouter([
     element: <Login />,
     errorElement: <NotFound />,
   },
-  {
-    path: 'login/oauth2/code/kakao',
-    element: <KakaoRedirectHandler />,
-  },
+  // {
+  //   path: 'login/oauth2/code/kakao',
+  //   element: <KakaoRedirectHandler />,
+  // },
   {
     path: '/main',
     element: <Root />,
