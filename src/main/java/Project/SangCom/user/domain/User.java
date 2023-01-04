@@ -2,9 +2,11 @@ package Project.SangCom.user.domain;
 
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.domain.embedded.TeacherInfo;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -38,4 +40,15 @@ public class User {
     private StudentInfo studentInfo;
     @Embedded
     private TeacherInfo teacherInfo;
+
+    @Builder
+    public User(String nickname, String email, Role role) {
+        // studentInfo, teacherInfo 추가 필요
+        this.nickname = nickname;
+        this.email = email;
+        this.role = role;
+    }
+
+    public User() {
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
@@ -29,6 +30,11 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
     private final UserRepository repository;
     private final HttpSession httpSession;
+
+    public void login(){
+//        RestTemplate rt = new RestTemplate();
+//        rt.exchange()
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
