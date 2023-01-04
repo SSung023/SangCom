@@ -4,7 +4,7 @@ import { KAKAO_AUTH_URL } from "./OAuth";
 
 export default function Loginmain (props){
     const handleKakaoLogin = () => {
-        window.location.href = KAKAO_AUTH_URL;
+        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
     };
     return(
         <form method="post" action="" id="loginForm">
