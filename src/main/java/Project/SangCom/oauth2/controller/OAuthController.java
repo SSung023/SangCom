@@ -10,9 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class OAuthController {
 
-    @RequestMapping("/oauth2/code/kakao")
+    @GetMapping("/login/oauth2/code/kakao")
     public String getCode(@RequestParam String code){
+        // login
+        // 인가 코드 통해서 access token 발급받고 -> 회원 정보 받아오기
         log.info("Authorization code: " + code);
-        return code;
+        return "redirect:/register";
+    }
+
+    @GetMapping("/register")
+    public String test(){
+        return "tets";
     }
 }

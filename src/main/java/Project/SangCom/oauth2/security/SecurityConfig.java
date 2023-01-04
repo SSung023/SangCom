@@ -17,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final OAuthService oAuthService;
+    private final KakaoOAuth2UserService kakaoOAuth2UserService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -33,11 +34,11 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
+                .defaultSuccessUrl("/register")
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
                 .and()
-                .userInfoEndpoint().userService(oAuthService);
-
+                .userInfoEndpoint().userService(kakaoOAuth2UserService);
 
         return http.build();
     }
