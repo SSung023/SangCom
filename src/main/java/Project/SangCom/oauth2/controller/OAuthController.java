@@ -22,4 +22,11 @@ public class OAuthController {
         String redirect_uri="http://localhost:3000/register";
         response.sendRedirect(redirect_uri);
     }
+
+
+    @GetMapping("/api/test")
+    public String test(){
+        log.info("test 성공");
+        return "test";
+    }
 }

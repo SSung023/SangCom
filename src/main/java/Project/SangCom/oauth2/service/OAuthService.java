@@ -62,7 +62,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         String accessToken = userRequest.getAccessToken().getTokenValue();
         log.info(accessToken);
 
-        //
+        // DB에서 일치하는 email을 찾은 경우
         if (optionalUser.isPresent()){
             user = optionalUser.get();
         }
@@ -74,7 +74,6 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                     .build();
             repository.save(user);
         }
-        // localhost:3000/main
 
         httpSession.setAttribute("user", new SessionUser(user));
         httpSession.setAttribute("access_token", accessToken);
