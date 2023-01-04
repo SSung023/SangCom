@@ -4,6 +4,7 @@ import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.dto.SessionUser;
 import Project.SangCom.user.repository.UserRepository;
+import Project.SangCom.util.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,7 +16,6 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
@@ -31,12 +31,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     private final UserRepository repository;
     private final HttpSession httpSession;
 
-    public void login(){
-//        RestTemplate rt = new RestTemplate();
-//        rt.exchange()
-    }
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
@@ -46,32 +43,39 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         // OAuth2 로그인의 시 키 값이 서비스마다 다르기 때문에 변수로 받아둠 (google: sub, naver: response, kakao: id)
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
+        // 요청한 사용자의 정보를 Map 형태로 저장
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String email;
 
+        // 서비스가 카카오인 경우 이메일 정보를 받아온다.
         if ("kakao".equals(serviceName)){
             Map<String , Object> profile = (Map<String, Object>) attributes.get("kakao_account");
             email = (String) profile.get("email");
+            log.info("email: " + email);
         }
         else {
-            throw new OAuth2AuthenticationException("허용되지 않는 인증입니다.");
+            throw new BusinessException("허용되지 않는 인증입니다.");
         }
 
         User user;
         Optional<User> optionalUser = repository.findByEmail(email);
         String accessToken = userRequest.getAccessToken().getTokenValue();
 
+        //
         if (optionalUser.isPresent()){
             user = optionalUser.get();
         }
         else {
-            user = new User();
-            user.setEmail(email);
-            user.setRole(Role.STUDENT);
+            user = User.builder()
+                    .email(email)
+                    .nickname("tempNickname")
+                    .role(Role.STUDENT)
+                    .build();
             repository.save(user);
         }
 
         httpSession.setAttribute("user", new SessionUser(user));
+        httpSession.setAttribute("access_token", accessToken);
         log.info("attributes :: " + attributes);
 
         //인증된 사용자를 반환

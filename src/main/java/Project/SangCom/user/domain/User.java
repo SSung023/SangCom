@@ -5,8 +5,7 @@ import Project.SangCom.user.domain.embedded.TeacherInfo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
-import org.springframework.web.client.RestTemplate;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,6 +17,7 @@ import javax.validation.constraints.NotNull;
  * role: student, student_council, teacher, admin
  */
 @Entity
+@ToString
 @Getter @Setter
 public class User {
 

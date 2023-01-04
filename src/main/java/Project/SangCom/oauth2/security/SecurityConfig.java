@@ -1,12 +1,10 @@
 package Project.SangCom.oauth2.security;
 
-import Project.SangCom.oauth2.service.KakaoOAuth2UserService;
 import Project.SangCom.oauth2.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final OAuthService oAuthService;
-    private final KakaoOAuth2UserService kakaoOAuth2UserService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -26,9 +23,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
-        // 로그인이 성공하면 해당 유저정보를 들고 kakaoOAuth2UserService에서 후 처리 진행
-//        http.oauth2Login().userInfoEndpoint().userService(kakaoOAuth2UserService);
-
+        /**
+         * .antMathers(): 해당 uri는 접근 허용
+         * .anyRequest().authenticated(): 외에는 모두 인증 필요
+         * .oauth2Login(): OAuth 로그인 설정
+         * .defaultSuccessURl(): 로그인 성공 시 이동할 url
+         * .userInfoEndpoint().userService(): 로그인이 성공하면 해당 유저정보를 들고 oAuthService에서 후처리 진행
+         */
         http.authorizeRequests()
                 .antMatchers("/login/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
@@ -38,7 +39,7 @@ public class SecurityConfig {
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
                 .and()
-                .userInfoEndpoint().userService(kakaoOAuth2UserService);
+                .userInfoEndpoint().userService(oAuthService);
 
         return http.build();
     }
