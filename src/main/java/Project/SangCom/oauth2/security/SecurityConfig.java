@@ -1,6 +1,7 @@
 package Project.SangCom.oauth2.security;
 
 import Project.SangCom.oauth2.service.KakaoOAuth2UserService;
+import Project.SangCom.oauth2.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final KakaoOAuth2UserService kakaoOAuth2UserService;
+    private final OAuthService oAuthService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -27,17 +28,16 @@ public class SecurityConfig {
         // 로그인이 성공하면 해당 유저정보를 들고 kakaoOAuth2UserService에서 후 처리 진행
 //        http.oauth2Login().userInfoEndpoint().userService(kakaoOAuth2UserService);
 
-
         http.authorizeRequests()
-                .antMatchers("/oauth2/**").permitAll()
-//                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers("/login/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .logout()
-                .logoutSuccessUrl("/")
+                .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorization")
                 .and()
-                .oauth2Login() // 기본 로그인 페이지 제공
-                .defaultSuccessUrl("/");
+                .userInfoEndpoint().userService(oAuthService);
+
 
         return http.build();
     }

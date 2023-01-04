@@ -2,18 +2,22 @@ package Project.SangCom.oauth2.service;
 
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.dto.SessionUser;
 import Project.SangCom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -57,12 +61,16 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         else {
             user = new User();
             user.setEmail(email);
-            user.setRole(Role.ROLE_STUDENT);
+            user.setRole(Role.STUDENT);
             repository.save(user);
         }
 
-//        httpSession.setAttribute("u);
+        httpSession.setAttribute("user", new SessionUser(user));
+        log.info("attributes :: " + attributes);
 
-        return null;
+        //인증된 사용자를 반환
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey()))
+                ,oAuth2User.getAttributes()
+                ,userNameAttributeName);
     }
 }

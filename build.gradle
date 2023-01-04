@@ -38,6 +38,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+	// webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	// Thymeleaf - for test page
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
