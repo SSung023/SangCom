@@ -25,7 +25,6 @@ public class User {
     private Long id;
 
     @Column(unique = true, length = 20)
-    @NotNull
     private String nickname;
 
     @Column(unique = true, length = 30)
