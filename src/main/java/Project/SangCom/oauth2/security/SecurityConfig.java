@@ -30,12 +30,13 @@ public class SecurityConfig {
          * .defaultSuccessURl(): 로그인 성공 시 이동할 url
          * .userInfoEndpoint().userService(): 로그인이 성공하면 해당 유저정보를 들고 oAuthService에서 후처리 진행
          */
+        // SuccessHandler 등 핸들러 클래스 추가 필요
         http.authorizeRequests()
                 .antMatchers("/login/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
-                .defaultSuccessUrl("/api/register")
+                .defaultSuccessUrl("/register")
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
                 .and()
