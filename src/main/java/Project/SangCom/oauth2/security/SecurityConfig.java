@@ -1,6 +1,6 @@
 package Project.SangCom.oauth2.security;
 
-import Project.SangCom.oauth2.service.OAuthService;
+import Project.SangCom.oauth2.service.CustomOAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final OAuthService oAuthService;
+    private final CustomOAuthService customOAuthService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -35,11 +35,11 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
-                .defaultSuccessUrl("/register")
+                .defaultSuccessUrl("/api/register")
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
                 .and()
-                .userInfoEndpoint().userService(oAuthService);
+                .userInfoEndpoint().userService(customOAuthService);
 
         return http.build();
     }

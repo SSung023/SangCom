@@ -26,7 +26,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @Slf4j
 @RequiredArgsConstructor
-public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository repository;
     private final HttpSession httpSession;

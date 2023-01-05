@@ -16,4 +16,9 @@ public class SingleResponse<T> extends CommonResponse {
     public SingleResponse(T data) {
         this.data = data;
     }
+
+    public SingleResponse(int code, String message, T data) {
+        super(code, message);
+        this.data = data;
+    }
 }
