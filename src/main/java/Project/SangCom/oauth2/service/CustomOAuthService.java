@@ -17,7 +17,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -49,7 +51,7 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
 
         // 서비스가 카카오인 경우 이메일 정보를 받아온다.
         if ("kakao".equals(serviceName)){
-            Map<String , Object> profile = (Map<String, Object>) attributes.get("kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) attributes.get("kakao_account");
             email = (String) profile.get("email");
             log.info("email: " + email);
         }
@@ -85,5 +87,3 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
                 ,userNameAttributeName);
     }
 }
-// localhost:3000/register
-// localhost:8080/register

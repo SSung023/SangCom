@@ -1,5 +1,6 @@
 package Project.SangCom.oauth2.security;
 
+import Project.SangCom.oauth2.handler.OAuth2SuccessHandler;
 import Project.SangCom.oauth2.service.CustomOAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomOAuthService customOAuthService;
+    private final OAuth2SuccessHandler successHandler;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -30,15 +32,14 @@ public class SecurityConfig {
          * .defaultSuccessURl(): 로그인 성공 시 이동할 url
          * .userInfoEndpoint().userService(): 로그인이 성공하면 해당 유저정보를 들고 oAuthService에서 후처리 진행
          */
-        // SuccessHandler 등 핸들러 클래스 추가 필요
+        // SuccessHandler, FailureHandler 등 핸들러 클래스 추가 필요
         http.authorizeRequests()
                 .antMatchers("/login/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
-                .defaultSuccessUrl("/register")
+                .successHandler(successHandler)
                 .authorizationEndpoint()
-                .baseUri("/oauth2/authorization")
                 .and()
                 .userInfoEndpoint().userService(customOAuthService);
 
