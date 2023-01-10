@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * 회원 엔티티
  * email: kakao 소셜 로그인 이후 kakao email을 받아옴
  * nickname, info: 소셜 로그인 이후 자체 회원가입 시 기입
- * role: student, student_council, teacher, admin
+ * role: not_verified, student, student_council, teacher, admin
  */
 @Entity
 @ToString

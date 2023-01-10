@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -22,24 +24,26 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
+    
     @Bean
     public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
-        /**
-         * .antMathers(): 해당 uri는 접근 허용
-         * .anyRequest().authenticated(): 외에는 모두 인증 필요
-         * .oauth2Login(): OAuth 로그인 설정
-         * .defaultSuccessURl(): 로그인 성공 시 이동할 url
-         * .userInfoEndpoint().userService(): 로그인이 성공하면 해당 유저정보를 들고 oAuthService에서 후처리 진행
-         */
-        // SuccessHandler, FailureHandler 등 핸들러 클래스 추가 필요
+        // 인증 없이 접근 가능한 uri 설정
         http.authorizeRequests()
                 .antMatchers("/login/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
+
+                // JWT로 인한 세션 설정 미사용
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                // OAuth 로그인 설정
                 .and()
                 .oauth2Login()
                 .successHandler(successHandler)
                 .authorizationEndpoint()
+
+                // 로그인이 성공하면 해당 유저정보를 들고 customOAuthService에서 후처리 진행
                 .and()
                 .userInfoEndpoint().userService(customOAuthService);
 

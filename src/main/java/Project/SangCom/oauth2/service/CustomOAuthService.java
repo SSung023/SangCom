@@ -31,7 +31,6 @@ import java.util.Optional;
 public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository repository;
-    private final HttpSession httpSession;
 
 
     @Override
@@ -62,24 +61,21 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         User user;
         Optional<User> optionalUser = repository.findByEmail(email);
         String accessToken = userRequest.getAccessToken().getTokenValue();
-        log.info(accessToken);
 
         // DB에서 일치하는 email을 찾은 경우
         if (optionalUser.isPresent()){
             user = optionalUser.get();
+            log.info("DB에 존재하는 사용자입니다.");
         }
+        // DB에 없는 사용자인 경우 - 이메일 정보만 저장하고 미인증사용자로 저장
         else {
             user = User.builder()
                     .email(email)
-                    .nickname("tempNickname")
-                    .role(Role.STUDENT)
+                    .role(Role.NOT_VERIFIED)
                     .build();
             repository.save(user);
         }
 
-        httpSession.setAttribute("user", new SessionUser(user));
-        httpSession.setAttribute("access_token", accessToken);
-        log.info("attributes :: " + attributes);
 
         //인증된 사용자를 반환
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey()))

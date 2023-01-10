@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    // 학생, 학생회, 교사, 관리자
+    // 미인증사용자, 학생, 학생회, 교사, 관리자
+    NOT_VERIFIED("ROLE_NOT_VERIFIED","미인증사용자"),
     STUDENT("ROLE_STUDENT", "학생"),
     STUDENT_COUNCIL("ROLE_STUDENT_COUNCIL", "학생회"),
     TEACHER("ROLE_TEACHER", "교사"),
