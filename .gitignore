@@ -166,3 +166,9 @@ sketch
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.DS_Store
+.DS_Store
+.gradle/7.5.1/checksums/checksums.lock
+.gradle/7.5.1/checksums/md5-checksums.bin
+*.bin
+*.lock
