@@ -12,6 +12,7 @@ import KakaoRedirectHandler from './pages/KakaoRedirectHandler';
 import Register from './pages/Register';
 import StudentRegister from "./components/register/StudentRegister";
 import TeacherRegister from "./components/register/TeacherRegister";
+import Authentication from './components/login/Authentication';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,11 @@ const router = createBrowserRouter([
      { path: 'board', element: <Board />},
      { path: 'timetable', element: <TimeTable />},
     ],
+  },
+  {
+    path: 'authentication',
+    element: <Authentication />,
+    errorElement: <NotFound />,
   },
   {
     path: '/register',
