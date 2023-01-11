@@ -1,6 +1,5 @@
-package Project.SangCom.oauth2.dto;
+package Project.SangCom.security.dto;
 
-import Project.SangCom.user.domain.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

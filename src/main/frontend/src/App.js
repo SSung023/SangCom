@@ -34,11 +34,11 @@ const router = createBrowserRouter([
      { path: 'timetable', element: <TimeTable />},
     ],
   },
-  {
-    path: 'authentication',
-    element: <Authentication />,
-    errorElement: <NotFound />,
-  },
+  // {
+  //   path: 'authentication',
+  //   element: <Authentication />,
+  //   errorElement: <NotFound />,
+  // },
   {
     path: '/register',
     element : <Register/>,

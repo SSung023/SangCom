@@ -1,8 +1,7 @@
-package Project.SangCom.oauth2.service;
+package Project.SangCom.security.service;
 
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
-import Project.SangCom.user.dto.SessionUser;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +15,6 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -71,7 +66,7 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         else {
             user = User.builder()
                     .email(email)
-                    .role(Role.NOT_VERIFIED)
+                    .role(Role.STUDENT)
                     .build();
             repository.save(user);
         }

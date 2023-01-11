@@ -1,16 +1,18 @@
-package Project.SangCom.oauth2.security;
+package Project.SangCom.security.config;
 
-import Project.SangCom.oauth2.handler.OAuth2SuccessHandler;
-import Project.SangCom.oauth2.service.CustomOAuthService;
+import Project.SangCom.security.config.filter.JwtAuthenticationFilter;
+import Project.SangCom.security.handler.OAuth2SuccessHandler;
+import Project.SangCom.security.service.CustomOAuthService;
+import Project.SangCom.security.service.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @Order(1)
@@ -19,21 +21,28 @@ public class SecurityConfig {
 
     private final CustomOAuthService customOAuthService;
     private final OAuth2SuccessHandler successHandler;
+    private final JwtTokenProvider provider;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
     public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
-        // 인증 없이 접근 가능한 uri 설정
-        http.authorizeRequests()
-                .antMatchers("/login/**", "/swagger-ui.html").permitAll()
+
+        // REST api는 stateless하기 때문에 csrf disable
+        http.cors().disable().csrf().disable()
+                // 인증 없이 접근 가능한 uri 설정
+                .authorizeRequests()
+                .antMatchers("/api/test","/swagger-ui.html", "/token/**").permitAll()
                 .anyRequest().authenticated()
 
-                // JWT로 인한 세션 설정 미사용
+                // 오류로 인해 잠시 주석 처리
                 .and()
+                .addFilterBefore(new JwtAuthenticationFilter(provider), UsernamePasswordAuthenticationFilter.class)
+
+                // JWT 사용으로 인한 세션 미사용
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 

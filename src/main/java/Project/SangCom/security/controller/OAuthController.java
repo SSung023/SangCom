@@ -1,10 +1,12 @@
-package Project.SangCom.oauth2.controller;
+package Project.SangCom.security.controller;
 
-import Project.SangCom.oauth2.dto.OAuthRegisterRequest;
+import Project.SangCom.security.dto.OAuthRegisterRequest;
+import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.dto.UserLoginResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +35,30 @@ public class OAuthController {
 
 
         return ResponseEntity.ok()
-                .body(new SingleResponse<>(0, null, ));
+                .body(new SingleResponse<>(0, null, new UserLoginResponse()));
+    }
+
+    @GetMapping("/api/login")
+    public ResponseEntity<SingleResponse<UserLoginResponse>> response(){
+        log.info("api login test");
+        UserLoginResponse loginResponse = UserLoginResponse.builder()
+                .email("test@naver.com")
+                .role(Role.STUDENT)
+                .nickname("nickname")
+                .username("dandoodae")
+                .build();
+
+        return ResponseEntity.ok()
+                .body(new SingleResponse<>(0, null, loginResponse));
+    }
+
+    @GetMapping("/api/authentication")
+    public String testtest(){
+        return "TESTETS";
+    }
+
+    @GetMapping("/api/test")
+    public String test(){
+        return "test";
     }
 }

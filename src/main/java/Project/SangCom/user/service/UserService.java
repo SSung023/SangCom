@@ -20,7 +20,6 @@ public class UserService {
         return user.getId();
     }
 
-    // User가 아닌 UserDTO 반환으로 변경 필요
     public Optional<User> findUserByEmail(String email){
         Optional<User> user = repository.findByEmail(email);
         return user;
