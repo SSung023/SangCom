@@ -35,7 +35,7 @@ public class SecurityConfig {
         http.cors().disable().csrf().disable()
                 // 인증 없이 접근 가능한 uri 설정
                 .authorizeRequests()
-                .antMatchers("/api/test","/swagger-ui.html", "/token/**").permitAll()
+                .antMatchers("/api/test","/swagger-ui.html", "/auth/**", "/register/**").permitAll()
                 .anyRequest().authenticated()
 
                 // 오류로 인해 잠시 주석 처리
