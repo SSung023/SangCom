@@ -14,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -49,8 +50,9 @@ public class User implements UserDetails {
     private TeacherInfo teacherInfo;
 
     @Builder
-    public User(String nickname, String email, Role role) {
+    public User(String username, String nickname, String email, Role role) {
         // studentInfo, teacherInfo 추가 필요
+        this.username = username;
         this.nickname = nickname;
         this.email = email;
         this.role = role;
