@@ -1,5 +1,8 @@
 package Project.SangCom.security.controller;
 
+import Project.SangCom.user.domain.Role;
+import Project.SangCom.user.domain.User;
+import Project.SangCom.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,8 +15,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 class OAuthControllerTest {
@@ -21,6 +24,8 @@ class OAuthControllerTest {
     MockMvc mockMvc;
     @Autowired
     WebApplicationContext context;
+    @Autowired
+    UserService userService;
 
 
     @BeforeEach
@@ -31,24 +36,30 @@ class OAuthControllerTest {
 						.build();
 
     }
-    
+
     @Test
-    @DisplayName("permitAll()에 등록한 uri는 인증 없이 접근 가능해야 한다.")
-    public void CheckPermitAllOperation() throws Exception {
-        mockMvc.perform(get("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON))
+    @DisplayName("회원가입 정보를 받아서 UserService를 통해 회원가입에 성공해야 한다.")
+    public void registerUser() throws Exception {
+        // given
+        User user = User.builder()
+                .email("test@naver.com")
+                .role(Role.NOT_VERIFIED)
+                .build();
+        userService.saveUser(user);
+
+        String requestJson
+                = "{\"role\":\"ROLE_STUDENT\", \"email\": \"test@naver.com\", \"nickname\": \"nickname\", \"username\": \"username\"}";
+
+
+        // when & then
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(0))
-                .andExpect(jsonPath("$.message").isEmpty())
-                .andExpect(jsonPath("$.data.email").value("test@naver.com"));
-    }
-
-    @Test
-    @DisplayName("swagger에 인증 없이 접근 가능해야 한다.")
-    public void CheckSwaggerEnter() throws Exception {
-        mockMvc.perform(get("/swagger-ui.html"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(jsonPath("$.message").value("회원가입 성공"));
 
     }
+
 
 }

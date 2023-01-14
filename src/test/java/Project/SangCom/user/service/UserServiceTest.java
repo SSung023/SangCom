@@ -2,14 +2,11 @@ package Project.SangCom.user.service;
 
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
-import Project.SangCom.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Optional;
 
 @SpringBootTest
 class UserServiceTest {

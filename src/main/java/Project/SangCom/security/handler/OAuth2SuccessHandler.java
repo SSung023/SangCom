@@ -50,10 +50,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
          */
         if (role.equals(Role.NOT_VERIFIED)) {
             log.info("ROLE이 NOT_VERIFIED(회원가입이 완료되지 않은 회원)이므로 회원가입 페이지로 넘어갑니다.");
-            String redirect_url = "http://localhost:3000/register?email=" + user.getEmail();
 
-            var writer = response.getWriter();
-            writer.flush();
+            String redirect_url = UriComponentsBuilder.fromUriString("http://localhost:3000/register")
+                    .queryParam("email", email)
+                    .build().toUriString();
 
             getRedirectStrategy().sendRedirect(request, response, redirect_url);
             return;

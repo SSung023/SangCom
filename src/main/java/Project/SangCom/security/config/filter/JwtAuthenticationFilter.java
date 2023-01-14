@@ -19,7 +19,11 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String n = "1";
+        if (n.equals(1))
+            throw new BusinessException("test ");
 
+        filterChain.doFilter(request, response);
     }
 
     /*private final JwtTokenProvider jwtTokenProvider;

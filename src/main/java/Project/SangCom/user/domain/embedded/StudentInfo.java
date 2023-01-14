@@ -1,5 +1,8 @@
 package Project.SangCom.user.domain.embedded;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
@@ -9,10 +12,18 @@ import javax.persistence.Embeddable;
  * null 가능
  */
 @Embeddable
+@Getter
 @NoArgsConstructor
 public class StudentInfo {
 
-    private Integer grade;
-    private Integer classes;
-    private Integer number;
+    private String grade;
+    private String classes;
+    private String number;
+
+    @Builder
+    public StudentInfo(String grade, String classes, String number) {
+        this.grade = grade;
+        this.classes = classes;
+        this.number = number;
+    }
 }

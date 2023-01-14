@@ -24,18 +24,17 @@ public class SecurityConfig {
 
         // REST api는 stateless하기 때문에 csrf disable
         http.csrf().disable()
-//                .anonymous().and()
+                .anonymous().and()
                 // 인증 없이 접근 가능한 uri 설정
                 .authorizeRequests()
                 .antMatchers("/api/auth/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
 
-//                // 오류로 인해 잠시 주석 처리
-//                .and()
-//                .addFilterBefore(new JwtAuthenticationFilter(/*provider*/), UsernamePasswordAuthenticationFilter.class)
-//
-                // JWT 사용으로 인한 세션 미사용
+                // 오류로 인해 잠시 주석 처리
                 .and()
+                .addFilterBefore(new JwtAuthenticationFilter(/*provider*/), UsernamePasswordAuthenticationFilter.class)
+
+                // JWT 사용으로 인한 세션 미사용
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
