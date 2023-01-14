@@ -16,18 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OAuthController {
 
     /**
-     * test 코드
-     */
-//    @GetMapping("/api/register")
-//    public ResponseEntity<SingleResponse<SocialLoginResponse>> passUserEmailInfo(){
-//
-//        SocialLoginResponse socialLoginResponse = new SocialLoginResponse("test@naver.com");
-//
-//        return ResponseEntity.ok()
-//                .body(new SingleResponse<>(0, null, socialLoginResponse));
-//    }
-
-    /**
      * FE에서 회원가입
      */
     @PostMapping("/api/register")
@@ -38,14 +26,14 @@ public class OAuthController {
                 .body(new SingleResponse<>(0, null, new UserLoginResponse()));
     }
 
-    @GetMapping("/api/login")
+    @GetMapping("/api/auth/login")
     public ResponseEntity<SingleResponse<UserLoginResponse>> response(){
         log.info("api login test");
         UserLoginResponse loginResponse = UserLoginResponse.builder()
                 .email("test@naver.com")
                 .role(Role.STUDENT)
                 .nickname("nickname")
-                .username("dandoodae")
+                .username("username")
                 .build();
 
         return ResponseEntity.ok()
