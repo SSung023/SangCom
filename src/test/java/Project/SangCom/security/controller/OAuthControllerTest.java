@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.CookieResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -62,6 +63,31 @@ class OAuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(0))
                 .andExpect(jsonPath("$.message").value("회원가입 성공"));
+
+    }
+    
+    @Test
+    @Transactional
+    @DisplayName("이미 가입되어있는 사용자에게 JWT token을 전달해주어야 한다.")
+    public void PassTokenToRegisteredUser() throws Exception {
+        String requestJson = "{\"email\":\"test@naver.com\"}";
+
+        User user = User.builder()
+                .username("username")
+                .nickname("nickname")
+                .email("test@naver.com")
+                .role(Role.STUDENT)
+                .build();
+
+        userService.saveUser(user);
+
+
+        mockMvc.perform(post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(header().exists("Authorization"))
+                .andExpect(header().exists("Set-Cookie"))
+                .andExpect(status().isOk());
 
     }
 

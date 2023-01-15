@@ -1,43 +1,95 @@
-//package Project.SangCom.security.service;
-//
-//
-//import Project.SangCom.user.domain.User;
-//import io.jsonwebtoken.*;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.stereotype.Component;
-//import org.springframework.util.StringUtils;
-//
-//import javax.servlet.http.HttpServletRequest;
-//import java.util.Date;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//@RequiredArgsConstructor
-//@Component
-//@Slf4j
-//public class JwtTokenProvider {
-//
-//    @Value("${jwt.secret}")
-//    private String secretKey;
-//    @Value("${jwt.access-token-validity-in-seconds}")
-//    private Long accessTokenValidityInMilliseconds;
-//    @Value("${jwt.refresh-token-validity-in-seconds}")
-//    private Long refreshTokenValidityInMilliseconds;
-//
-//    private static String AUTHORITIES_KEY = "role";
-//    private static String EMAIL_KEY = "email";
-//    public static String AUTHORIZATION_HEADER = "Authorization";
-//
+package Project.SangCom.security.service;
+
+
+import Project.SangCom.user.domain.User;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+@RequiredArgsConstructor
+@Component
+@Slf4j
+public class JwtTokenProvider {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+    @Value("${jwt.access-token-validity-in-seconds}")
+    private Long accessTokenValidityInMilliseconds;
+    @Value("${jwt.refresh-token-validity-in-seconds}")
+    private Long refreshTokenValidityInMilliseconds;
+
+    private static String AUTHORITIES_KEY = "role";
+    private static String EMAIL_KEY = "email";
+    public static String AUTHORIZATION_HEADER = "Authorization";
+
+
+    public String createAccessToken(User user) {
+         Long now = System.currentTimeMillis();
+
+         String accessToken = Jwts.builder()
+                 .setHeader(createHeader())
+                 .setClaims(createClaims(user))
+                 .setSubject("access-token")
+                 .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
+                 .signWith(SignatureAlgorithm.HS512, secretKey)
+                 .compact();
+         return "Bearer " + accessToken;
+    }
+
+    public String createRefreshToken(User user){
+        Long now = System.currentTimeMillis();
+
+        String refreshToken = Jwts.builder()
+                .setHeader(createHeader())
+                .setClaims(createClaims(user))
+                .setSubject("refresh-token")
+                .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+
+        return refreshToken;
+    }
+
+    public void setHttpOnlyCookie(HttpServletResponse response, String refreshToken){
+        ResponseCookie cookie
+                = ResponseCookie.from("refreshToken", refreshToken)
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .build();
+
+        response.setHeader("Set-Cookie", cookie.toString());
+    }
+
+    public Map<String, Object> createHeader() {
+        Map<String, Object> header = new HashMap<>();
+        header.put("typ", "JWT");
+        header.put("alg", "HS512");
+        return header;
+    }
+
+    public Map<String, Object> createClaims(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(EMAIL_KEY, user.getEmail());
+        claims.put(AUTHORITIES_KEY, user.getRole().getKey());
+        return claims;
+
+    }
+
+
+
 //    private final CustomUserDetailsService userDetailsService;
-//
-//
 //
 //    /**
 //     * createAccessToken(): JWT access token 생성
@@ -142,4 +194,4 @@
 //                .getSubject();
 //    }
 //
-//}
+}

@@ -24,11 +24,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
 
         // REST api는 stateless하기 때문에 csrf disable
-        http.csrf().disable()
+        http.cors().disable().csrf().disable()
+                .httpBasic().disable().formLogin().disable()
                 .anonymous().and()
                 // 인증 없이 접근 가능한 uri 설정
                 .authorizeRequests()
-                .antMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                .antMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**"
+                            ,"/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
 
                 // 오류로 인해 잠시 주석 처리
