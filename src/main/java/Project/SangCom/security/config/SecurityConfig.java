@@ -11,7 +11,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 @Order(1)
@@ -24,11 +26,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
 
         // REST api는 stateless하기 때문에 csrf disable
-        http.cors().disable().csrf().disable()
+        http.csrf().disable()
                 .httpBasic().disable().formLogin().disable()
                 .anonymous().and()
                 // 인증 없이 접근 가능한 uri 설정
                 .authorizeRequests()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**"
                             ,"/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
@@ -53,4 +56,9 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource(){
+//        CorsConfiguration configuration = new CorsConfiguration();
+//    }
 }
