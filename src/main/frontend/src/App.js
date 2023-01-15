@@ -1,18 +1,16 @@
 import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-// TODO: 주석처리된 것 삭제하기
-//import { KAKAO_AUTH_URL } from './components/login/OAuth';
+
 import Root from './pages/Root';
 import Login from './pages/Login';
 import Main from './pages/Main';
 import Board from './pages/Board';
 import TimeTable from './pages/TimeTable';
 import NotFound from './pages/NotFound';
-import KakaoRedirectHandler from './pages/KakaoRedirectHandler';
 import Register from './pages/Register';
+import Auth from "./pages/Auth";
 import StudentRegister from "./components/register/StudentRegister";
 import TeacherRegister from "./components/register/TeacherRegister";
-import Authentication from './components/login/Authentication';
 
 const router = createBrowserRouter([
   {
@@ -20,10 +18,6 @@ const router = createBrowserRouter([
     element: <Login />,
     errorElement: <NotFound />,
   },
-  // {
-  //   path: 'login/oauth2/code/kakao',
-  //   element: <KakaoRedirectHandler />,
-  // },
   {
     path: '/main',
     element: <Root />,
@@ -34,15 +28,15 @@ const router = createBrowserRouter([
      { path: 'timetable', element: <TimeTable />},
     ],
   },
-  // {
-  //   path: 'authentication',
-  //   element: <Authentication />,
-  //   errorElement: <NotFound />,
-  // },
   {
     path: '/register',
     element : <Register/>,
     errorElement : <NotFound/>,
+  },
+  {
+    path : '/auth',
+    element : <Auth />,
+    errorElement : <NotFound />,
   },
   {
     path: '/studentregister',

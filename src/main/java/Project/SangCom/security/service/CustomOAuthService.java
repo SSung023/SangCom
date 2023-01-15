@@ -66,7 +66,7 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         else {
             user = User.builder()
                     .email(email)
-                    .role(Role.NOT_VERIFIED)
+                    .role(Role.STUDENT)
                     .build();
             repository.save(user);
         }
