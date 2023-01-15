@@ -46,10 +46,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Role role = user.getRole();
 
         /**
-         *
+         * NOT_VERIFIED인 경우 회원가입 페이지로 리다이렉트
          */
         if (role.equals(Role.NOT_VERIFIED)) {
-            log.info("ROLE이 NOT_VERIFIED(회원가입이 완료되지 않은 회원)이므로 회원가입 페이지로 넘어갑니다.");
+            log.info("ROLE이 NOT_VERIFIED(회원가입이 완료되지 않은 회원)이므로 회원가입 페이지로 리다이렉트 합니다.");
 
             String redirect_url = UriComponentsBuilder.fromUriString("http://localhost:3000/register")
                     .queryParam("email", email)
@@ -60,8 +60,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
 
 
+        /**
+         * 제대로 된 Role인 경우, /auth?email=""로 리다이렉트
+         */
+        log.info("ROLE이 NOT_VERIFIED가 아닌 경우 token 인가 페이지로 리다이렉트 합니다.");
+        String redirect_url = UriComponentsBuilder.fromUriString("http://localhost:3000/auth")
+                .queryParam("email", email)
+                .build().toUriString();
 
-        log.info("successHandler 동작");
+        getRedirectStrategy().sendRedirect(request, response, redirect_url);
     }
 
     //    private final UserService service;
