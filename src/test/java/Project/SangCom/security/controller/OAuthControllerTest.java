@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -39,6 +40,7 @@ class OAuthControllerTest {
 
     @Test
     @DisplayName("회원가입 정보를 받아서 UserService를 통해 회원가입에 성공해야 한다.")
+    @Transactional
     public void registerUser() throws Exception {
         // given
         User user = User.builder()
@@ -48,7 +50,9 @@ class OAuthControllerTest {
         userService.saveUser(user);
 
         String requestJson
-                = "{\"role\":\"ROLE_STUDENT\", \"email\": \"test@naver.com\", \"nickname\": \"nickname\", \"username\": \"username\"}";
+                = "{\"role\":\"ROLE_STUDENT\", \"email\": \"test@naver.com\", " +
+                "\"nickname\": \"nickname\", \"username\": \"username\", " +
+                "\"grade\": \"1\", \"classes\": \"5\", \"number\": \"23\"}";
 
 
         // when & then

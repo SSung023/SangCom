@@ -14,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * 회원 엔티티
@@ -59,6 +60,15 @@ public class User implements UserDetails {
     }
 
     public User() {
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // StudentInfo, TeacherInfo 제외한 비교
+        User target = (User) obj;
+        return (Objects.equals(this.id, target.getId())) && (this.nickname.equals(target.nickname))
+                && (this.email.equals(target.email)) && (this.username.equals(target.username))
+                && (this.role == target.role);
     }
 
     @Override

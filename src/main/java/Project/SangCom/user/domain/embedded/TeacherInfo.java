@@ -1,11 +1,9 @@
 package Project.SangCom.user.domain.embedded;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 /**
  * User 테이블에 들어갈 교사 정보 -> 담당 학년, 담당 과목
@@ -13,6 +11,7 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 @Getter
+@ToString
 @NoArgsConstructor
 public class TeacherInfo {
 
@@ -23,5 +22,13 @@ public class TeacherInfo {
     public TeacherInfo(String chargeGrade, String chargeSubject) {
         this.chargeGrade = chargeGrade;
         this.chargeSubject = chargeSubject;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        TeacherInfo target = (TeacherInfo) obj;
+
+        return (Objects.equals(this.chargeGrade, target.getChargeGrade()))
+                && (Objects.equals(this.chargeSubject, target.getChargeSubject()));
     }
 }

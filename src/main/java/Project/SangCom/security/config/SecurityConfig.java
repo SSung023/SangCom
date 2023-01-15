@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @Order(1)
@@ -27,7 +28,7 @@ public class SecurityConfig {
                 .anonymous().and()
                 // 인증 없이 접근 가능한 uri 설정
                 .authorizeRequests()
-                .antMatchers("/api/auth/**", "/swagger-ui.html").permitAll()
+                .antMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
 
                 // 오류로 인해 잠시 주석 처리
@@ -37,9 +38,9 @@ public class SecurityConfig {
                 // JWT 사용으로 인한 세션 미사용
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
 
                 // OAuth 로그인 설정
-                .and()
                 .oauth2Login()
                 .successHandler(successHandler)
                 .authorizationEndpoint()

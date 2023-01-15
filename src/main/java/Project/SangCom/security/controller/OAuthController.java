@@ -12,6 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -23,13 +27,13 @@ public class OAuthController {
      * FE에서 사용자에게서 받은 정보를 바탕으로 UserService에서 회원가입 진행
      */
     @PostMapping("/api/auth/register")
-    public ResponseEntity<CommonResponse> register(@RequestBody OAuthRegisterRequest registerRequest){
-        log.info(registerRequest.toString());
+    public ResponseEntity<CommonResponse> register(HttpServletResponse response,
+                                                   @RequestBody OAuthRegisterRequest registerRequest) throws IOException {
 
-        Long registeredId = userService.registerUser(registerRequest);
+        // DTO -> Entity 변환
+        User receivedUser = registerRequest.toEntity();
 
-        log.info(userService.findUserById(registeredId).toString());
-
+        Long registeredId = userService.registerUser(receivedUser);
 
         return ResponseEntity.ok().body(new CommonResponse(0, "회원가입 성공"));
     }

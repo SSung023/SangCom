@@ -62,7 +62,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 
         log.info("successHandler 동작");
-        response.sendRedirect("http://localhost:3000/register");
     }
 
     //    private final UserService service;

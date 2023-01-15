@@ -28,40 +28,54 @@ public class UserService {
     }
 
     /**
-     * 전달받은 객체의 email을 통해 DB에서 정보를 꺼내고, 정보 수정
+     * 전달받은 객체의 email을 통해 DB에서 사용자의 정보를 꺼냄
+     * -> Role, username, nickname.. 등의 정보를 설정
      */
     @Transactional
-    public Long registerUser(OAuthRegisterRequest receivedUser){
+    public Long registerUser(User receivedUser){
+        // FE에서 전달받은 정보 중 email을 통해 DB에 저장한 User 객체를 가져온다.
         Optional<User> byIdUser = repository.findByEmail(receivedUser.getEmail());
-
         if (byIdUser.isEmpty())
             throw new BusinessException(ExMessage.DATA_ERROR_NOT_FOUND);
 
-        User targetUser = byIdUser.get();
+        User storedUser = byIdUser.get(); // DB에 저장되어 있던 사용자
 
-        if (receivedUser.getRole().equals("ROLE_STUDENT")) {
-            targetUser.setRole(Role.STUDENT);
+        /**
+         * nickname이 같은 경우 -> BusinessException 발생
+         */
+        if (!validateDuplicateNickname(receivedUser)) {
+            throw new BusinessException("닉네임이 중복됩니다. 다른 닉네임으로 설정해주세요.");
         }
-        else if (receivedUser.getRole().equals("ROLE_TEACHER")) {
-            targetUser.setRole(Role.TEACHER);
+
+
+        // email, id를 제외한 정보를 설정
+        storedUser.setNickname(receivedUser.getNickname());
+        storedUser.setUsername(receivedUser.getUsername());
+
+        if (receivedUser.getRole() == Role.STUDENT){
+            storedUser.setStudentInfo
+                    (StudentInfo.builder()
+                            .grade(receivedUser.getStudentInfo().getGrade())
+                            .classes(receivedUser.getStudentInfo().getClasses())
+                            .number(receivedUser.getStudentInfo().getNumber())
+                            .build());
+            storedUser.setTeacherInfo(null);
+        }
+        else if (receivedUser.getRole() == Role.TEACHER){
+            storedUser.setStudentInfo(null);
+            storedUser.setTeacherInfo
+                    (TeacherInfo.builder()
+                            .chargeGrade(receivedUser.getTeacherInfo().getChargeGrade())
+                            .chargeSubject(receivedUser.getTeacherInfo().getChargeSubject())
+                            .build());
         }
 
-        // Builder 패턴 이용
-        targetUser.setNickname(receivedUser.getNickname());
-        targetUser.setUsername(receivedUser.getUsername());
-        targetUser.setStudentInfo
-                (StudentInfo.builder()
-                        .grade(receivedUser.getGrade())
-                        .classes(receivedUser.getClasses())
-                        .number(receivedUser.getNumbers())
-                        .build());
-        targetUser.setTeacherInfo
-                (TeacherInfo.builder()
-                        .chargeGrade(receivedUser.getChargeGrade())
-                        .chargeSubject(receivedUser.getChargeSubject())
-                        .build());
+        return storedUser.getId();
+    }
 
-        return targetUser.getId();
+    private boolean validateDuplicateNickname(User targetUser) {
+        Optional<User> byNickname = repository.findByNickname(targetUser.getNickname());
+        return byNickname.isEmpty();
     }
 
 
@@ -74,5 +88,9 @@ public class UserService {
     public Optional<User> findUserById(Long id) {
         Optional<User> user = repository.findById(id);
         return user;
+    }
+
+    public Optional<User> findUserByNickname(String nickname){
+        return repository.findByNickname(nickname);
     }
 }
