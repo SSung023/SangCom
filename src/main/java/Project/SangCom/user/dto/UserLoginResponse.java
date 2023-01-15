@@ -17,7 +17,8 @@ public class UserLoginResponse {
     private Role role;
 
     @Builder
-    public UserLoginResponse(int code, String username, String nickname, String email, Role role) {
+    public UserLoginResponse
+            (int code, String username, String nickname, String email, Role role) {
         this.code = code;
         this.username = username;
         this.nickname = nickname;
