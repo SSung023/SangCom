@@ -40,7 +40,7 @@ class SecurityConfigTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(0))
                 .andExpect(jsonPath("$.message").isEmpty())
-                .andExpect(jsonPath("$.data.email").value("test@naver.com"));
+                .andExpect(jsonPath("$.data.username").value("username"));
     }
 
     @Test

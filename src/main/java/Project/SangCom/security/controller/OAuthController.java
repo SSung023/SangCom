@@ -3,10 +3,12 @@ package Project.SangCom.security.controller;
 import Project.SangCom.security.dto.OAuthRegisterRequest;
 import Project.SangCom.security.dto.TokenRequest;
 import Project.SangCom.security.service.JwtTokenProvider;
+import Project.SangCom.security.service.JwtTokenProviderService;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.dto.UserLoginResponse;
 import Project.SangCom.user.service.UserService;
+import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ExMessage;
 import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class OAuthController {
 
     private final UserService userService;
+    private final JwtTokenProviderService tokenService;
     private final JwtTokenProvider tokenProvider;
 
     /**
@@ -43,28 +46,47 @@ public class OAuthController {
         return ResponseEntity.ok().body(new CommonResponse(0, "회원가입 성공"));
     }
 
+    /**
+     * email을 통해 JWT 발급 대상자가 누구인지 확인하고 JWT(access, refresh)토큰을 발급한 뒤, header에 설정
+     * @param email JWT token 발급 대상자의 이메일
+     * @return
+     */
     @PostMapping("/api/auth/token")
     public ResponseEntity<CommonResponse> generateToken(HttpServletResponse response, @RequestBody TokenRequest email){
 
         // JWT access-token을 생성해서 header에 설정하고, refresh-token은 httpOnly cookie로 설정
-        log.info(email.getEmail());
         Optional<User> userByEmail = userService.findUserByEmail(email.getEmail());
-
         if (userByEmail.isEmpty())
             log.info(ExMessage.DATA_ERROR_NOT_FOUND.getMessage());
 
-        String accessToken = tokenProvider.createAccessToken(userByEmail.get());
-
-        log.info(accessToken);
-        response.setHeader("Authorization", accessToken);
-
-
-        String refreshToken = tokenProvider.createRefreshToken(userByEmail.get());
-        tokenProvider.setHttpOnlyCookie(response, refreshToken);
-
+        String accessToken = tokenService.setAccessToken(response, userByEmail.get());
+        String refreshToken = tokenService.setRefreshToken(response, userByEmail.get());
 
         return ResponseEntity.ok().body(new CommonResponse(0, ""));
     }
+
+    /**
+     * 1. request의 header에서 access-token 추출
+     * 2. access-token 유효성 검증
+     * 3. access-token으로부터 정보 요청 대상자가 누구인지 확인
+     * 4. 정보 요청 대상자의 정보들을 담아서 response body에 담아서 전달
+     */
+    @GetMapping("/api/auth/user")
+    public ResponseEntity<SingleResponse<UserLoginResponse>> sendUserInfo(HttpServletRequest request){
+        String accessToken = tokenService.resolveToken(request);
+
+        if (!tokenService.validateToken(accessToken)) {
+            throw new BusinessException(ExMessage.DATA_ERROR_NOT_FOUND);
+        }
+
+        UserLoginResponse loginResponse = tokenService.getRequestUserInfo(accessToken);
+
+        return ResponseEntity.ok().body(new SingleResponse<>(0, "", loginResponse));
+    }
+
+
+
+
 
 
     // test code
@@ -72,7 +94,6 @@ public class OAuthController {
     public ResponseEntity<SingleResponse<UserLoginResponse>> response(){
         log.info("api login test");
         UserLoginResponse loginResponse = UserLoginResponse.builder()
-                .email("test@naver.com")
                 .role(Role.STUDENT)
                 .nickname("nickname")
                 .username("username")

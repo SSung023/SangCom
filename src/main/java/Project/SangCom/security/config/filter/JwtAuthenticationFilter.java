@@ -1,11 +1,8 @@
 package Project.SangCom.security.config.filter;
 
-import Project.SangCom.util.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -19,12 +16,29 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String n = "1";
-        if (n.equals(1))
-            throw new BusinessException("test ");
 
+
+        /**
+         * /api/auth 혹은 /swagger-ui.html의 경우 JWT 토큰이 없는 상태이므로 에러를 출력하고 넘어간다.
+         * 주의!!!) requestURI에 해당하는 경우에만 허용을 해주어야 할 것 같다. 그렇지 않으면 보안상으로 문제가 있지 않을까?
+         */
+        if (request.getHeader("Authorization") == null || !request.getHeader("Authorization").startsWith("Bearer ")){
+            // JWT 토큰이 없는 경우에는 Authentication를 null로 설정
+            log.error(request.getRequestURI() + " 요청의 헤더 형식이 올바르지 않으므로 Authentication을 null로 설정합니다.");
+            SecurityContextHolder.getContext().setAuthentication(null);
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        log.info("Authorization 헤더가 유효합니다.");
         filterChain.doFilter(request, response);
     }
+
+
+
+
 
     /*private final JwtTokenProvider jwtTokenProvider;
 

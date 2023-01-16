@@ -44,9 +44,9 @@ public class User implements UserDetails {
     private Role role;
 
     @Embedded
-    private StudentInfo studentInfo;
+    private StudentInfo studentInfo = new StudentInfo();
     @Embedded
-    private TeacherInfo teacherInfo;
+    private TeacherInfo teacherInfo = new TeacherInfo();
 
     @Builder
     public User(String username, String nickname, String email, Role role, StudentInfo studentInfo, TeacherInfo teacherInfo) {
