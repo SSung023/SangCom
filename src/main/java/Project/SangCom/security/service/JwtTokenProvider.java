@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -31,6 +34,8 @@ public class JwtTokenProvider {
     private static String AUTHORITIES_KEY = "role";
     private static String EMAIL_KEY = "email";
     public static String AUTHORIZATION_HEADER = "Authorization";
+
+    private final CustomUserDetailsService customUserDetailsService;
 
 
     /**
@@ -90,7 +95,7 @@ public class JwtTokenProvider {
     /**
      * Request 객체의 Authorization 헤더에서 Access token을 추출
      */
-    public String resolveTokenFromHeader(HttpServletRequest request) {
+    public String resolveAccessTokenFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         bearerToken = resolveTokenFromString(bearerToken);
 
@@ -125,8 +130,8 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(String token) {
         try{
-            String processedToken = resolveTokenFromString(token);
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(processedToken);
+//            String processedToken = resolveTokenFromString(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         }
         catch (SignatureException e){
@@ -158,6 +163,11 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(getUserPk(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
 

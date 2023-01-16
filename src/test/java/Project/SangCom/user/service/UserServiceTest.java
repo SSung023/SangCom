@@ -1,10 +1,8 @@
 package Project.SangCom.user.service;
 
-import Project.SangCom.security.dto.OAuthRegisterRequest;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.domain.embedded.StudentInfo;
-import Project.SangCom.user.domain.embedded.TeacherInfo;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 @Slf4j
 class UserServiceTest {
     @Autowired
@@ -26,7 +25,6 @@ class UserServiceTest {
 
 
     @Test
-    @Transactional
     @DisplayName("service를 통해 사용자 저장 후, ID를 통해 사용자 찾기")
     public void findUserById(){
         //given
@@ -46,7 +44,6 @@ class UserServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("service를 통해 사용자 저장 후, email을 통해 사용자 찾기")
     public void findUserByEmail(){
         //given
@@ -66,7 +63,6 @@ class UserServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("회원가입 시 email이 같다면 덮어쓰기한다.")
     public void whenEmailIsSameOverwriteInfo(){
         //given
@@ -103,7 +99,6 @@ class UserServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("회원가입 시 nickname은 unique하지 않으면 오류가 발생해야 한다.")
     public void nicknameNeedToBeUnique (){
         //given

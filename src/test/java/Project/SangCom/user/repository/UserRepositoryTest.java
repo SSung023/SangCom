@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @SpringBootTest
+@Transactional
 class UserRepositoryTest {
 
     @Autowired
@@ -20,7 +21,6 @@ class UserRepositoryTest {
 
 
     @Test
-    @Transactional
     @DisplayName("사용자 저장 후 ID를 통해 비교")
     public void saveAndCompareId(){
         // given
@@ -39,7 +39,6 @@ class UserRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("사용자 저장 후 이메일을 통해 찾았을 때, 이메일이 동일해야 한다.")
     public void findUserByEmail(){
         //given
@@ -62,7 +61,6 @@ class UserRepositoryTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("사용자를 nickname을 통해 DB에서 찾을 수 있다.")
     public void findUserByNickname(){
         //given

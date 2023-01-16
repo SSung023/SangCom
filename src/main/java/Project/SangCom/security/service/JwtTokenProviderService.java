@@ -6,6 +6,7 @@ import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ExMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,7 @@ public class JwtTokenProviderService {
 
     // request의 header에서 access-token을 추출하고, 앞의 prefix를 제거하여 반환
     public String resolveToken(HttpServletRequest request) {
-        String token = tokenProvider.resolveTokenFromHeader(request);
+        String token = tokenProvider.resolveAccessTokenFromHeader(request);
         return token;
     }
 
@@ -68,6 +69,12 @@ public class JwtTokenProviderService {
         loginResponse.setInfoByRole(user.getRole(), user.getStudentInfo(), user.getTeacherInfo());
 
         return loginResponse;
+    }
+
+
+    public Authentication getAuthentication(String token){
+        Authentication authentication = tokenProvider.getAuthentication(token);
+        return authentication;
     }
 
 }

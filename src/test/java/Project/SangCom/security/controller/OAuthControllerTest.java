@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@Transactional
 class OAuthControllerTest {
 
     MockMvc mockMvc;
@@ -44,7 +45,6 @@ class OAuthControllerTest {
 
     @Test
     @DisplayName("회원가입 정보를 받아서 UserService를 통해 회원가입에 성공해야 한다.")
-    @Transactional
     public void registerUser() throws Exception {
         // given
         getAndSaveUser();
@@ -66,7 +66,6 @@ class OAuthControllerTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("이미 가입되어있는 사용자에게 JWT token을 전달해주어야 한다.")
     public void passTokenToRegisteredUser() throws Exception {
         String requestJson = "{\"email\":\"test@naver.com\"}";
@@ -83,7 +82,6 @@ class OAuthControllerTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("header의 access-token을 통해 어떤 사용자의 토큰인지 확인할 수 있다.")
     public void checkWhichUserByToken() throws Exception {
         //given

@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @SpringBootTest
+@Transactional
 @Slf4j
 class OAuthRegisterRequestTest {
 
 
     @Test
-    @Transactional
     @DisplayName("OAuthRegisterRequest를 User(학생)로 변환할 수 있다.")
     public void ConvertToStudent(){
         //given
@@ -47,7 +47,6 @@ class OAuthRegisterRequestTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("OAuthRegisterRequest를 User(교사)로 변환할 수 있다.")
     public void ConvertToTeacher(){
         //given

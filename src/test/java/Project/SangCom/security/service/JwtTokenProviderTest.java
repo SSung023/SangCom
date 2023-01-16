@@ -2,6 +2,7 @@ package Project.SangCom.security.service;
 
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -11,27 +12,30 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 
 @SpringBootTest
 @Slf4j
+@Transactional
 @ActiveProfiles({"jwt"})
 class JwtTokenProviderTest {
 
     @Autowired
     private JwtTokenProvider provider;
+    @Autowired
+    private UserRepository repository;
+
     @Autowired
     WebApplicationContext context;
     MockMvc mockMvc;
@@ -156,6 +160,7 @@ class JwtTokenProviderTest {
         
         //when
         String accessToken = provider.createAccessToken(user);
+        accessToken = provider.resolveTokenFromString(accessToken);
 
         //then
         Assertions.assertThat(provider.validateToken(accessToken)).isTrue();
@@ -175,6 +180,21 @@ class JwtTokenProviderTest {
         Assertions.assertThat(subject).isEqualTo("test@naver.com");
     }
 
+    @Test
+    @DisplayName("token의 subject를 통해 DB에서 Authentication 객체를 받아올 수 있다.")
+    public void getAuthenticationByTokenSubject(){
+        //given
+        User user = getUser();
+        repository.save(user);
+        
+        //when
+        String accessToken = provider.createAccessToken(user);
+        Authentication authentication = provider.getAuthentication(accessToken);
+
+        //then
+        Assertions.assertThat(authentication).isInstanceOf(UsernamePasswordAuthenticationToken.class);
+        log.info(authentication.toString());
+    }
 
 
     private User getUser() {

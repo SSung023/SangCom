@@ -29,7 +29,6 @@ public class OAuthController {
 
     private final UserService userService;
     private final JwtTokenProviderService tokenService;
-    private final JwtTokenProvider tokenProvider;
 
     /**
      * FE에서 사용자에게서 받은 정보를 바탕으로 UserService에서 회원가입 진행
