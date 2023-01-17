@@ -127,4 +127,27 @@ class UserServiceTest {
                 }
         );
     }
+
+    @Test
+    @DisplayName("회원가입 시 nickname의 길이는 10 이하까지 허용된다.")
+    public void limitLengthOfNickname(){
+        //given
+        User user = User.builder()
+                .role(Role.STUDENT)
+                .email("test@naver.com")
+                .build();
+
+        User user2 = User.builder()
+                .role(Role.STUDENT)
+                .nickname("nickname")
+                .email("test@naver.com")
+                .studentInfo(StudentInfo.builder().grade("1").classes("2").number("23").build())
+                .build();
+
+        //when
+        repository.save(user);
+
+        //then
+        service.registerUser(user2);
+    }
 }
