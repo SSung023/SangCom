@@ -1,10 +1,10 @@
-
+// action type
 // reducer가 많아질 떄 action 상수가 중복되는 것을 방지하기 위해
 // 앞에 파일 이름을 넣는다.
 export const INCREASE = "counter/INCREASE";
 export const DECREASE = "counter/DECREASE";
 
-// action 함수
+// action 생성자
 export const increaseCount = (count) => ({ type: INCREASE, count });
 export const decreaseCount = (count) => ({ type: DECREASE, count });
 
