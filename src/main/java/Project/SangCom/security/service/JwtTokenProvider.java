@@ -26,6 +26,8 @@ public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secretKey;
+    @Value("${jwt.refresh-secret}")
+    private String refreshSecretKey;
     @Value("${jwt.access-token-validity-in-seconds}")
     private Long accessTokenValidityInMilliseconds;
     @Value("${jwt.refresh-token-validity-in-seconds}")
@@ -61,7 +63,7 @@ public class JwtTokenProvider {
                 .setClaims(createClaims(user))
                 .setSubject(user.getEmail())
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(SignatureAlgorithm.HS512, refreshSecretKey)
                 .compact();
 
         return refreshToken;
@@ -72,7 +74,7 @@ public class JwtTokenProvider {
                 .secure(true)
                 .httpOnly(true)
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60)
+                .maxAge(24 * 60 * 60) // 24hour * 60min * 60sec
                 .build();
 
         response.setHeader("Set-Cookie", cookie.toString());
@@ -169,16 +171,4 @@ public class JwtTokenProvider {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(getUserPk(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
-
-
-//    private final CustomUserDetailsService userDetailsService;
-//
-//    /**
-//     * JWT 토큰에서 인증 정보 조회
-//     */
-//    public Authentication getAuthentication(String token){
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserPk(token));
-//        return new UsernamePasswordAuthenticationToken
-//                    (userDetails, "", userDetails.getAuthorities());
-//    }
 }
