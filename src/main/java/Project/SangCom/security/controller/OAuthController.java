@@ -2,7 +2,6 @@ package Project.SangCom.security.controller;
 
 import Project.SangCom.security.dto.OAuthRegisterRequest;
 import Project.SangCom.security.dto.TokenRequest;
-import Project.SangCom.security.service.JwtTokenProvider;
 import Project.SangCom.security.service.JwtTokenProviderService;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;

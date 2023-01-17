@@ -43,7 +43,10 @@ public class UserService {
         /**
          * nickname이 같은 경우 -> BusinessException 발생
          */
-        if (!validateDuplicateNickname(receivedUser)) {
+        if (!validateNicknameLength(receivedUser)){
+            throw new BusinessException("닉네임의 길이가 최대 길이(10)를 초과했습니다. 닉네임의 길이를 줄여주세요.");
+        }
+        else if (!validateDuplicateNickname(receivedUser)) {
             throw new BusinessException("닉네임이 중복됩니다. 다른 닉네임으로 설정해주세요.");
         }
 
@@ -71,6 +74,10 @@ public class UserService {
         }
 
         return storedUser.getId();
+    }
+
+    private boolean validateNicknameLength(User targetUser){
+        return (targetUser.getNickname().length() <= 10);
     }
 
     private boolean validateDuplicateNickname(User targetUser) {
