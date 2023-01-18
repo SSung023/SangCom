@@ -1,5 +1,5 @@
 import './App.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter, RouterProvider, Routes, Route } from 'react-router-dom';
 
 import Root from './pages/Root';
 import Login from './pages/Login';
@@ -11,44 +11,82 @@ import Register from './pages/Register';
 import Auth from "./pages/Auth";
 import StudentRegister from "./components/register/StudentRegister";
 import TeacherRegister from "./components/register/TeacherRegister";
+import PrivateRoute from './lib/PrivateRoute';
+import PublicRoute from './lib/PublicRoute';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <Login />,
+    path: '/login',
+    element: <PublicRoute component={<Login/>} restricted={true}/>,
     errorElement: <NotFound />,
   },
   {
-    path: '/main',
-    element: <Root />,
+    path: '/',
+    element: <PrivateRoute component={<Root/>}/>,
     errorElement: <NotFound />,
     children: [
-     { index: true, element: <Main /> } ,
-     { path: 'board', element: <Board />},
-     { path: 'timetable', element: <TimeTable />},
+      { index: true, element: <Main /> } ,
+      { path: 'board', element: <Board />},
+      { path: 'timetable', element: <TimeTable />},
     ],
   },
   {
     path: '/register',
-    element : <Register/>,
+    element : <PublicRoute component={<Register/>} restricted={true}/>,
     errorElement : <NotFound/>,
   },
   {
     path : '/auth',
-    element : <Auth />,
+    element : <PublicRoute component={<Auth/>} restricted={true}/>,
     errorElement : <NotFound />,
   },
   {
     path: '/studentregister',
-    element : <StudentRegister/>,
+    element : <PublicRoute component={<StudentRegister/>} restricted={true}/>,
     errorElement : <NotFound/>,
   },
   {
     path: '/teacherregister',
-    element : <TeacherRegister/>,
+    element : <PublicRoute component={<TeacherRegister/>} restricted={true}/>,
     errorElement : <NotFound/>,
   },
 ]);
+
+
+// const router = createBrowserRouter(
+//   <Routes>
+//     <Route 
+//       path='/' 
+//       element={<PrivateRoute component={<Root/>}/>}
+//       children={[
+//         { index: true, element: <Main /> } ,
+//         { path: 'board', element: <Board />},
+//         { path: 'timetable', element: <TimeTable />},
+//       ]}
+//     />
+//     <Route
+//       path='/login'
+//       element={<PublicRoute component={<Login/>} restricted/>}
+//     />
+//     <Route
+//       path='/register'
+//       element={<PublicRoute component={<Register/>} restricted/>}
+//     />
+//     <Route
+//       path='/studentregister'
+//       element={<PublicRoute component={<StudentRegister/>} restricted/>}
+//     />
+//     <Route
+//       path='/teacherregister'
+//       element={<PublicRoute component={<TeacherRegister/>} restricted/>}
+//     />
+//     <Route
+//       path='/auth'
+//       element={<PublicRoute component={<Auth/>} restricted/>}
+//     />
+//   </Routes>
+// );
+
 
 function App() {
   return (
@@ -58,4 +96,5 @@ function App() {
   );
 }
 
+//<RouterProvider router={router}/>
 export default App;
