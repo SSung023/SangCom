@@ -40,7 +40,7 @@ class SecurityConfigTest {
     @Test
     @DisplayName("permitAll()에 등록한 uri는 인증 없이 접근 가능해야 한다.")
     public void CheckPermitAllOperation() throws Exception {
-        mockMvc.perform(get("/api/auth/login")
+        mockMvc.perform(get("/api/auth/test/login")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(0))

@@ -36,7 +36,9 @@ public class JwtTokenProvider {
     private static String AUTHORITIES_KEY = "role";
     private static String EMAIL_KEY = "email";
     public static String AUTHORIZATION_HEADER = "Authorization";
+    public static String REFRESH_HEADER = "Set-Cookie";
 
+    private int refreshLength = 0;
     private final CustomUserDetailsService customUserDetailsService;
 
 
@@ -65,6 +67,8 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
                 .signWith(SignatureAlgorithm.HS512, refreshSecretKey)
                 .compact();
+        
+        refreshLength = refreshToken.length();
 
         return refreshToken;
     }
@@ -105,6 +109,17 @@ public class JwtTokenProvider {
     }
 
     /**
+     * Set-Cookie 헤더에서 refresh token을 추출하여 반환
+     */
+    public String resolveRefreshTokenFromHeader(HttpServletRequest request) {
+        int tokenStartIdx = 13;
+        String cookieHeader = request.getHeader(REFRESH_HEADER);
+        String refreshToken = cookieHeader.substring(tokenStartIdx, tokenStartIdx + refreshLength);
+
+        return refreshToken;
+    }
+
+    /**
      * token을 String 형태로 받은 후,
      * access-token인 경우 Bearer prefix를 제거하고 반환
      * refresh-token인 경우 prefix가 없으므로 그대로 반환
@@ -128,26 +143,24 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 전달받은 token이 유효한지 확인 후, 유효하지 않다면 오류 발생
+     * 전달받은 access-token이 유효한지 확인 후, 유효하지 않다면 오류 발생
      */
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
         try{
-//            String processedToken = resolveTokenFromString(token);
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         }
         catch (SignatureException e){
-            log.error("Invalid JWT signature", e);
+            log.error("Invalid JWT access signature", e);
         }
         catch (MalformedJwtException e){
-            log.error("Invalid JWT token", e);
+            log.error("Invalid JWT access token", e);
         }
         catch (ExpiredJwtException e){
-            log.error("Expired JWT token", e);
+            log.error("Expired JWT access token", e);
         }
-
         catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT token", e);
+            log.error("Unsupported JWT access token", e);
         }
         catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty", e);
@@ -156,7 +169,33 @@ public class JwtTokenProvider {
     }
 
     /**
-     * token에서 DB에서 사용자를 찾을 때 사용할 정보(이메일)를 추출
+     * 전달받은 refresh-token이 유효한지 확인 후, 유효하지 않다면 오류 발생
+     */
+    public boolean validateRefreshToken(String token){
+        try{
+            Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(token);
+            return true;
+        }
+        catch (SignatureException e){
+            log.error("Invalid JWT refresh signature", e);
+        }
+        catch (MalformedJwtException e){
+            log.error("Invalid JWT refresh token", e);
+        }
+        catch (ExpiredJwtException e){
+            log.error("Expired JWT refresh token", e);
+        }
+        catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT refresh token", e);
+        }
+        catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty", e);
+        }
+        return false;
+    }
+
+    /**
+     * access-token에서 DB에서 사용자를 찾을 때 사용할 정보(이메일)를 추출
      */
     public String getUserPk(String token) {
         token = resolveTokenFromString(token);
@@ -167,6 +206,22 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
+    /**
+     * refresh-token에서 사용자 정보 email을 추출
+     */
+    public String getUserPkByRefresh(String token) {
+        token = resolveTokenFromString(token);
+        return Jwts.parser()
+                .setSigningKey(refreshSecretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+
+    /**
+     * token에서 추출한 사용자 식별 정보(email)를 토대로 Authentication 객체 생성 후 반환
+     */
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(getUserPk(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

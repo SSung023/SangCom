@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseCookie;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Map;
-
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
 @Slf4j
@@ -108,6 +110,20 @@ class JwtTokenProviderTest {
     }
 
     @Test
+    @DisplayName("JWT refresh token의 유효성 확인")
+    public void validateRefreshToken(){
+        //given
+        User user = getUser();
+
+        //when
+        String refreshToken = provider.createRefreshToken(user);
+
+        //then
+        log.info(refreshToken);
+        provider.validateRefreshToken(refreshToken);
+    }
+
+    @Test
     @DisplayName("access-token인 경우 토큰 추출 과정에서 prefix(Bearer)를 제거해야 한다.")
     public void extractAccessShouldRemovePrefix(){
         //given
@@ -163,7 +179,7 @@ class JwtTokenProviderTest {
         accessToken = provider.resolveTokenFromString(accessToken);
 
         //then
-        Assertions.assertThat(provider.validateToken(accessToken)).isTrue();
+        Assertions.assertThat(provider.validateAccessToken(accessToken)).isTrue();
     }
 
     @Test
@@ -194,6 +210,48 @@ class JwtTokenProviderTest {
         //then
         Assertions.assertThat(authentication).isInstanceOf(UsernamePasswordAuthenticationToken.class);
         log.info(authentication.toString());
+    }
+
+    @Test
+    @DisplayName("set-cookie header에서 refresh-token를 추출할 수 있다.")
+    public void extractRefreshTokenFromHeader(){
+        //given
+        User user = getUser();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String refreshToken = provider.createRefreshToken(user);
+        ResponseCookie cookie
+                = ResponseCookie.from("refreshToken", refreshToken)
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(24 * 60 * 60) // 24hour * 60min * 60sec
+                .build();
+
+
+        //when
+        request.addHeader("Set-Cookie", cookie.toString());
+        String receivedRefresh = provider.resolveRefreshTokenFromHeader(request);
+
+        // then
+        Assertions.assertThat(receivedRefresh).isEqualTo(refreshToken);
+
+    }
+
+    @Test
+    @DisplayName("refresh-token에서 사용자 식별 정보인 email을 알 수 있다.")
+    public void getUserInfoByRefreshToken(){
+        //given
+        User user = getUser();
+
+        //when
+        String refreshToken = provider.createRefreshToken(user);
+        log.info(refreshToken);
+
+        String userPk = provider.getUserPkByRefresh(refreshToken);
+
+        //then
+        Assertions.assertThat(user.getEmail()).isEqualTo(userPk);
     }
 
 
