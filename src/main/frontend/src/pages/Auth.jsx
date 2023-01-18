@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setTokenAction } from '../reducers/jwtReducer';
 import axios from 'axios';
 import { loginAction } from '../reducers/loginReducer';
+import { useNavigate } from 'react-router-dom';
 
 // BE로부터 access token을 axios 통신으로 받아와 store에 저장
 export default function Auth() {
+    const navigate = useNavigate();
+
     // 쿼리에서 email 정보 받아 오기
     const email = new URL(window.location.href).searchParams.get("email");
 
@@ -54,9 +57,12 @@ export default function Auth() {
                 }
             })
             .then(function (res) {
-                console.log(res.data);
+                // dispatch(loginAction(res.data));
                 dispatch(loginAction(dummyUserInfos));
-                // TODO: main page redirect part
+            })
+            .then(function (res) {
+                // main 페이지로 이동, history 안 남김
+                navigate("/", { replace: true });
             })
             .catch(function (e) {
                 console.log(e);
