@@ -4,7 +4,7 @@ import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
-import Project.SangCom.util.exception.ExMessage;
+import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -38,8 +38,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 예외 처리
         if (userByEmail.isEmpty()) {
-            log.error(String.valueOf(ExMessage.DATA_ERROR_NOT_FOUND));
-            throw new BusinessException(ExMessage.DATA_ERROR_NOT_FOUND);
+            log.error(String.valueOf(ErrorCode.DATA_ERROR_NOT_FOUND));
+            throw new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND);
         }
 
         User user = userByEmail.get();

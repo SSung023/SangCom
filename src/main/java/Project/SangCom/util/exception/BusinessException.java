@@ -1,17 +1,28 @@
 package Project.SangCom.util.exception;
 
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
 /**
  * @Author : Jeeseob
  * @CreateAt : 2022/11/25
  */
 
+@Getter
 public class BusinessException extends RuntimeException {
+    private HttpStatus status;
+
     public BusinessException() {
         super();
     }
 
-    public BusinessException(ExMessage exMessage) {
-        super(exMessage.getMessage());
+    public BusinessException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+    }
+
+    public BusinessException(HttpStatus status, ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.status = status;
     }
 
     public BusinessException(String message) {

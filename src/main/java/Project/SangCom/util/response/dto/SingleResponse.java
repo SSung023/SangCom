@@ -2,6 +2,7 @@ package Project.SangCom.util.response.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 /**
  * @Author : Jeeseob
@@ -17,8 +18,8 @@ public class SingleResponse<T> extends CommonResponse {
         this.data = data;
     }
 
-    public SingleResponse(int code, String message, T data) {
-        super(code, message);
+    public SingleResponse(HttpStatus status, String message, T data) {
+        super(status, message);
         this.data = data;
     }
 }

@@ -2,6 +2,7 @@ package Project.SangCom.security.config.filter;
 
 import Project.SangCom.security.service.JwtTokenProviderService;
 import Project.SangCom.util.exception.BusinessException;
+import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -58,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         else {
 
             log.debug("유효한 JWT 토큰이 없습니다. uri: " + requestURI);
-            throw new BusinessException("유효한 JWT 토큰이 없습니다.");
+            throw new BusinessException(ErrorCode.TOKEN_INVALID);
         }
 
         filterChain.doFilter(request, response);

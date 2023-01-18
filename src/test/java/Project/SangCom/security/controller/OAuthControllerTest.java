@@ -6,6 +6,7 @@ import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.service.UserService;
+import Project.SangCom.util.exception.SuccessCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,8 +62,8 @@ class OAuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(0))
-                .andExpect(jsonPath("$.message").value("회원가입 성공"));
+                .andExpect(jsonPath("$.status").value(SuccessCode.CREATED.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.CREATED.getMessage()));
 
     }
 
@@ -104,8 +105,8 @@ class OAuthControllerTest {
         mockMvc.perform(get("/api/auth/user")
                 .header("Authorization", accessToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(0))
-                .andExpect(jsonPath("$.message").value(""))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data.role").value("STUDENT"))
                 .andExpect(jsonPath("$.data.nickname").value("nickname"))
                 .andExpect(jsonPath("$.data.grade").value("1"))

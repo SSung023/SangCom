@@ -5,7 +5,7 @@ import Project.SangCom.user.domain.User;
 import Project.SangCom.user.dto.UserLoginResponse;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
-import Project.SangCom.util.exception.ExMessage;
+import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -83,7 +83,8 @@ public class JwtTokenProviderService {
                 return true;
             }
             // refresh-token도 유효하지 않을 때
-            return false;
+            throw new BusinessException(ErrorCode.TOKEN_INVALID);
+            //return false;
         }
         // access-token이 유효할 때
         return true;
@@ -96,7 +97,7 @@ public class JwtTokenProviderService {
     public User getAccessUserInfo(String email) {
         Optional<User> userByEmail = userService.findUserByEmail(email);
         if (userByEmail.isEmpty()){
-            throw new BusinessException(ExMessage.DATA_ERROR_NOT_FOUND);
+            throw new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND);
         }
 
         return userByEmail.get();
@@ -110,7 +111,7 @@ public class JwtTokenProviderService {
         Optional<User> userByEmail = userService.findUserByEmail(userEmail);
 
         if (userByEmail.isEmpty())
-            throw new BusinessException(ExMessage.DATA_ERROR_NOT_FOUND);
+            throw new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND);
 
         User user = userByEmail.get();
         UserLoginResponse loginResponse = UserLoginResponse.builder()

@@ -4,6 +4,7 @@ import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
+import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -50,7 +51,7 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
             log.info("email: " + email);
         }
         else {
-            throw new BusinessException("허용되지 않는 인증입니다.");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED_WAY);
         }
 
         User user;

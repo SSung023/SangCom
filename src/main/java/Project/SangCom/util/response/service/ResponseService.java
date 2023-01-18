@@ -15,14 +15,13 @@ import java.util.List;
 public class ResponseService {
 
     private void setSuccessResult(CommonResponse response) {
-        response.setCode(1);
-        response.setMessage("성공");
+        response.setStatus(response.getStatus());
+        response.setMessage(response.getMessage());
     }
 
-    // 나중에 enum으로 바꿔보자
     private void setFailResult(CommonResponse response) {
-        response.setCode(0);
-        response.setMessage("실패");
+        response.setStatus(response.getStatus());
+        response.setMessage(response.getMessage());
     }
 
     public CommonResponse successResult() {

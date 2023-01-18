@@ -1,6 +1,7 @@
 package Project.SangCom.security.config;
 
 import Project.SangCom.util.exception.BusinessException;
+import Project.SangCom.util.exception.SuccessCode;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,8 +44,8 @@ class SecurityConfigTest {
         mockMvc.perform(get("/api/auth/test/login")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(0))
-                .andExpect(jsonPath("$.message").isEmpty())
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data.username").value("username"));
     }
 

@@ -4,6 +4,7 @@ import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.service.ResponseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,7 +21,10 @@ public class BusinessExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     protected CommonResponse globalBusinessExceptionHandler(BusinessException e) {
         log.info("[Error]" + e.getMessage());
-        return responseService.failResult(e.getMessage());
+
+        return new CommonResponse(e.getStatus(), e.getMessage());
+
+//        return responseService.failResult(e.getMessage());
     }
 }
 

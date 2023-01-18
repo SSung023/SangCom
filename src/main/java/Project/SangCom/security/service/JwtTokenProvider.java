@@ -153,53 +153,45 @@ public class JwtTokenProvider {
      * 전달받은 access-token이 유효한지 확인 후, 유효하지 않다면 오류 발생
      */
     public boolean validateAccessToken(String token) {
-        try{
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        }
-        catch (SignatureException e){
-            log.error("Invalid JWT access signature", e);
-        }
-        catch (MalformedJwtException e){
-            log.error("Invalid JWT access token", e);
-        }
-        catch (ExpiredJwtException e){
-            log.error("Expired JWT access token", e);
-        }
-        catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT access token", e);
-        }
-        catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty", e);
-        }
-        return false;
+        return validateToken(token, secretKey);
     }
 
     /**
      * 전달받은 refresh-token이 유효한지 확인 후, 유효하지 않다면 오류 발생
      */
     public boolean validateRefreshToken(String token){
+        return validateToken(token, refreshSecretKey);
+    }
+
+    private boolean validateToken(String token, String secretKey) {
         try{
-            Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         }
         catch (SignatureException e){
-            log.error("Invalid JWT refresh signature", e);
+            log.error("Invalid JWT access signature", e);
+//            throw new BusinessException(ExMessage.TOKEN_INVALID_SIGNATURE);
         }
         catch (MalformedJwtException e){
-            log.error("Invalid JWT refresh token", e);
+            log.error("Invalid JWT access token", e);
+//            throw new BusinessException(ExMessage.TOKEN_INVALID);
         }
         catch (ExpiredJwtException e){
-            log.error("Expired JWT refresh token", e);
+            log.error("Expired JWT access token", e);
+//            throw new BusinessException(ExMessage.TOKEN_EXPIRED);
         }
         catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT refresh token", e);
+            log.error("Unsupported JWT access token", e);
+//            throw new BusinessException(ExMessage.TOKEN_UNSUPPORTED);
         }
         catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty", e);
+//            throw new BusinessException(ExMessage.TOKEN_INVALID_CLAIM);
         }
         return false;
     }
+
+
 
     /**
      * refreshToken의 만료 시간이 1/2이 지났는지 여부 반환

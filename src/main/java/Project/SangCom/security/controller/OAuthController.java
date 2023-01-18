@@ -8,7 +8,8 @@ import Project.SangCom.user.domain.User;
 import Project.SangCom.user.dto.UserLoginResponse;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
-import Project.SangCom.util.exception.ExMessage;
+import Project.SangCom.util.exception.ErrorCode;
+import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class OAuthController {
 
         Long registeredId = userService.registerUser(receivedUser);
 
-        return ResponseEntity.ok().body(new CommonResponse(0, "회원가입 성공"));
+        return ResponseEntity.ok().body(new CommonResponse(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage()));
     }
 
     /**
@@ -54,12 +55,12 @@ public class OAuthController {
         // JWT access-token을 생성해서 header에 설정하고, refresh-token은 httpOnly cookie로 설정
         Optional<User> userByEmail = userService.findUserByEmail(email.getEmail());
         if (userByEmail.isEmpty())
-            log.info(ExMessage.DATA_ERROR_NOT_FOUND.getMessage());
+            throw new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND);
 
         String accessToken = tokenService.setAccessToken(response, userByEmail.get());
         String refreshToken = tokenService.setRefreshToken(response, userByEmail.get());
 
-        return ResponseEntity.ok().body(new CommonResponse(0, ""));
+        return ResponseEntity.ok().body(new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }
 
     /**
@@ -73,12 +74,13 @@ public class OAuthController {
         String accessToken = tokenService.resolveAccessToken(request);
 
         if (!tokenService.validateAndReissueToken(request, response, accessToken)) {
-            throw new BusinessException(ExMessage.DATA_ERROR_NOT_FOUND);
+            throw new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND);
         }
 
         UserLoginResponse loginResponse = tokenService.getRequestUserInfo(accessToken);
 
-        return ResponseEntity.ok().body(new SingleResponse<>(0, "", loginResponse));
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), loginResponse));
     }
 
 
@@ -96,8 +98,8 @@ public class OAuthController {
                 .username("username")
                 .build();
 
-        return ResponseEntity.ok()
-                .body(new SingleResponse<>(0, null, loginResponse));
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), loginResponse));
     }
 
 }
