@@ -1,6 +1,7 @@
 package Project.SangCom.security.service;
 
 
+import Project.SangCom.security.dto.AccessTokenUserDTO;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.repository.UserRepository;
@@ -36,7 +37,7 @@ public class JwtTokenProviderServiceTest {
     @Value("${jwt.refresh-secret}")
     String refreshSecretKey;
     @Value("${jwt.refresh-token-validity-in-seconds}")
-    private Long refreshTokenValidityInMilliseconds;
+    Long refreshTokenValidityInMilliseconds;
 
     @Autowired
     UserRepository repository;
@@ -54,19 +55,15 @@ public class JwtTokenProviderServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
+        AccessTokenUserDTO userDTO = convertToUser(user);
         repository.save(user);
 
         Long now = System.currentTimeMillis();
-        String accessToken = getToken(user, now + 100, secretKey); // 유효기간 짧은 access-token 생성
-        String refreshToken = provider.createRefreshToken(user);
+        String accessToken = createAccessToken(userDTO, now + 100, secretKey); // 유효기간 짧은 access-token 생성
+        String refreshToken = provider.createRefreshToken(userDTO);
 
         ResponseCookie cookie
-                = ResponseCookie.from("refreshToken", refreshToken)
-                .secure(true)
-                .httpOnly(true)
-                .path("/")
-                .maxAge(24 * 60 * 60) // 24hour * 60min * 60sec
-                .build();
+                = getRefreshTokenToCookie(refreshToken, 6);
 
         //when
         request.addHeader(AUTHORIZATION_HEADER, accessToken);
@@ -85,10 +82,11 @@ public class JwtTokenProviderServiceTest {
     public void getUserInfoByEmail(){
         //given
         User user = getUser();
+        AccessTokenUserDTO userDTO = convertToUser(user);
         repository.save(user);
 
         //when
-        String refreshToken = provider.createRefreshToken(user);
+        String refreshToken = provider.createRefreshToken(userDTO);
         String userEmail = provider.getUserPkByRefresh(refreshToken);
         User accessUser = tokenProviderService.getAccessUserInfo(userEmail);
 
@@ -104,19 +102,14 @@ public class JwtTokenProviderServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         User user = getUser();
+        AccessTokenUserDTO userDTO = convertToUser(user);
         repository.save(user);
 
         //when
         Long now = System.currentTimeMillis();
-        String accessToken = "Bearer " + getToken(user, now + 100, secretKey); // 유효기간이 짧은 access-token 생성
-        String refreshToken = provider.createRefreshToken(user);
-        ResponseCookie cookie
-                = ResponseCookie.from("refreshToken", refreshToken)
-                .secure(true)
-                .httpOnly(true)
-                .path("/")
-                .maxAge(24 * 60 * 60) // 24hour * 60min * 60sec
-                .build();
+        String accessToken = "Bearer " + createAccessToken(userDTO, now + 100, secretKey); // 유효기간이 짧은 access-token 생성
+        String refreshToken = provider.createRefreshToken(userDTO);
+        ResponseCookie cookie = getRefreshTokenToCookie(refreshToken, 6);
 
         request.addHeader(AUTHORIZATION_HEADER, accessToken);
         request.addHeader(REFRESH_HEADER, cookie.toString());
@@ -125,6 +118,49 @@ public class JwtTokenProviderServiceTest {
 
         //then
         Assertions.assertThat(accessToken).isNotEqualTo(response.getHeader(AUTHORIZATION_HEADER));
+    }
+    
+    @Test
+    @DisplayName("refresh-token의 유효기간이 1/2 이하라면 refresh-token을 재발급한다.")
+    public void reissueRefreshToken(){
+        //given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        User user = getUser();
+        AccessTokenUserDTO userDTO = convertToUser(user);
+        repository.save(user);
+        
+        //when
+        /**
+         * validateAndReissueToken에서 사용할 access-token과 refresh-token을 직접 설정
+         */
+        Long now = System.currentTimeMillis();
+        String accessToken = "Bearer " + createAccessToken(userDTO, now + 100, secretKey);
+        String refreshToken = Jwts.builder()
+                .setHeader(createHeader())
+                .setClaims(createClaims(userDTO))
+                .setSubject(userDTO.getEmail())
+                .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
+                .signWith(SignatureAlgorithm.HS512, refreshSecretKey)
+                .compact();
+        ResponseCookie cookie = getRefreshTokenToCookie(refreshToken, 1);
+        provider.refreshLength = refreshToken.length();
+
+        // request에 access-token, refresh-token이 왔다고 가정
+        request.addHeader(AUTHORIZATION_HEADER, accessToken);
+        request.addHeader(REFRESH_HEADER, cookie.toString());
+
+        tokenProviderService.validateAndReissueToken(request, response, accessToken);
+
+        String newAccessToken = response.getHeader(AUTHORIZATION_HEADER);
+        String newRefreshToken = provider.resolveRefreshTokenFromHeader(response.getHeader(REFRESH_HEADER));
+
+        log.info("reissued access-token: " + newAccessToken);
+        log.info("reissued refresh-token: " + newRefreshToken);
+
+        //then
+        Assertions.assertThat(accessToken).isNotEqualTo(newAccessToken);
+        Assertions.assertThat(refreshToken).isNotEqualTo(newRefreshToken);
     }
 
 
@@ -140,14 +176,23 @@ public class JwtTokenProviderServiceTest {
                 .build();
         return user;
     }
-    private String getToken(User user, long now, String secretKey) {
+    private String createAccessToken(AccessTokenUserDTO userDTO, long now, String secretKey) {
         return Jwts.builder()
                 .setHeader(createHeader())
-                .setClaims(createClaims(user))
-                .setSubject(user.getEmail())
+                .setClaims(createClaims(userDTO))
+                .setSubject(userDTO.getEmail())
                 .setExpiration(new Date(now))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
+    }
+
+    private ResponseCookie getRefreshTokenToCookie(String refreshToken, int expiryHour) {
+        return ResponseCookie.from("refreshToken", refreshToken)
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .maxAge((long) expiryHour * 60 * 60) // hour * 60min * 60sec
+                .build();
     }
     private Map<String, Object> createHeader() {
         Map<String, Object> header = new HashMap<>();
@@ -155,11 +200,17 @@ public class JwtTokenProviderServiceTest {
         header.put("alg", "HS512");
         return header;
     }
-    private Map<String, Object> createClaims(User user) {
+    private Map<String, Object> createClaims(AccessTokenUserDTO userDTO) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", user.getEmail());
-        claims.put("Authorization", user.getRole().getKey());
+        claims.put("email", userDTO.getEmail());
+        claims.put("Authorization", userDTO.getRole());
         return claims;
 
+    }
+    private AccessTokenUserDTO convertToUser(User user) {
+        return AccessTokenUserDTO.builder()
+                .email(user.getEmail())
+                .role(user.getRole().getKey())
+                .build();
     }
 }

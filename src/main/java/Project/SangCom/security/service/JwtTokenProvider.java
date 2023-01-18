@@ -1,7 +1,7 @@
 package Project.SangCom.security.service;
 
 
-import Project.SangCom.user.domain.User;
+import Project.SangCom.security.dto.AccessTokenUserDTO;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,33 +38,33 @@ public class JwtTokenProvider {
     public static String AUTHORIZATION_HEADER = "Authorization";
     public static String REFRESH_HEADER = "Set-Cookie";
 
-    private int refreshLength = 0;
+    public int refreshLength = 0;
     private final CustomUserDetailsService customUserDetailsService;
 
 
     /**
      * access-token & refresh-token 생성
      */
-    public String createAccessToken(User user) {
+    public String createAccessToken(AccessTokenUserDTO userDTO) {
          Long now = System.currentTimeMillis();
 
          String accessToken = Jwts.builder()
                  .setHeader(createHeader())
-                 .setClaims(createClaims(user))
-                 .setSubject(user.getEmail())
+                 .setClaims(createClaims(userDTO))
+                 .setSubject(userDTO.getEmail())
                  .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
                  .signWith(SignatureAlgorithm.HS512, secretKey)
                  .compact();
          return "Bearer " + accessToken;
     }
-    public String createRefreshToken(User user){
+    public String createRefreshToken(AccessTokenUserDTO userDTO){
         Long now = System.currentTimeMillis();
 
         String refreshToken = Jwts.builder()
                 .setHeader(createHeader())
-                .setClaims(createClaims(user))
-                .setSubject(user.getEmail())
-                .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
+                .setClaims(createClaims(userDTO))
+                .setSubject(userDTO.getEmail())
+                .setExpiration(new Date(now + refreshTokenValidityInMilliseconds * 2))
                 .signWith(SignatureAlgorithm.HS512, refreshSecretKey)
                 .compact();
         
@@ -78,10 +78,10 @@ public class JwtTokenProvider {
                 .secure(true)
                 .httpOnly(true)
                 .path("/")
-                .maxAge(24 * 60 * 60) // 24hour * 60min * 60sec
+                .maxAge(6 * 60 * 60) // 6hours * 60min * 60sec
                 .build();
 
-        response.setHeader("Set-Cookie", cookie.toString());
+        response.setHeader(REFRESH_HEADER, cookie.toString());
     }
     public Map<String, Object> createHeader() {
         Map<String, Object> header = new HashMap<>();
@@ -89,10 +89,10 @@ public class JwtTokenProvider {
         header.put("alg", "HS512");
         return header;
     }
-    public Map<String, Object> createClaims(User user) {
+    public Map<String, Object> createClaims(AccessTokenUserDTO userDTO) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(EMAIL_KEY, user.getEmail());
-        claims.put(AUTHORITIES_KEY, user.getRole().getKey());
+        claims.put(EMAIL_KEY, userDTO.getEmail());
+        claims.put(AUTHORITIES_KEY, userDTO.getRole());
         return claims;
 
     }
@@ -110,11 +110,18 @@ public class JwtTokenProvider {
 
     /**
      * Set-Cookie 헤더에서 refresh token을 추출하여 반환
+     * - 오버로딩: Request.ver, String.ver
      */
     public String resolveRefreshTokenFromHeader(HttpServletRequest request) {
         int tokenStartIdx = 13;
         String cookieHeader = request.getHeader(REFRESH_HEADER);
         String refreshToken = cookieHeader.substring(tokenStartIdx, tokenStartIdx + refreshLength);
+
+        return refreshToken;
+    }
+    public String resolveRefreshTokenFromHeader(String fullRefreshToken) {
+        int tokenStartIdx = 13;
+        String refreshToken = fullRefreshToken.substring(tokenStartIdx, tokenStartIdx + refreshLength);
 
         return refreshToken;
     }
@@ -192,6 +199,21 @@ public class JwtTokenProvider {
             log.error("JWT claims string is empty", e);
         }
         return false;
+    }
+
+    /**
+     * refreshToken의 만료 시간이 1/2이 지났는지 여부 반환
+     */
+    public Boolean checkRefreshExpirationTime(String refreshToken) {
+        Claims claims = Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken).getBody();
+
+        Date expiration = claims.getExpiration();
+        Date curDate = new Date(System.currentTimeMillis());
+
+        long remainTime = expiration.getTime() - curDate.getTime();
+
+        // 남은 시간이 1/2 이하로 남았다면 refreshToken을 재발급해야 하므로 true 반환
+        return remainTime <= refreshTokenValidityInMilliseconds;
     }
 
     /**
