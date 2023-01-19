@@ -23,14 +23,14 @@ public class SecurityConfig {
     private final JwtTokenProviderService providerService;
     private final OAuth2SuccessHandler successHandler;
     public static final String permitURI[] = {"/api/auth/**", "/swagger-ui.html", "/swagger-ui/**"
-            ,"/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"};
+            ,"/v3/api-docs/**", "/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"};
 
     @Bean
     public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
 
         // REST api는 stateless하기 때문에 csrf disable
         http.csrf().disable()
-                .httpBasic().disable().formLogin().disable()
+//                .httpBasic().disable().formLogin().disable()
                 .anonymous().and()
                 // 인증 없이 접근 가능한 uri 설정 & CORS/preflight 설정
                 .authorizeRequests()
