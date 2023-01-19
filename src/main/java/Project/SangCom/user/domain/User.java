@@ -1,5 +1,6 @@
 package Project.SangCom.user.domain;
 
+import Project.SangCom.like.domain.Like;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.domain.embedded.TeacherInfo;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,6 +31,9 @@ public class User implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "user")
+    private List<Like> likes = new ArrayList<>();
 
     @Column(unique = true, length = 10)
     private String nickname;
