@@ -1,6 +1,7 @@
 package Project.SangCom.user.domain;
 
-import Project.SangCom.like.domain.Like;
+import Project.SangCom.like.domain.Likes;
+import Project.SangCom.post.domain.Post;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.domain.embedded.TeacherInfo;
 import lombok.Builder;
@@ -24,6 +25,8 @@ import java.util.Objects;
  * nickname, info: 소셜 로그인 이후 자체 회원가입 시 기입
  * role: not_verified, student, student_council, teacher, admin
  */
+
+// 연관관계 편의 메서드 설정 필요
 @Entity
 @ToString
 @Getter @Setter
@@ -33,7 +36,10 @@ public class User implements UserDetails {
     private Long id;
 
     @OneToMany(mappedBy = "user")
-    private List<Like> likes = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts = new ArrayList<>();
 
     @Column(unique = true, length = 10)
     private String nickname;

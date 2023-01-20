@@ -30,7 +30,7 @@ public class SecurityConfig {
 
         // REST api는 stateless하기 때문에 csrf disable
         http.csrf().disable()
-//                .httpBasic().disable().formLogin().disable()
+                .httpBasic().disable().formLogin().disable()
                 .anonymous().and()
                 // 인증 없이 접근 가능한 uri 설정 & CORS/preflight 설정
                 .authorizeRequests()

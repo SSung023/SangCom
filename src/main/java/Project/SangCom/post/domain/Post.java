@@ -1,5 +1,7 @@
 package Project.SangCom.post.domain;
 
+import Project.SangCom.like.domain.Likes;
+import Project.SangCom.user.domain.User;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,13 +25,16 @@ public class Post {
     private Long id;
 
     @OneToMany(mappedBy = "post")
-    private List<Post> posts = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
 
 
     /**
      * @ManyToOne(fetch = FetchType.LAZY) private User user;
      * 위의 대안: user의 id를 저장
      */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
     private Long author_id;
     private String author; // 게시글 작성자 이름
 
