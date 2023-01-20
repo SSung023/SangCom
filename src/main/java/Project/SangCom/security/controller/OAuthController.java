@@ -5,6 +5,7 @@ import Project.SangCom.security.dto.TokenRequest;
 import Project.SangCom.security.service.JwtTokenProviderService;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.dto.UserLoginResponse;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
@@ -83,6 +84,17 @@ public class OAuthController {
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), loginResponse));
     }
 
+    /**
+     *
+     * @return
+     */
+    @PostMapping("/api/logout")
+    public ResponseEntity<CommonResponse> userLogout(){
+
+        return ResponseEntity.ok().body
+                (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
+    }
+
 
 
 
@@ -100,6 +112,23 @@ public class OAuthController {
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), loginResponse));
+    }
+
+    @GetMapping("/api/auth/test/user")
+    public ResponseEntity<CommonResponse> test(){
+        log.info("FE 테스트를 위해 DB에 더미 유저 정보를 추가합니다.");
+        User testUser = User.builder()
+                .email("326ekdms@naver.com")
+//                .email("adrians023@naver.com")
+                .username("김댠")
+                .nickname("단두대")
+                .role(Role.STUDENT)
+                .studentInfo(new StudentInfo("1", "2", "23"))
+                .build();
+
+        userService.registerUser(testUser);
+
+        return ResponseEntity.ok(new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }
 
 }
