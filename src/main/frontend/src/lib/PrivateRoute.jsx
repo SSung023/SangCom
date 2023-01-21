@@ -8,7 +8,6 @@ import useLogin from './useLogin';
 export default function PrivateRoute({ component }) {
     const isLogin = useLogin();
     //const isLogin = false;
-    console.log(isLogin);
     return (
         isLogin ? component : <Navigate replace to='/login'/>
     );

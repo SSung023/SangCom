@@ -1,23 +1,14 @@
 import React from 'react';
 import styles from './Leftside.module.css';
-import { useState } from 'react';
 import Avartar from './Avartar';
-import defaultProfile from '../../images/defualtProfile.svg';
 import {MdOutlineFormatListBulleted, MdOutlineModeComment, MdOutlineBookmarks} from "react-icons/md";
 
 export default function Leftside() {
-    const [user, setUser] = useState({
-        name:'홍길동',
-        grade:'1',
-        class:'12',
-        number:'33',
-    });
-
     return (
         <div className={styles.leftSide}>
             <div className={styles.wrapper}>
                 {/* 나중에 네트워크 통신으로 user data 받아와서 초기화하는 작업 필요 */}
-                <Avartar photoURL={defaultProfile} user={user}/>
+                <Avartar />
                 <Menus />
             </div>
         </div>

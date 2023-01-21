@@ -11,7 +11,7 @@ class Topnav extends Component {
             <header>
                 <div className={styles.inner}>
                     <div className={styles.logo}>
-                        <Link to="/main">
+                        <Link to="/">
                             <img src={schoolLogo} alt="logo of school"/>                          
                         </Link>
 

@@ -3,7 +3,8 @@ import loginReducer from './loginReducer';
 import jwtReducer from './jwtReducer';
 
 const rootReducer = combineReducers({
-    loginReducer
+    loginReducer,
+    jwtReducer
 });
 
 export default rootReducer;

@@ -1,7 +1,5 @@
-import { useSelector } from "react-redux";
-
 function useLogin() {
-    const actoken = useSelector((state) => state.loginReducer.user.access_token);
+    const actoken = localStorage.getItem("token");
     return !!actoken;
 }
 
