@@ -1,5 +1,6 @@
 package Project.SangCom.post.domain;
 
+import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.user.domain.User;
 import lombok.Getter;
@@ -24,18 +25,21 @@ public class Post {
     @Column(name = "post_id")
     private Long id;
 
-    @OneToMany(mappedBy = "post")
-    private List<Likes> likes = new ArrayList<>();
-
 
     /**
-     * @ManyToOne(fetch = FetchType.LAZY) private User user;
-     * 위의 대안: user의 id를 저장
+     * 대안: user의 id를 저장 - private Long author_id;
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    private Long author_id;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Likes> likes = new ArrayList<>();
+
+
     private String author; // 게시글 작성자 이름
 
     @Enumerated(EnumType.STRING)
@@ -66,4 +70,11 @@ public class Post {
     @Column(columnDefinition = "TINYINT", length = 1)
     private int is_solved;
 
+
+
+    //=== 연관관계 편의 메서드 ===//
+    public void setUser(User user){
+        this.user = user;
+        user.getPosts().add(this);
+    }
 }

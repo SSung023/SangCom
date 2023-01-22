@@ -21,7 +21,7 @@ import java.util.Objects;
 
 /**
  * 회원 엔티티
- * email: kakao 소셜 로그인 이후 kakao email을 받아옴
+ * email: 소셜 로그인 이후 email을 받아옴
  * nickname, info: 소셜 로그인 이후 자체 회원가입 시 기입
  * role: not_verified, student, student_council, teacher, admin
  */
@@ -35,10 +35,10 @@ public class User implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Likes> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
     @Column(unique = true, length = 10)

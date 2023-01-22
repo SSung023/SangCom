@@ -26,4 +26,11 @@ public class Comment {
 
     @CreatedDate
     private LocalDateTime createdAt;
+
+
+    //=== 연관관계 편의 메서드 ===//
+    public void setPost(Post post){
+        this.post = post;
+        post.getComments().add(this);
+    }
 }
