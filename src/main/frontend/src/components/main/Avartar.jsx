@@ -1,31 +1,30 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
-import axios from 'axios';
 import { authInstance } from "../../utility/api";
+import { loginAction } from "../../reducers/loginReducer";
 
 
 export default function Avartar(props){
+    const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.loginReducer.user.info);
 
     const handleLogout = () => {
         localStorage.setItem("token", "");
     };
 
-    authInstance.get("/api/auth/user")
-    .then(function(res) {
-        console.log(res);
-    })
     // userInfo 받아 오기
-    // axios.get("/api/auth/user", {
-    //     headers: {
-    //         Authorization: `${localStorage.getItem("token")}`,
-    //     }
-    // })
-    // .then(function (res) {
-    //     console.log(res);
-    // })
+    useEffect(() => {
+        authInstance.get("/api/auth/user")
+        .then(function(res) {
+            console.log(res.data.data);
+            dispatch(loginAction(res.data.data));
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    }, []);
         
     // userInfo가 바뀌면 리렌더링 해야 함.
     useEffect(() => {
@@ -39,16 +38,25 @@ export default function Avartar(props){
             src={defaultProfile} 
             alt=""
             />
-            <p className={styles.userName}>
-                {`${userInfo.username}`}
-            </p>
-            <p className={styles.userInfo}>
-                {`${userInfo.grade}학년 ${userInfo.classes}반 ${userInfo.number}번`}
+
+            <p className={styles.userNickname}>
+                {`${userInfo.nickname}`}
             </p>
 
-            <a href="/my" className={`${styles.buttons} ${styles.highlight}`}>내 정보</a>
-            <a href="/" className={styles.buttons} onClick={handleLogout}>로그아웃</a>
+            <div className={`${styles.userInfo}`}>
+                <p className={styles.userName}>
+                    {`${userInfo.username}`}
+                </p>
+                <p className={styles.userBelong}>
+                    {`${userInfo.grade}학년 ${userInfo.classes}반 ${userInfo.number}번`}
+                </p>
+            </div>
 
+            <div>
+                <a href="/my" className={`${styles.buttons} ${styles.highlight}`}>내 정보</a>
+                <a href="/" className={styles.buttons} onClick={handleLogout}>로그아웃</a>
+            </div>
+            
             <div className="horizontalDivider"></div>
         </div>
     );
