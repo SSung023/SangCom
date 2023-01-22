@@ -11,16 +11,13 @@
     height: 100%;
 }
 
-.flexCenter{
-    display: flex;
-    flex-direction: column
-}
-
 .avartar{
     width: 250px;
     position: relative;
     padding: 0 20px 0 20px;
     margin: auto;
+    display: flex;
+    flex-direction: column
 }
 
 .photo{
@@ -32,13 +29,10 @@
 }
 
 .userNickname{
+    display: block;
     font-size: 24px;
     font-weight: var(--semi-bold);
     margin: 16px auto 0 auto;
-}
-
-.userNickname {
-    display: block;
 }
 
 .userInfo{
