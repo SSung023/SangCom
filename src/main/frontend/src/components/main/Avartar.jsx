@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
 import axios from 'axios';
+import { authInstance } from "../../utility/api";
 
 
 export default function Avartar(props){
@@ -12,6 +13,10 @@ export default function Avartar(props){
         localStorage.setItem("token", "");
     };
 
+    authInstance.get("/api/auth/user")
+    .then(function(res) {
+        console.log(res);
+    })
     // userInfo 받아 오기
     // axios.get("/api/auth/user", {
     //     headers: {
