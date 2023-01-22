@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
-import axios from 'axios';
 
 
 export default function Avartar(props){
@@ -12,7 +11,7 @@ export default function Avartar(props){
         localStorage.setItem("token", "");
     };
 
-    // userInfo 받아 오기
+    // TODO: userInfo 통신은 Main.jsx에서, Avartar에서는 store에 저장된 state를 가져오는 방식으로 변경
     // axios.get("/api/auth/user", {
     //     headers: {
     //         Authorization: `${localStorage.getItem("token")}`,
@@ -23,9 +22,9 @@ export default function Avartar(props){
     // })
         
     // userInfo가 바뀌면 리렌더링 해야 함.
-    useEffect(() => {
-        console.log(userInfo);
-    }, [userInfo]);
+    // useEffect(() => {
+    //     console.log(userInfo);
+    // }, [userInfo]);
 
     return (
         <div className={styles.avartar}>
@@ -34,13 +33,20 @@ export default function Avartar(props){
             src={defaultProfile} 
             alt=""
             />
-            <p className={styles.userName}>
-                {`${userInfo.username}`}
-            </p>
-            <p className={styles.userInfo}>
-                {`${userInfo.grade}학년 ${userInfo.classes}반 ${userInfo.number}번`}
-            </p>
-
+            <div className={styles.flexCenter}>
+                <p className={styles.userNickname}>
+                    {`${userInfo.username}`}
+                </p>
+                <div className={styles.userInfo}>
+                    <p className={styles.userName}>
+                        {`${userInfo.name}`}
+                    </p>
+                    <p className={styles.userBelong}>
+                        {`${userInfo.grade}학년 ${userInfo.classes}반 ${userInfo.number}번`}
+                    </p>
+                </div>
+            </div>
+            
             <a href="/my" className={`${styles.buttons} ${styles.highlight}`}>내 정보</a>
             <a href="/" className={styles.buttons} onClick={handleLogout}>로그아웃</a>
 
