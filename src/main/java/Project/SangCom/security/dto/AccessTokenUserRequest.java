@@ -1,6 +1,5 @@
 package Project.SangCom.security.dto;
 
-import Project.SangCom.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,13 +9,13 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class AccessTokenUserDTO {
+public class AccessTokenUserRequest {
     private String email; // ex) test@gmail.com
     private String role; // ex) ROLE_STUDENT
 
 
     @Builder
-    public AccessTokenUserDTO(String email, String role) {
+    public AccessTokenUserRequest(String email, String role) {
         this.email = email;
         this.role = role;
     }

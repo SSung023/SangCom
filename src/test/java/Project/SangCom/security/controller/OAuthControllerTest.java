@@ -1,6 +1,6 @@
 package Project.SangCom.security.controller;
 
-import Project.SangCom.security.dto.AccessTokenUserDTO;
+import Project.SangCom.security.dto.AccessTokenUserRequest;
 import Project.SangCom.security.service.JwtTokenProvider;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
@@ -95,7 +95,7 @@ class OAuthControllerTest {
                 .studentInfo(new StudentInfo("1", "3", "12"))
                 .build();
         userService.saveUser(user);
-        AccessTokenUserDTO userDTO = AccessTokenUserDTO.builder()
+        AccessTokenUserRequest userDTO = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
                 .role(user.getRole().getKey())
                 .build();

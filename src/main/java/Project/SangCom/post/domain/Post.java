@@ -4,6 +4,8 @@ import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.util.formatter.BaseTimeEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,10 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@EnableJpaAuditing
-@ToString
+@ToString(callSuper = true, includeFieldNames = true)
 @Getter
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
@@ -57,23 +58,38 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
 
-
+    /**
+     * TINYINT
+     * 0: false, 1: true
+     */
     @Column(columnDefinition = "TINYINT", length = 1)
-    private int is_anonymous;
+    private int isAnonymous;
     @Column(columnDefinition = "TINYINT", length = 1)
-    private int is_deleted;
+    private int isDeleted;
 
     // Only 건의게시판
     @Column(columnDefinition = "TINYINT", length = 1)
-    private int is_secret;
+    private int isSecret;
     @Column(columnDefinition = "TINYINT", length = 1)
-    private int is_solved;
+    private int isSolved;
 
+
+    public Post() {
+    }
+
+    @Builder
+    public Post(String author, PostCategory category, String title, String content
+    , int isAnonymous, int isDeleted, int isSecret, int isSolved) {
+        this.author = author;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.isAnonymous = isAnonymous;
+        this.isDeleted = isDeleted;
+        this.isSecret = isSecret;
+        this.isSolved = isSolved;
+    }
 
 
     //=== 연관관계 편의 메서드 ===//

@@ -1,6 +1,6 @@
 package Project.SangCom.security.service;
 
-import Project.SangCom.security.dto.AccessTokenUserDTO;
+import Project.SangCom.security.dto.AccessTokenUserRequest;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.dto.UserLoginResponse;
 import Project.SangCom.user.service.UserService;
@@ -32,7 +32,7 @@ public class JwtTokenProviderService {
 
     // access-token 발급 후 Authorization 헤더에 추가
     public String setAccessToken(HttpServletResponse response, User user) {
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         String accessToken = tokenProvider.createAccessToken(userDTO);
         response.setHeader("Authorization", accessToken);
         return accessToken;
@@ -40,7 +40,7 @@ public class JwtTokenProviderService {
 
     // refresh-token 발급 후, Set-Cookie에 추가
     public String setRefreshToken(HttpServletResponse response, User user) {
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         String refreshToken = tokenProvider.createRefreshToken(userDTO);
         tokenProvider.setHttpOnlyCookie(response, refreshToken);
         return refreshToken;
@@ -70,7 +70,7 @@ public class JwtTokenProviderService {
                 log.info("refresh-token가 유효하므로 access-token을 재발급합니다.");
                 String email = tokenProvider.getUserPkByRefresh(refreshToken);
                 User accessUser = getAccessUserInfo(email);
-                AccessTokenUserDTO userDTO = convertToUser(accessUser);
+                AccessTokenUserRequest userDTO = convertToUser(accessUser);
 
                 String newAccessToken = tokenProvider.createAccessToken(userDTO);
                 response.setHeader(AUTHORIZATION_HEADER, newAccessToken);
@@ -132,8 +132,8 @@ public class JwtTokenProviderService {
 
 
 
-    private AccessTokenUserDTO convertToUser(User user) {
-        return AccessTokenUserDTO.builder()
+    private AccessTokenUserRequest convertToUser(User user) {
+        return AccessTokenUserRequest.builder()
                 .email(user.getEmail())
                 .role(user.getRole().getKey())
                 .build();

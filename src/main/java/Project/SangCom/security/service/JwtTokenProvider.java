@@ -1,7 +1,7 @@
 package Project.SangCom.security.service;
 
 
-import Project.SangCom.security.dto.AccessTokenUserDTO;
+import Project.SangCom.security.dto.AccessTokenUserRequest;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +45,7 @@ public class JwtTokenProvider {
     /**
      * access-token & refresh-token 생성
      */
-    public String createAccessToken(AccessTokenUserDTO userDTO) {
+    public String createAccessToken(AccessTokenUserRequest userDTO) {
          Long now = System.currentTimeMillis();
 
          String accessToken = Jwts.builder()
@@ -57,7 +57,7 @@ public class JwtTokenProvider {
                  .compact();
          return "Bearer " + accessToken;
     }
-    public String createRefreshToken(AccessTokenUserDTO userDTO){
+    public String createRefreshToken(AccessTokenUserRequest userDTO){
         Long now = System.currentTimeMillis();
 
         String refreshToken = Jwts.builder()
@@ -89,7 +89,7 @@ public class JwtTokenProvider {
         header.put("alg", "HS512");
         return header;
     }
-    public Map<String, Object> createClaims(AccessTokenUserDTO userDTO) {
+    public Map<String, Object> createClaims(AccessTokenUserRequest userDTO) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(EMAIL_KEY, userDTO.getEmail());
         claims.put(AUTHORITIES_KEY, userDTO.getRole());

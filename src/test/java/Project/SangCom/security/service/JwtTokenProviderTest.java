@@ -1,6 +1,6 @@
 package Project.SangCom.security.service;
 
-import Project.SangCom.security.dto.AccessTokenUserDTO;
+import Project.SangCom.security.dto.AccessTokenUserRequest;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.repository.UserRepository;
@@ -78,7 +78,7 @@ class JwtTokenProviderTest {
     public void createJwtClaims(){
         // given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         // when
         Map<String, Object> claims = provider.createClaims(userDTO);
@@ -93,7 +93,7 @@ class JwtTokenProviderTest {
     public void generateJwtAccessToken(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         String accessToken = provider.createAccessToken(userDTO);
@@ -107,7 +107,7 @@ class JwtTokenProviderTest {
     public void generateJwtRefreshToken(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         String refreshToken = provider.createRefreshToken(userDTO);
@@ -121,7 +121,7 @@ class JwtTokenProviderTest {
     public void validateRefreshToken(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         String refreshToken = provider.createRefreshToken(userDTO);
@@ -136,7 +136,7 @@ class JwtTokenProviderTest {
     public void extractAccessShouldRemovePrefix(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         
         //when
         String accessToken = provider.createAccessToken(userDTO);
@@ -151,7 +151,7 @@ class JwtTokenProviderTest {
     public void extractRefreshShouldExtractLiterally(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         
         //when
         String refreshToken = provider.createRefreshToken(userDTO);
@@ -166,7 +166,7 @@ class JwtTokenProviderTest {
     public void checkClaimsOfAccessToken(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         String accessToken = provider.createAccessToken(userDTO);
@@ -184,7 +184,7 @@ class JwtTokenProviderTest {
     public void checkValidationOfAccessToken(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         
         //when
         String accessToken = provider.createAccessToken(userDTO);
@@ -199,7 +199,7 @@ class JwtTokenProviderTest {
     public void getUserPkFromToken(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         String accessToken = provider.createAccessToken(userDTO);
@@ -214,7 +214,7 @@ class JwtTokenProviderTest {
     public void getAuthenticationByTokenSubject(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         repository.save(user);
         
         //when
@@ -231,7 +231,7 @@ class JwtTokenProviderTest {
     public void extractRefreshTokenFromHeader(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         String refreshToken = provider.createRefreshToken(userDTO);
@@ -258,7 +258,7 @@ class JwtTokenProviderTest {
     public void getUserInfoByRefreshToken(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         String refreshToken = provider.createRefreshToken(userDTO);
@@ -275,7 +275,7 @@ class JwtTokenProviderTest {
     public void checkRefreshExpiredTime(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         Long now = System.currentTimeMillis();
@@ -293,7 +293,7 @@ class JwtTokenProviderTest {
     public void checkRefreshExpiredTimeOver(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
 
         //when
         Long now = System.currentTimeMillis();
@@ -323,13 +323,13 @@ class JwtTokenProviderTest {
                 .build();
         return user;
     }
-    private AccessTokenUserDTO convertToUser(User user) {
-        return AccessTokenUserDTO.builder()
+    private AccessTokenUserRequest convertToUser(User user) {
+        return AccessTokenUserRequest.builder()
                 .email(user.getEmail())
                 .role(user.getRole().getKey())
                 .build();
     }
-    private String createTempRefreshToken(AccessTokenUserDTO userDTO, Long now) {
+    private String createTempRefreshToken(AccessTokenUserRequest userDTO, Long now) {
         return Jwts.builder()
                 .setSubject(userDTO.getEmail())
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds * 2))

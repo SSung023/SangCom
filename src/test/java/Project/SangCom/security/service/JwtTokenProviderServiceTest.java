@@ -1,7 +1,7 @@
 package Project.SangCom.security.service;
 
 
-import Project.SangCom.security.dto.AccessTokenUserDTO;
+import Project.SangCom.security.dto.AccessTokenUserRequest;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.repository.UserRepository;
@@ -55,7 +55,7 @@ public class JwtTokenProviderServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         repository.save(user);
 
         Long now = System.currentTimeMillis();
@@ -82,7 +82,7 @@ public class JwtTokenProviderServiceTest {
     public void getUserInfoByEmail(){
         //given
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         repository.save(user);
 
         //when
@@ -102,7 +102,7 @@ public class JwtTokenProviderServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         repository.save(user);
 
         //when
@@ -127,7 +127,7 @@ public class JwtTokenProviderServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         User user = getUser();
-        AccessTokenUserDTO userDTO = convertToUser(user);
+        AccessTokenUserRequest userDTO = convertToUser(user);
         repository.save(user);
         
         //when
@@ -176,7 +176,7 @@ public class JwtTokenProviderServiceTest {
                 .build();
         return user;
     }
-    private String createAccessToken(AccessTokenUserDTO userDTO, long now, String secretKey) {
+    private String createAccessToken(AccessTokenUserRequest userDTO, long now, String secretKey) {
         return Jwts.builder()
                 .setHeader(createHeader())
                 .setClaims(createClaims(userDTO))
@@ -200,15 +200,15 @@ public class JwtTokenProviderServiceTest {
         header.put("alg", "HS512");
         return header;
     }
-    private Map<String, Object> createClaims(AccessTokenUserDTO userDTO) {
+    private Map<String, Object> createClaims(AccessTokenUserRequest userDTO) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", userDTO.getEmail());
         claims.put("Authorization", userDTO.getRole());
         return claims;
 
     }
-    private AccessTokenUserDTO convertToUser(User user) {
-        return AccessTokenUserDTO.builder()
+    private AccessTokenUserRequest convertToUser(User user) {
+        return AccessTokenUserRequest.builder()
                 .email(user.getEmail())
                 .role(user.getRole().getKey())
                 .build();

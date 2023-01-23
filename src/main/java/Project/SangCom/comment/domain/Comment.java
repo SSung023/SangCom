@@ -1,18 +1,14 @@
 package Project.SangCom.comment.domain;
 
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.util.formatter.BaseTimeEntity;
 import lombok.Getter;
-import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@EnableJpaAuditing
 @Getter
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -25,9 +21,11 @@ public class Comment {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
 
+    @Override
+    public String toString() {
+        return super.toString() + " 댓글 내용: " + content;
+    }
 
     //=== 연관관계 편의 메서드 ===//
     public void setPost(Post post){
@@ -35,7 +33,5 @@ public class Comment {
         post.getComments().add(this);
     }
 
-    public String toString(){
-        return "Comment_id: " + id;
-    }
+
 }
