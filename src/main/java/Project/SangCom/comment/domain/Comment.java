@@ -2,6 +2,7 @@ package Project.SangCom.comment.domain;
 
 import Project.SangCom.post.domain.Post;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
@@ -32,5 +33,9 @@ public class Comment {
     public void setPost(Post post){
         this.post = post;
         post.getComments().add(this);
+    }
+
+    public String toString(){
+        return "Comment_id: " + id;
     }
 }

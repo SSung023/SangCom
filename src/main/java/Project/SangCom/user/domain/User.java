@@ -2,6 +2,7 @@ package Project.SangCom.user.domain;
 
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.domain.embedded.TeacherInfo;
 import lombok.Builder;
@@ -36,10 +37,14 @@ public class User implements UserDetails {
     private Long id;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+    private List<Scrap> scraps = new ArrayList<>();
+
 
     @Column(unique = true, length = 10)
     private String nickname;

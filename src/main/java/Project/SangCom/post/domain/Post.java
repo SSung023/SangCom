@@ -2,6 +2,7 @@ package Project.SangCom.post.domain;
 
 import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
+import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.User;
 import lombok.Getter;
 import lombok.ToString;
@@ -38,6 +39,9 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Scrap> scraps = new ArrayList<>();
 
 
     private String author; // 게시글 작성자 이름
