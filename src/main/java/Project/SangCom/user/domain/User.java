@@ -12,6 +12,7 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import reactor.util.annotation.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,7 @@ import java.util.Objects;
 // 연관관계 편의 메서드 설정 필요
 @Entity
 @ToString
-@Getter @Setter
+@Getter
 public class User implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,6 +79,16 @@ public class User implements UserDetails {
     public User() {
     }
 
+    public void updateUser(String username, String nickname, @Nullable StudentInfo studentInfo, @Nullable TeacherInfo teacherInfo){
+        this.username = username;
+        this.nickname = nickname;
+        if (studentInfo != null)
+            this.studentInfo = new StudentInfo(studentInfo.getGrade(), studentInfo.getClasses(), studentInfo.getNumber());
+        if (teacherInfo != null)
+            this.teacherInfo = new TeacherInfo(teacherInfo.getChargeGrade(), teacherInfo.getChargeSubject());
+    }
+
+
     @Override
     public boolean equals(Object obj) {
         // StudentInfo, TeacherInfo 제외한 비교
@@ -87,6 +98,8 @@ public class User implements UserDetails {
                 && (this.role == target.role);
     }
 
+
+    //=== UserDetails 관련 메서드 ===//
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authList = new ArrayList<>();

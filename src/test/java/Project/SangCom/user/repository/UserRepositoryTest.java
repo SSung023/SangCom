@@ -47,7 +47,6 @@ class UserRepositoryTest {
                 .email("test@naver.com")
                 .role(Role.STUDENT)
                 .build();
-        user.setId(1L);
 
         //when
         User savedUser = userRepository.save(user);
@@ -70,7 +69,6 @@ class UserRepositoryTest {
                 .email("test@naver.com")
                 .role(Role.STUDENT)
                 .build();
-        user.setId(1L);
 
         //when
         userRepository.save(user);

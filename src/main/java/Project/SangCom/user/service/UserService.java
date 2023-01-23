@@ -50,27 +50,9 @@ public class UserService {
         }
 
 
-        // email, id를 제외한 정보를 설정
-        storedUser.setNickname(receivedUser.getNickname());
-        storedUser.setUsername(receivedUser.getUsername());
-
-        if (receivedUser.getRole() == Role.STUDENT){
-            storedUser.setStudentInfo
-                    (StudentInfo.builder()
-                            .grade(receivedUser.getStudentInfo().getGrade())
-                            .classes(receivedUser.getStudentInfo().getClasses())
-                            .number(receivedUser.getStudentInfo().getNumber())
-                            .build());
-            storedUser.setTeacherInfo(null);
-        }
-        else if (receivedUser.getRole() == Role.TEACHER){
-            storedUser.setStudentInfo(null);
-            storedUser.setTeacherInfo
-                    (TeacherInfo.builder()
-                            .chargeGrade(receivedUser.getTeacherInfo().getChargeGrade())
-                            .chargeSubject(receivedUser.getTeacherInfo().getChargeSubject())
-                            .build());
-        }
+        // email, id를 제외한 정보(username, nickname, studentInfo(teacherInfo)를 재설정
+        storedUser.updateUser(receivedUser.getUsername(), receivedUser.getNickname(),
+                receivedUser.getStudentInfo(), receivedUser.getTeacherInfo());
 
         return storedUser.getId();
     }

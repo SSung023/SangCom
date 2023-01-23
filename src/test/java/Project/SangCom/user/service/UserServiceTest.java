@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -88,11 +90,12 @@ class UserServiceTest {
         repository.save(user1);
         Long registerId = service.registerUser(user2);
 
-        user2.setId(registerId);
         User registerUser = repository.findById(registerId).get();
 
         //then
-        Assertions.assertThat(registerUser).isEqualTo(user2);
+        //정보가 제대로 덮어쓰기 되어 있어야 한다.
+        Assertions.assertThat(registerUser.getNickname()).isEqualTo(user2.getNickname());
+        Assertions.assertThat(registerUser.getUsername()).isEqualTo(user2.getUsername());
         Assertions.assertThat(registerUser.getStudentInfo()).isEqualTo(user2.getStudentInfo());
         Assertions.assertThat(registerUser.getTeacherInfo()).isEqualTo(user2.getTeacherInfo());
 
