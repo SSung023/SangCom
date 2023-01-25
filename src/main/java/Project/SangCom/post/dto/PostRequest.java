@@ -7,23 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @ToString
 public class PostRequest {
 
-//    private Long id;
-    private String author;
+    private Long id;
+    private String boardCategory;
+    private String author; // 닉네임
     private String title;
     private String content;
-    private String category;
-    private int isAnonymous;
+    private int isAnonymous; // 익명 여부. 0: false, 1: true
 
 
     @Builder
-    public PostRequest(String author, String title, String content, int isAnonymous) {
+    public PostRequest(Long id, String boardCategory, String author, String title, String content, int isAnonymous) {
+        this.id = id;
+        this.boardCategory = boardCategory;
         this.author = author;
         this.title = title;
         this.content = content;
@@ -33,6 +33,7 @@ public class PostRequest {
 
     public Post toEntity(){
         return Post.builder()
+                .category(PostCategory.valueOf(boardCategory))
                 .author(this.author)
                 .title(this.title)
                 .content(this.content)

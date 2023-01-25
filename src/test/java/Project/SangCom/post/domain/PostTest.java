@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-@Transactional
+//@Transactional
 class PostTest {
     
     @Test

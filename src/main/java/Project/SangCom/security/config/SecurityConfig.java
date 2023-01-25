@@ -36,9 +36,10 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(permitURI).permitAll()
+                .antMatchers("/api/board/free/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "ADMIN")
                 .anyRequest().authenticated()
 
-                // 오류로 인해 잠시 주석 처리
+                // JWT 검증 필터 추가
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(providerService), UsernamePasswordAuthenticationFilter.class)
 

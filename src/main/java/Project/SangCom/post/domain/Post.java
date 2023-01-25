@@ -48,7 +48,7 @@ public class Post extends BaseTimeEntity {
     private String author; // 게시글 작성자 이름
 
     @Enumerated(EnumType.STRING)
-    private PostCategory category;
+    private PostCategory category; // 게시글 카테고리(분류)
 
     @NotNull
     @Column(length = 50)
