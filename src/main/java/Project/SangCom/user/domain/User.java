@@ -79,7 +79,8 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public void updateUser(String username, String nickname, @Nullable StudentInfo studentInfo, @Nullable TeacherInfo teacherInfo){
+    public void updateUser(Role role, String username, String nickname, @Nullable StudentInfo studentInfo, @Nullable TeacherInfo teacherInfo){
+        this.role = role;
         this.username = username;
         this.nickname = nickname;
         if (studentInfo != null)

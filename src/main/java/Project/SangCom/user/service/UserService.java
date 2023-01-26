@@ -8,6 +8,7 @@ import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository repository;
 
@@ -51,8 +53,10 @@ public class UserService {
 
 
         // email, id를 제외한 정보(username, nickname, studentInfo(teacherInfo)를 재설정
-        storedUser.updateUser(receivedUser.getUsername(), receivedUser.getNickname(),
+        storedUser.updateUser(receivedUser.getRole(), receivedUser.getUsername(), receivedUser.getNickname(),
                 receivedUser.getStudentInfo(), receivedUser.getTeacherInfo());
+
+        log.info(storedUser.toString());
 
         return storedUser.getId();
     }

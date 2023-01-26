@@ -8,10 +8,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @ToString
 @NoArgsConstructor
+@Slf4j
 public class OAuthRegisterRequest {
 
     private String role;
@@ -43,11 +45,12 @@ public class OAuthRegisterRequest {
     }
 
     public User toEntity(){
+        log.info("register request: " + this.toString());
         Role targetRole = null;
-        if (role.equals("ROLE_STUDENT")) {
+        if (role.equals("student")) {
             targetRole = Role.STUDENT;
         }
-        else if (role.equals("ROLE_TEACHER")) {
+        else if (role.equals("teacher")) {
             targetRole = Role.TEACHER;
         }
 

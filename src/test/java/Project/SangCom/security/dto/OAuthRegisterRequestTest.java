@@ -25,7 +25,7 @@ class OAuthRegisterRequestTest {
         //given
         OAuthRegisterRequest request
                 = OAuthRegisterRequest.builder()
-                .role("ROLE_STUDENT")
+                .role("student")
                 .email("test@naver.com")
                 .nickname("nickname")
                 .username("username")
@@ -52,7 +52,7 @@ class OAuthRegisterRequestTest {
         //given
         OAuthRegisterRequest request
                 = OAuthRegisterRequest.builder()
-                .role("ROLE_TEACHER")
+                .role("teacher")
                 .email("test@naver.com")
                 .nickname("nickname")
                 .username("username")
