@@ -29,6 +29,7 @@ public class PostServiceTest {
                 .author("단두대")
                 .title("postRequest title")
                 .content("postRequest content")
+                .boardCategory("FREE")
                 .isAnonymous(1) // true
                 .build();
 

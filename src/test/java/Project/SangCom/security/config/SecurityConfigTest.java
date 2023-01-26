@@ -61,6 +61,9 @@ class SecurityConfigTest {
     @DisplayName("permitAll에 등록하지 않은 uri는 인증 없이 접근할 수 없다.")
     public void NotRegisteredUriCannnotIn() throws Exception {
 
+//        mockMvc.perform(get("/api/test"))
+//                .andExpect(status().isOk());
+
         // 테스트 코드 작성 방법을 모르겠다..
 //        org.junit.jupiter.api.Assertions.assertThrows(BusinessException.class,
 //                (Executable) mockMvc.perform(get("/api/test")));
