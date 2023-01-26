@@ -5,8 +5,8 @@ import {Link} from "react-router-dom";
 import StudentRegister from "./StudentRegister";
 export default function RegisterSelection(props){
     const email = new URL(window.location.href).searchParams.get("email");
-    const studentUrl = "/studentregister?email=" + email;
-    const teacherUrl = "/teacherregister?email=" + email;
+    const studentUrl = "/register/student?email=" + email;
+    const teacherUrl = "/register/teacher?email=" + email;
 
     return(
         <div className={style.regSelPage}>

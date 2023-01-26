@@ -41,12 +41,12 @@ const router = createBrowserRouter([
     errorElement : <NotFound />,
   },
   {
-    path: '/studentregister',
+    path: '/register/student',
     element : <PublicRoute component={<StudentRegister/>} restricted={true}/>,
     errorElement : <NotFound/>,
   },
   {
-    path: '/teacherregister',
+    path: '/register/teacher',
     element : <PublicRoute component={<TeacherRegister/>} restricted={true}/>,
     errorElement : <NotFound/>,
   },

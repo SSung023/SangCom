@@ -9,12 +9,12 @@ export default function StudentRegister(){
     const email = new URL(window.location.href).searchParams.get("email");
 
     const [formData, setFormData] = useState({
-        role : "student",
+        role : "STUDENT",
         email : email,
-        name : "",
+        username : "",
         nickname : "",
         grade: "",
-        class: "",
+        classes: "",
         number: "",
         chargeGrade: "",
         chargeSubject: ""
@@ -23,7 +23,7 @@ export default function StudentRegister(){
     const handleSubmit = (event) => {
         event.preventDefault();
         defaultInstance.post("api/auth/register",{
-            formData
+            ...formData
         }).then(function (response){
             if(response.status === 200) {
                 console.log(formData)
