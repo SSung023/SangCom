@@ -12,7 +12,7 @@ export default function TeacherRegister(){
     const email = new URL(window.location.href).searchParams.get("email");
 
     const [formData, setFormData] = useState({
-        role : "TEACHER",
+        role : "teacher",
         email : email,
         username : "",
         nickname : "",
@@ -68,7 +68,7 @@ export default function TeacherRegister(){
                     <label><span>이름</span>
                         <input
                             type="text"
-                            name="name"
+                            name="username"
                             className={style.inputBox}
                             placeholder="이름 입력"
                             onChange={handleChange}
@@ -77,7 +77,7 @@ export default function TeacherRegister(){
                     <label><span>담당 학년</span>
                         <select
                             onChange={handleChange}
-                            className={style.select} id="teacherGrades" name="teacherGrades" size="1" required>
+                            className={style.select} id="chargeGrade" name="chargeGrade" size="1" required>
                             <option value="" hidden>담당 학년 선택</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -87,7 +87,7 @@ export default function TeacherRegister(){
                     <label><span>담당 과목</span>
                         <select
                             onChange={handleChange}
-                            className={style.select} id="subjects" name="subjects" size="1" required>
+                            className={style.select} id="chargeSubject" name="chargeSubject" size="1" required>
                             <option value="" hidden selected>담당 과목 선택</option>
                             {subjects[0].map((subject)=>(
                                 <option value={subject.name}>{`${subject.name}`}</option>)) }

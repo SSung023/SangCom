@@ -9,7 +9,7 @@ export default function StudentRegister(){
     const email = new URL(window.location.href).searchParams.get("email");
 
     const [formData, setFormData] = useState({
-        role : "STUDENT",
+        role : "student",
         email : email,
         username : "",
         nickname : "",
@@ -72,7 +72,7 @@ export default function StudentRegister(){
                     <label><span>이름</span>
                         <input
                             type="text"
-                            name="name"
+                            name="username"
                             className={style.inputBox}
                             placeholder="이름 입력"
                             onChange={handleChange}
@@ -100,7 +100,7 @@ export default function StudentRegister(){
                     <label><span>반</span>
                         <select
                             onChange={handleChange}
-                            className={style.select} id="class" name="class" size="1" required>
+                            className={style.select} id="classes" name="classes" size="1" required>
                             <option value="" hidden>반 선택</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
