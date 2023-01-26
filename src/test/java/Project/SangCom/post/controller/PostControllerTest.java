@@ -1,14 +1,14 @@
 package Project.SangCom.post.controller;
 
 
+import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.security.dto.AccessTokenUserRequest;
 import Project.SangCom.security.service.JwtTokenProvider;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
-import Project.SangCom.user.repository.UserRepository;
-import Project.SangCom.user.service.UserService;
+import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.utils.WithMockCustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -16,18 +16,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @Transactional
@@ -57,20 +57,31 @@ class PostControllerTest {
     @WithMockCustomUser(role = Role.STUDENT)
     public void studentCanAccessFreeBoard() throws Exception {
         //given
-        User user = getUser();
-        String accessToken = getAccessToken(user);
-
-        //when
-
-        //then
+        String accessToken = getAccessToken();
+        
+        //when&then
         mockMvc.perform(get("/api/board/free")
                         .header("Authorization", accessToken))
                 .andExpect(status().isOk());
     }
+    
+    @Test
+    @DisplayName("접근이 가능하지 않은 ROLE의 경우 자유게시판 api에 접근할 수 없다.")
+    @WithMockCustomUser(role = Role.NOT_VERIFIED)
+    public void cannotAccessFreeBoardRole() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+        
+        //when&then
+        mockMvc.perform(get("/api/board/free")
+                .header("Authorization", accessToken))
+                .andExpect(status().is4xxClientError());
+       
+    }
 
     @Test
     @DisplayName("자유게시판 카테고리에 게시글을 작성(저장)할 수 있다.")
-    @WithMockCustomUser
+    @WithMockCustomUser(role = Role.STUDENT)
     public void registerFreePost() throws Exception {
         //given
         PostRequest postRequest = PostRequest.builder()
@@ -81,16 +92,24 @@ class PostControllerTest {
                 .isAnonymous(0)
                 .build();
 
-        User user = getUser();
-        String accessToken = getAccessToken(user);
-        
-        //when
-        Long savePostId = postService.savePost(postRequest);
+        String accessToken = getAccessToken();
+        String requestJson = "{\"id\":\"\", \"boardCategory\":\"FREE\"," +
+                "\"author\":\"nickname\", \"title\":\"title\", \"content\":\"content\"," +
+                "\"isAnonymous\":\"0\"}";
 
-        //then
+        //when&then
         mockMvc.perform(post("/api/board/free")
-                        .header("Authorization", accessToken))
-                .andExpect(status().isOk());
+                        .header("Authorization", accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(SuccessCode.CREATED.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.CREATED.getMessage()))
+                .andExpect(jsonPath("$.data.boardCategory").value("FREE"))
+                .andExpect(jsonPath("$.data.author").value("nickname"))
+                .andExpect(jsonPath("$.data.title").value("title"))
+                .andExpect(jsonPath("$.data.content").value("content"))
+                .andExpect(jsonPath("$.data.isAnonymous").value("0"));
     }
 
 
@@ -104,7 +123,8 @@ class PostControllerTest {
                 .build();
         return user;
     }
-    private String getAccessToken(User user) {
+    private String getAccessToken() {
+        User user = getUser();
         AccessTokenUserRequest tokenUserRequest = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
                 .role(user.getRole().getKey())

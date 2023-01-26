@@ -2,6 +2,7 @@ package Project.SangCom.post.dto;
 
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
+import Project.SangCom.util.exception.BusinessException;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

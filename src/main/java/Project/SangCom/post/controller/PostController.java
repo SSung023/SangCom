@@ -3,6 +3,7 @@ package Project.SangCom.post.controller;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
+import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.ListResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +43,11 @@ public class PostController {
      */
     @PostMapping("/board/free")
     public ResponseEntity<SingleResponse<PostResponse>> registerPost(@RequestBody PostRequest postRequest){
-        postService.savePost(postRequest);
+        Long savedPostId = postService.savePost(postRequest);
+        PostResponse postResponse = postService.convertToResponse(savedPostId);
 
-        return ResponseEntity.ok().body(new SingleResponse<>());
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.CREATED.getStatus(),SuccessCode.CREATED.getMessage(),postResponse));
     }
 
     /**
