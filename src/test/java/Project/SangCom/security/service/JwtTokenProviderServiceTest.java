@@ -162,6 +162,17 @@ public class JwtTokenProviderServiceTest {
         Assertions.assertThat(accessToken).isNotEqualTo(newAccessToken);
         Assertions.assertThat(refreshToken).isNotEqualTo(newRefreshToken);
     }
+    
+    @Test
+    @DisplayName("logout 처리 시 Header에 있던 Token들을 모두 삭제해야 한다.")
+    public void deleteTokenWhenLogout(){
+        //given
+        
+        //when
+        
+        //then
+        
+    }
 
 
 
@@ -185,7 +196,6 @@ public class JwtTokenProviderServiceTest {
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }
-
     private ResponseCookie getRefreshTokenToCookie(String refreshToken, int expiryHour) {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .secure(true)

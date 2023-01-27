@@ -57,7 +57,7 @@ public class PostService {
     }
 
     /**
-     * postId에 저장되어 있는 nickname과
+     * postId에 저장되어 있는 nickname과 사용자의 nickname이 일치한다면
      */
     public boolean checkIsPostOwner(Long postId){
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

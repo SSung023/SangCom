@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -113,9 +114,17 @@ public class JwtTokenProvider {
      * - 오버로딩: Request.ver, String.ver
      */
     public String resolveRefreshTokenFromHeader(HttpServletRequest request) {
-        int tokenStartIdx = 13;
-        String cookieHeader = request.getHeader(REFRESH_HEADER);
-        String refreshToken = cookieHeader.substring(tokenStartIdx, tokenStartIdx + refreshLength);
+        String cookieHeader = "";
+
+        if (request.getHeader(REFRESH_HEADER) != null){
+            cookieHeader = request.getHeader(REFRESH_HEADER);
+        }
+        if (request.getHeader("Cookie") != null){
+            cookieHeader = request.getHeader("Cookie");
+        }
+
+        int refreshIdx = cookieHeader.indexOf("refreshToken") + "refreshToken".length() + 1;
+        String refreshToken = cookieHeader.substring(refreshIdx, refreshIdx + refreshLength);
 
         return refreshToken;
     }
@@ -237,7 +246,7 @@ public class JwtTokenProvider {
      * token에서 추출한 사용자 식별 정보(email)를 토대로 Authentication 객체 생성 후 반환
      */
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(getUserPk(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        UserDetails principal = customUserDetailsService.loadUserByUsername(getUserPk(token));
+        return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 }

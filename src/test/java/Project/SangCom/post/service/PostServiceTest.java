@@ -87,18 +87,30 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("특정 게시글이 본인이 작성한 게시글인 경우 isOwner 필드에 1(TRUE)가 들어간다.")
+    @DisplayName("특정 게시글을 checkIsPostOwner를 통해 로그인한 사용자가 작성한 게시글인지 확인할 수 있다.")
     @WithMockCustomUser(nickname = "nickname")
     public void checkIsPostOwner(){
         //given
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(request); //
+        Long savedId = service.savePost(request); // 게시글 등록
 
         //then
         Assertions.assertThat(service.checkIsPostOwner(savedId)).isTrue();
+    }
+    
+    @Test
+    @DisplayName("특정 사용자가 작성한 게시글이라면 응답 시, 응답 객체의 isOwner가 1(true)여야 한다.")
+    public void isOwnerIs1_whenUserIsWriter(){
+        //given
+        PostRequest request = getPostRequest("content");
+        
+        //when
+        Long savedId = service.savePost(request); // 게시글 등록
 
+        //then
+        
     }
     
     @Test
