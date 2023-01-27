@@ -4,6 +4,8 @@ import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
 import { authInstance } from "../../utility/api";
 import { loginAction } from "../../reducers/loginReducer";
+import axios from "axios";
+
 
 
 export default function Avartar(props){
@@ -18,17 +20,27 @@ export default function Avartar(props){
     useEffect(() => {
         authInstance.get("/api/auth/user")
         .then(function(res) {
-            console.log(res.data.data);
             dispatch(loginAction(res.data.data));
         })
         .catch(function (error) {
             console.log(error);
         })
+        // axios.get("/api/auth/user", {
+        //     headers: {
+        //         Authorization: `${localStorage.getItem("token")}`,
+        //     },
+        // })
+        // .then(function (res) {
+        //     dispatch(loginAction(res.data.data));
+        // })
+        // .catch(function (err) {
+        //     console.log(err);
+        // })
     }, []);
         
     // userInfo가 바뀌면 리렌더링 해야 함.
     useEffect(() => {
-        console.log(userInfo);
+        //console.log(userInfo);
     }, [userInfo]);
 
     return (

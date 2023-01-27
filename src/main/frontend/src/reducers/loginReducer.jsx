@@ -23,7 +23,6 @@ const initialState = {
 const loginReducer = ( state = initialState, action ) => {
     switch(action.type) {
         case LOGIN:
-            console.log(action.userInfos);
             return {...state, user: {...state.user, info: action.userInfos}};
         default:
             return state;
