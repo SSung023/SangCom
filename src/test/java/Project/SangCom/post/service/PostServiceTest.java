@@ -1,7 +1,9 @@
 package Project.SangCom.post.service;
 
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
+import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -39,6 +41,31 @@ public class PostServiceTest {
 
         //then
         Assertions.assertThat(receivedPost).isEqualTo(savedPost);
+    }
+
+    @Test
+    @DisplayName("Post 객체를 PostResponse 객체로 변환할 수 있다.")
+    public void convertToPostResponse(){
+        //given
+        Post post = Post.builder()
+                .category(PostCategory.FREE)
+                .author("author")
+                .title("title")
+                .content("content")
+                .isAnonymous(0)
+                .build();
+
+        //when
+        Post savedPost = repository.save(post);
+        PostResponse postResponse = service.convertToResponse(savedPost.getId());
+
+        //then
+        Assertions.assertThat(postResponse.getId()).isEqualTo(savedPost.getId());
+        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(savedPost.getAuthor());
+        Assertions.assertThat(postResponse.getTitle()).isEqualTo(savedPost.getTitle());
+        Assertions.assertThat(postResponse.getContent()).isEqualTo(savedPost.getContent());
+        Assertions.assertThat(postResponse.getBoardCategory()).isEqualTo("FREE");
+        Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(0);
     }
 
     @Test

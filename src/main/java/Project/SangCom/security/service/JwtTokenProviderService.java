@@ -95,12 +95,7 @@ public class JwtTokenProviderService {
      * User 객체가 아닌 AccessUser 같은 DTO에 담는 것이 더 좋을까?
      */
     public User getAccessUserInfo(String email) {
-        Optional<User> userByEmail = userService.findUserByEmail(email);
-        if (userByEmail.isEmpty()){
-            throw new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND);
-        }
-
-        return userByEmail.get();
+        return userService.findUserByEmail(email);
     }
 
 
@@ -108,12 +103,8 @@ public class JwtTokenProviderService {
     // 토큰으로부터 정보를 요청하는 사용자가 누구인지 확인하고, 필요한 정보를 Response DTO 객체로 반환
     public UserLoginResponse getRequestUserInfo(String accessToken) {
         String userEmail = tokenProvider.getUserPk(accessToken);
-        Optional<User> userByEmail = userService.findUserByEmail(userEmail);
+        User user = userService.findUserByEmail(userEmail);
 
-        if (userByEmail.isEmpty())
-            throw new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND);
-
-        User user = userByEmail.get();
         UserLoginResponse loginResponse = UserLoginResponse.builder()
                 .role(user.getRole())
                 .nickname(user.getNickname())

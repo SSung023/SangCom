@@ -58,7 +58,7 @@ class UserServiceTest {
 
         //when
         service.saveUser(user);
-        User foundUser = service.findUserByEmail(user.getEmail()).get();
+        User foundUser = service.findUserByEmail(user.getEmail());
 
         //then
         Assertions.assertThat(user).isEqualTo(foundUser);

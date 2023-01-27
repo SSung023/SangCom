@@ -79,6 +79,8 @@ public class User implements UserDetails {
     public User() {
     }
 
+
+    //== 비지니스 코드 ==//
     public void updateUser(Role role, String username, String nickname, @Nullable StudentInfo studentInfo, @Nullable TeacherInfo teacherInfo){
         this.role = role;
         this.username = username;

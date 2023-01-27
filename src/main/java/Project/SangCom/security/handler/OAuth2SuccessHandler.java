@@ -34,15 +34,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Map<String, Object> attributes = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
 
         String email = (String) attributes.get("email");
-        Optional<User> userByEmail = userService.findUserByEmail(email);
+        User user = userService.findUserByEmail(email);
 
-        // 예외 처리
-        if (userByEmail.isEmpty()) {
-            log.error(String.valueOf(ErrorCode.DATA_ERROR_NOT_FOUND));
-            throw new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND);
-        }
-
-        User user = userByEmail.get();
         Role role = user.getRole();
 
         /**

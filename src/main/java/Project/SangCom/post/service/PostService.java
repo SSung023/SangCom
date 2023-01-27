@@ -31,10 +31,12 @@ public class PostService {
     }
 
     /**
+     * post_id(PK)를 통해 Post 객체를 찾아서 반환
      * @param postId repository(DB)에서 찾고자 하는 Post의 id
      */
-    public Optional<Post> findPostById(Long postId) {
-        return repository.findById(postId);
+    public Post findPostById(Long postId) {
+        return repository.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 
 

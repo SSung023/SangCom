@@ -1,7 +1,6 @@
 package Project.SangCom.post.controller;
 
 
-import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.security.dto.AccessTokenUserRequest;
@@ -11,7 +10,6 @@ import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.utils.WithMockCustomUser;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

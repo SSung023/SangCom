@@ -72,9 +72,9 @@ public class UserService {
 
 
 
-    public Optional<User> findUserByEmail(String email){
-        Optional<User> user = repository.findByEmail(email);
-        return user;
+    public User findUserByEmail(String email){
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND));
     }
 
     public Optional<User> findUserById(Long id) {

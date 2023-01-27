@@ -54,12 +54,10 @@ public class OAuthController {
     public ResponseEntity<CommonResponse> generateToken(HttpServletResponse response, @RequestBody TokenRequest email){
 
         // JWT access-token을 생성해서 header에 설정하고, refresh-token은 httpOnly cookie로 설정
-        Optional<User> userByEmail = userService.findUserByEmail(email.getEmail());
-        if (userByEmail.isEmpty())
-            throw new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND);
+        User userByEmail = userService.findUserByEmail(email.getEmail());
 
-        String accessToken = tokenService.setAccessToken(response, userByEmail.get());
-        String refreshToken = tokenService.setRefreshToken(response, userByEmail.get());
+        String accessToken = tokenService.setAccessToken(response, userByEmail);
+        String refreshToken = tokenService.setRefreshToken(response, userByEmail);
 
         return ResponseEntity.ok().body(new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }
