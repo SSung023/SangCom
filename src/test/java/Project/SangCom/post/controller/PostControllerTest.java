@@ -84,7 +84,7 @@ class PostControllerTest {
         //given
         String accessToken = getAccessToken();
         String requestJson = "{\"id\":\"\", \"boardCategory\":\"FREE\"," +
-                "\"author\":\"nickname\", \"title\":\"title\", \"content\":\"content\"," +
+                "\"authorNickname\":\"nickname\", \"title\":\"title\", \"content\":\"content\"," +
                 "\"isAnonymous\":\"0\"}";
 
         //when&then
