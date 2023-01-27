@@ -5,6 +5,9 @@ import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
+import Project.SangCom.util.exception.BusinessException;
+import Project.SangCom.util.exception.ErrorCode;
+import Project.SangCom.utils.WithMockCustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,17 +26,13 @@ public class PostServiceTest {
     @Autowired
     private PostService service;
 
+
+
     @Test
     @DisplayName("PostRequest 객체를 Post로 변환할 수 있다.")
     public void convertToPost(){
         //given
-        PostRequest postRequest = PostRequest.builder()
-                .author("단두대")
-                .title("postRequest title")
-                .content("postRequest content")
-                .boardCategory("FREE")
-                .isAnonymous(1) // true
-                .build();
+        PostRequest postRequest = getPostRequest("content");
 
         //when
         Post receivedPost = postRequest.toEntity();
@@ -69,23 +68,117 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Post 객체로 변환 후, service를 통해 게시글을 DB에 저장할 수 있다.")
+    @DisplayName("PostRequest 객체를 전달받아 service를 통해 게시글을 DB에 저장할 수 있다.")
     public void canSavePost(){
         //given
-        PostRequest request = PostRequest.builder()
-                .author("익명1")
-                .isAnonymous(1) // true
-                .title("title")
-                .content("content")
-                .boardCategory("FREE")
-                .build();
+        PostRequest request = getPostRequest("content");
 
         //when
-        Post post = request.toEntity();
         Long registeredId = service.savePost(request);
-        log.info(repository.findById(registeredId).get().toString());
+        Post savedPost = repository.findById(registeredId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+
+        //then
+        Assertions.assertThat(request.getAuthor()).isEqualTo(savedPost.getAuthor());
+        Assertions.assertThat(request.getTitle()).isEqualTo(savedPost.getTitle());
+        Assertions.assertThat(request.getContent()).isEqualTo(savedPost.getContent());
+        Assertions.assertThat(request.getBoardCategory()).isEqualTo(savedPost.getCategory().toString());
+        Assertions.assertThat(request.getIsAnonymous()).isEqualTo(savedPost.getIsAnonymous());
+    }
+
+    @Test
+    @DisplayName("특정 게시글이 본인이 작성한 게시글인 경우 isOwner 필드에 1(TRUE)가 들어간다.")
+    @WithMockCustomUser()
+    public void checkIsPostOwner(){
+        //given
+        PostRequest request = getPostRequest("content");
+
+        //when
+        Long savedId = service.savePost(request);
+//        service.checkIsOwner(savedId, );
+
 
         //then
 
+    }
+    
+    @Test
+    @DisplayName("postId(PK)를 통해 특정 게시글을 조회할 수 있다.")
+    public void canLookupPostById(){
+        //given
+        PostRequest request = getPostRequest("content");
+        
+        //when
+        Long savedId = service.savePost(request); // 게시글 저장
+        Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
+        
+        //then
+        Assertions.assertThat(request.getAuthor()).isEqualTo(postById.getAuthor());
+        Assertions.assertThat(request.getTitle()).isEqualTo(postById.getTitle());
+        Assertions.assertThat(request.getContent()).isEqualTo(postById.getContent());
+        Assertions.assertThat(request.getBoardCategory()).isEqualTo(postById.getCategory().toString());
+        Assertions.assertThat(request.getIsAnonymous()).isEqualTo(postById.getIsAnonymous());
+    }
+
+    @Test
+    @DisplayName("postId(PK)를 통해 조회한 특정 게시글을 PostResponse 객체로 변환할 수 있다.")
+    public void convertPostToPostResponse(){
+        //given
+        PostRequest request = getPostRequest("content");
+
+        //when
+        Long savedId = service.savePost(request); // 게시글 저장
+        Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
+
+        PostResponse postResponse = service.convertToResponse(postById.getId()); // 조회한 게시글을 Response 객체로 변환
+
+        //then
+        Assertions.assertThat(postResponse.getId()).isEqualTo(postById.getId());
+        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(postById.getAuthor());
+        Assertions.assertThat(postResponse.getTitle()).isEqualTo(postById.getTitle());
+        Assertions.assertThat(postResponse.getContent()).isEqualTo(postById.getContent());
+        Assertions.assertThat(postResponse.getBoardCategory()).isEqualTo(postById.getCategory().toString());
+        Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(postById.getIsAnonymous());
+    }
+
+    @Test
+    @DisplayName("postId(PK)를 통해 조회한 특정 게시글의 내용을 수정할 수 있다.")
+    public void UpdateCertainPost(){
+        //given
+        PostRequest postRequest = getPostRequest("content");
+        PostRequest newRequest = getPostRequest("new-content");
+
+        //when
+        Long savedId = service.savePost(postRequest);
+        Long modifiedPostId = service.updatePost(savedId, newRequest);
+
+        Post post = service.findPostById(savedId);
+        Post modifiedPost = service.findPostById(modifiedPostId);
+
+        //then
+        //post와 modifiedPost의 필드값들이 같아야 한다
+        Assertions.assertThat(post.getAuthor()).isEqualTo(modifiedPost.getAuthor());
+        Assertions.assertThat(post.getCategory()).isEqualTo(modifiedPost.getCategory());
+        Assertions.assertThat(post.getTitle()).isEqualTo(modifiedPost.getTitle());
+
+        Assertions.assertThat(post.getContent()).isEqualTo(modifiedPost.getContent());
+        Assertions.assertThat(modifiedPost.getContent()).isEqualTo("new-content");
+
+        log.info("post: " + post.toString());
+        log.info("modifiedPost: " + modifiedPost.toString());
+    }
+    
+    
+
+
+
+    private PostRequest getPostRequest(String content) {
+        return PostRequest.builder()
+                .author("익명")
+                .isAnonymous(1) // true
+                .title("title")
+                .content(content)
+                .boardCategory("FREE")
+                .build();
     }
 }

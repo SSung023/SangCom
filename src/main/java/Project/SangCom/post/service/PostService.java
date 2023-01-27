@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,11 +21,26 @@ public class PostService {
      * RequestDTO를 Entity로 변환하고 repository를 통해 저장
      * @param postRequest 사용자에게 전달받은 게시글 정보
      */
+    @Transactional
     public Long savePost(PostRequest postRequest) {
         Post post = postRequest.toEntity();
         Post savedPost = repository.save(post);
 
         return savedPost.getId();
+    }
+
+    /**
+     * postId에 해당하는 게시글을 postRequest의 내용으로 수정
+     * @param postId 수정하고자하는 게시글의 Id(PK)
+     * @param postRequest 수정하고자 하는 내용
+     */
+    @Transactional
+    public Long updatePost(Long postId, PostRequest postRequest){
+        Post post = repository.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+        post.updatePost(postRequest);
+
+        return post.getId();
     }
 
     /**

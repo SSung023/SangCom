@@ -39,7 +39,7 @@ class UserServiceTest {
         
         //when
         Long savedUserId = service.saveUser(user);
-        User foundUser = service.findUserById(savedUserId).get();
+        User foundUser = service.findUserById(savedUserId);
 
         //then
         Assertions.assertThat(user).isEqualTo(foundUser);

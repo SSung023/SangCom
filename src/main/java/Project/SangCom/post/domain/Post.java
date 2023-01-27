@@ -2,6 +2,7 @@ package Project.SangCom.post.domain;
 
 import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
+import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.util.formatter.BaseTimeEntity;
@@ -89,6 +90,18 @@ public class Post extends BaseTimeEntity {
         this.isDeleted = isDeleted;
         this.isSecret = isSecret;
         this.isSolved = isSolved;
+    }
+
+
+    //== 비즈니스 코드 ==//
+
+    /**
+     * 게시글의 content(내용)을 수정
+     */
+    public void updatePost(PostRequest postRequest){
+        if (!postRequest.getContent().equals("")) {
+            this.content = postRequest.getContent();
+        }
     }
 
 

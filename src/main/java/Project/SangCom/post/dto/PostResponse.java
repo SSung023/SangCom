@@ -15,16 +15,22 @@ public class PostResponse {
     private String author; // 익명 or 닉네임
     private String title; // 게시글 제목
     private String content; // 게시글 내용
+    private int isOwner; // 게시글 작성자 여부
     private int isAnonymous; // 익명 여부
 
     @Builder
     public PostResponse(Long id, String boardCategory, String author, String title, String content,
-                        int isAnonymous) {
+                        int isOwner, int isAnonymous) {
         this.id = id;
         this.boardCategory = boardCategory;
         this.author = author;
         this.title = title;
         this.content = content;
+        this.isOwner = isOwner;
         this.isAnonymous = isAnonymous;
+    }
+
+    public void setIsOwner(int isOwner) {
+        this.isOwner = isOwner;
     }
 }

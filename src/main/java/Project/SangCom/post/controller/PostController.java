@@ -1,5 +1,6 @@
 package Project.SangCom.post.controller;
 
+import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
@@ -34,8 +35,12 @@ public class PostController {
      */
     @GetMapping("/board/free/{postId}")
     public ResponseEntity<SingleResponse<PostResponse>> inquiryCertainFreePost(@PathVariable Long postId){
+        Post postById = postService.findPostById(postId);
+        PostResponse postResponse = postService.convertToResponse(postById.getId());
 
-        return ResponseEntity.ok().body(new SingleResponse<>());
+
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));
     }
 
     /**
@@ -54,9 +59,12 @@ public class PostController {
      * 자유게시판 특정 글 수정
      */
     @PatchMapping("/board/free/{postId}")
-    public ResponseEntity<SingleResponse<PostResponse>> modifyPost(@PathVariable Long postId){
+    public ResponseEntity<SingleResponse<PostResponse>> modifyPost(@PathVariable Long postId, @RequestBody PostRequest postRequest){
+        Long updatedPostId = postService.updatePost(postId, postRequest);
+        PostResponse postResponse = postService.convertToResponse(updatedPostId);
 
-        return ResponseEntity.ok().body(new SingleResponse<>());
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));
     }
 
     /**

@@ -77,12 +77,13 @@ public class UserService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND));
     }
 
-    public Optional<User> findUserById(Long id) {
-        Optional<User> user = repository.findById(id);
-        return user;
+    public User findUserById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 
-    public Optional<User> findUserByNickname(String nickname){
-        return repository.findByNickname(nickname);
+    public User findUserByNickname(String nickname){
+        return repository.findByNickname(nickname)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 }
