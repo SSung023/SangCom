@@ -16,6 +16,8 @@ import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,11 +85,14 @@ public class OAuthController {
     }
 
     /**
-     *
-     * @return
+     * FE 메인화면에서 로그아웃 버튼 클릭 시 작동
+     * BE: token 제거 & SecurityContext 사용자 삭제
+     * FE: 브라우저의 Cookie에 있는 내용을 싹 지우기 & access-token도 지우기.. 가능??
      */
-    @PostMapping("/api/logout")
-    public ResponseEntity<CommonResponse> userLogout(){
+    @RequestMapping("/api/auth/logout")
+    public ResponseEntity<CommonResponse> userLogout(HttpServletResponse response) {
+
+        response.setHeader("Set-Cookie", "");
 
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));

@@ -180,7 +180,7 @@ class PostControllerTest {
     private PostRequest getPostRequest(String content) {
         return PostRequest.builder()
                 .boardCategory("FREE")
-                .author("nickname")
+                .authorNickname("nickname")
                 .title("title")
                 .content(content)
                 .isAnonymous(0)

@@ -4,15 +4,19 @@ import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
+import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class PostService {
     private final PostRepository repository;
 
@@ -52,6 +56,17 @@ public class PostService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 
+    /**
+     * postId에 저장되어 있는 nickname과
+     */
+    public boolean checkIsPostOwner(Long postId){
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Post post = repository.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+
+        return post.getAuthor().equals(principal.getNickname());
+    }
 
 
     /**

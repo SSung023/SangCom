@@ -79,7 +79,7 @@ public class PostServiceTest {
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
         //then
-        Assertions.assertThat(request.getAuthor()).isEqualTo(savedPost.getAuthor());
+        Assertions.assertThat(request.getAuthorNickname()).isEqualTo(savedPost.getAuthor());
         Assertions.assertThat(request.getTitle()).isEqualTo(savedPost.getTitle());
         Assertions.assertThat(request.getContent()).isEqualTo(savedPost.getContent());
         Assertions.assertThat(request.getBoardCategory()).isEqualTo(savedPost.getCategory().toString());
@@ -88,17 +88,16 @@ public class PostServiceTest {
 
     @Test
     @DisplayName("특정 게시글이 본인이 작성한 게시글인 경우 isOwner 필드에 1(TRUE)가 들어간다.")
-    @WithMockCustomUser()
+    @WithMockCustomUser(nickname = "nickname")
     public void checkIsPostOwner(){
         //given
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(request);
-//        service.checkIsOwner(savedId, );
-
+        Long savedId = service.savePost(request); //
 
         //then
+        Assertions.assertThat(service.checkIsPostOwner(savedId)).isTrue();
 
     }
     
@@ -113,7 +112,7 @@ public class PostServiceTest {
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
         
         //then
-        Assertions.assertThat(request.getAuthor()).isEqualTo(postById.getAuthor());
+        Assertions.assertThat(request.getAuthorNickname()).isEqualTo(postById.getAuthor());
         Assertions.assertThat(request.getTitle()).isEqualTo(postById.getTitle());
         Assertions.assertThat(request.getContent()).isEqualTo(postById.getContent());
         Assertions.assertThat(request.getBoardCategory()).isEqualTo(postById.getCategory().toString());
@@ -174,7 +173,7 @@ public class PostServiceTest {
 
     private PostRequest getPostRequest(String content) {
         return PostRequest.builder()
-                .author("익명")
+                .authorNickname("nickname")
                 .isAnonymous(1) // true
                 .title("title")
                 .content(content)
