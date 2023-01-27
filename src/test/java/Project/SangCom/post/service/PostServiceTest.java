@@ -191,6 +191,22 @@ public class PostServiceTest {
         log.info("post: " + post.toString());
         log.info("modifiedPost: " + modifiedPost.toString());
     }
+
+    @Test
+    @DisplayName("postId(PK)를 통해 특정 게시글을 삭제 처리하면 isDeleted가 true가 된다.")
+    public void deletePost(){
+        //given
+        PostRequest postRequest = getPostRequest("content");
+
+        //when
+        Long savedId = service.savePost(postRequest);
+        Long deletePostId = service.deletePost(savedId);
+
+        Post deletedPost = service.findPostById(deletePostId);
+
+        //then
+        Assertions.assertThat(deletedPost.getIsDeleted()).isEqualTo(1);
+    }
     
     
 

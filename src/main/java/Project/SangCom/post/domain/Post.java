@@ -103,6 +103,9 @@ public class Post extends BaseTimeEntity {
             this.content = postRequest.getContent();
         }
     }
+    public void deletePost(){
+        this.isDeleted = 1; // true
+    }
 
 
     //=== 연관관계 편의 메서드 ===//

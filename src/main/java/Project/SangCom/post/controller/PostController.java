@@ -5,6 +5,7 @@ import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.util.exception.SuccessCode;
+import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.ListResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
@@ -81,8 +82,10 @@ public class PostController {
      * 자유게시판 특정 글 삭제
      */
     @DeleteMapping("/board/free/{postId}")
-    public ResponseEntity<SingleResponse<PostResponse>> deletePost(@PathVariable Long postId){
+    public ResponseEntity<CommonResponse> deletePost(@PathVariable Long postId){
+        postService.deletePost(postId);
 
-        return ResponseEntity.ok().body(new SingleResponse<>());
+        return ResponseEntity.ok().body
+                (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }
 }

@@ -161,6 +161,24 @@ class PostControllerTest {
 
     }
 
+    @Test
+    @DisplayName("자유게시판에서 특정 글을 삭제 처리 할 수 있다.")
+    @WithMockCustomUser
+    public void deletePost() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+        PostRequest postRequest = getPostRequest("content");
+
+        // when
+        Long savePostId = postService.savePost(postRequest);
+
+        //then
+        mockMvc.perform(delete("/api/board/free/" + savePostId)
+                .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(status().isOk());
+
+    }
+
 
 
 

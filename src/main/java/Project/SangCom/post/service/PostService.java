@@ -37,6 +37,15 @@ public class PostService {
     }
 
     /**
+     * post_id(PK)를 통해 Post 객체를 찾아서 반환
+     * @param postId repository(DB)에서 찾고자 하는 Post의 id
+     */
+    public Post findPostById(Long postId) {
+        return repository.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+    }
+
+    /**
      * postId에 해당하는 게시글을 postRequest의 내용으로 수정
      * @param postId 수정하고자하는 게시글의 Id(PK)
      * @param postRequest 수정하고자 하는 내용
@@ -51,12 +60,16 @@ public class PostService {
     }
 
     /**
-     * post_id(PK)를 통해 Post 객체를 찾아서 반환
-     * @param postId repository(DB)에서 찾고자 하는 Post의 id
+     * postId에 해당하는 게시글을 삭제 처리(isDeleted = 1(true)로 변경)
+     * @param postId 삭제처리 할 게시글의 Id(PK)
      */
-    public Post findPostById(Long postId) {
-        return repository.findById(postId)
+    @Transactional
+    public Long deletePost(Long postId){
+        Post post = repository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+        post.deletePost();
+
+        return post.getId();
     }
 
     /**
