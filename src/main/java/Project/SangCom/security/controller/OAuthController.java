@@ -16,10 +16,12 @@ import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -86,13 +88,18 @@ public class OAuthController {
 
     /**
      * FE 메인화면에서 로그아웃 버튼 클릭 시 작동
-     * BE: token 제거 & SecurityContext 사용자 삭제
-     * FE: 브라우저의 Cookie에 있는 내용을 싹 지우기 & access-token도 지우기.. 가능??
+     * BE: Cookie의 refreshToken 제거 & SecurityContext 사용자 삭제
+     * FE: localStorage에 있는 accessToken 제거
      */
-    @RequestMapping("/api/auth/logout")
+    @PostMapping("/api/auth/logout")
     public ResponseEntity<CommonResponse> userLogout(HttpServletResponse response) {
 
-        response.setHeader("Set-Cookie", "");
+        // Cookie에 있는 refresh-token 제거
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        
 
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
