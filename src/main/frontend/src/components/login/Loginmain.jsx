@@ -1,59 +1,72 @@
 import React from "react";
-import style from './login.module.css';
-import { KAKAO_AUTH_URL } from "./OAuth";
+import styles from './login.module.css';
+import kakaoIcon from '../../images/kakaoIcon.svg';
+import naverIcon from '../../images/naverIcon.svg';
+import googleIcon from '../../images/google_gIcon.svg';
+import { googleBtnStyle, googleRedirectURL, 
+        kakaoBtnStyle, kakaoRedirectURL, 
+        naverBtnStyle, naverRedirectURL } from "./SocialLogin";
 
-export default function Loginmain (props){
-    const handleKakaoLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
-    };
+export default function Loginmain (){
     return(
-        <form method="post" action="" id="loginForm">
-            <div className={style.loginpage}>
-                <div className={style.loginmain}>
-                    <img
-                        className={style.logo}
-                        src={props.logoImg}
-                        alt=""/>
-                    <input
-                        type="email"
-                        className={style.inputEmail}
-                        placeholder="사용자 이메일 입력"
-                        name="email"
-                    />
-                    <input
-                        type="password"
-                        className={style.inputPw}
-                        placeholder="비밀번호 입력"
-                        name="password"
-                    />
-
-                    <button
-                        type="button"
-                        className={style.loginbtn}>
-                        로그인
-                    </button>
-                    <button
-                        type="button"
-                        className={style.kakaoLogin}
-                        onClick={handleKakaoLogin}
-                        > 
-                        <img
-                            className={style.kakaoIcon}
-                            src={props.kakaoIcon}/>
-                        카카오 로그인
-                    </button>
-                    
-                
-                    <a href="./changePw" className={style.changepw}>
-                        비밀번호 재설정
-                    </a>
-                    <p className={style.signuptext}>계정이 없으신가요?{" "}
-                    <a href="./singUp" className={style.signup}>
-                        회원가입</a>
-                    </p>
-                </div>
+        <div className={styles.loginpage}>
+            <SangcomLogo />
+            <div className={styles.verticalDivider} />
+            <div className={styles.loginmain}>
+                <SocialLoginBtn 
+                    icon={googleIcon} 
+                    socialName="구글 로그인" 
+                    redirectURL={googleRedirectURL} 
+                    style={googleBtnStyle}
+                />
+                <SocialLoginBtn 
+                    icon={kakaoIcon} 
+                    socialName="카카오 로그인" 
+                    redirectURL={kakaoRedirectURL} 
+                    style={kakaoBtnStyle}
+                />
+                <SocialLoginBtn 
+                    icon={naverIcon} 
+                    socialName="네이버 로그인" 
+                    redirectURL={naverRedirectURL} 
+                    style={naverBtnStyle}
+                />
+                <p>소셜 계정으로 간편하게 로그인하세요!</p>
             </div>
-        </form>
+        </div>
+    );
+}
 
+function SangcomLogo(){
+    return (
+        <div className={styles.logoContainer}>
+            <div className={styles.serviceName}>
+                SangCom
+            </div>
+            <div className={styles.serviceInfo}>
+                상명여자고등학교 커뮤니티
+            </div>
+        </div>
+    );
+}
+
+function SocialLoginBtn({ icon, socialName, redirectURL, style }){
+    const handleLogin = () => {
+        window.location.href = redirectURL;
+    }
+    return (
+        <button
+            type="button"
+            className={styles.socialBtn}
+            onClick={handleLogin}
+            style={style}>
+            <div className={styles.iconWrapper}>
+                <img
+                    className={styles.socialIcon}
+                    src={icon}
+                />
+            </div>
+            {socialName}
+        </button>
     );
 }
