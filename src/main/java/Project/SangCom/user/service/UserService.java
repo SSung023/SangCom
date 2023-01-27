@@ -74,7 +74,7 @@ public class UserService {
 
     public User findUserByEmail(String email){
         return repository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(ErrorCode.SAVED_MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 
     public User findUserById(Long id) {

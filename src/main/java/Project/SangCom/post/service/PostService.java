@@ -13,6 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static Project.SangCom.post.dto.PostResponse.FALSE;
+import static Project.SangCom.post.dto.PostResponse.TRUE;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -57,15 +60,22 @@ public class PostService {
     }
 
     /**
-     * postId에 저장되어 있는 nickname과 사용자의 nickname이 일치한다면
+     * postId에 저장되어 있는 nickname과 사용자의 nickname이 일치하는지 확인
+     * 작성자가 맞으므로 postResponse 객체의 isOwner를 TRUE(1)로 설정,
+     * 작성자가 아니라면 postRepsonse 객체의 isOwner를 FALSE(0)으로 설정
      */
-    public boolean checkIsPostOwner(Long postId){
+    public void checkAndSetIsPostOwner(Long postId, PostResponse postResponse){
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Post post = repository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
-        return post.getAuthor().equals(principal.getNickname());
+        if (post.getAuthor().equals(principal.getNickname())){
+            postResponse.setIsOwner(TRUE);
+        }
+        else {
+            postResponse.setIsOwner(FALSE);
+        }
     }
 
 

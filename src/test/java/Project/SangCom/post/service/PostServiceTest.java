@@ -96,21 +96,34 @@ public class PostServiceTest {
         //when
         Long savedId = service.savePost(request); // 게시글 등록
 
+        PostResponse postResponse = service.convertToResponse(savedId);
+        service.checkAndSetIsPostOwner(savedId, postResponse);
+
         //then
-        Assertions.assertThat(service.checkIsPostOwner(savedId)).isTrue();
+        Assertions.assertThat(postResponse.getIsOwner()).isEqualTo(1);
     }
     
     @Test
     @DisplayName("특정 사용자가 작성한 게시글이라면 응답 시, 응답 객체의 isOwner가 1(true)여야 한다.")
+    @WithMockCustomUser(nickname = "nickname")
     public void isOwnerIs1_whenUserIsWriter(){
         //given
         PostRequest request = getPostRequest("content");
         
         //when
         Long savedId = service.savePost(request); // 게시글 등록
+        PostResponse postResponse = service.convertToResponse(savedId);
+
+        service.checkAndSetIsPostOwner(savedId, postResponse);
 
         //then
-        
+        Assertions.assertThat(postResponse.getId()).isEqualTo(savedId);
+        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(request.getAuthorNickname());
+        Assertions.assertThat(postResponse.getTitle()).isEqualTo(request.getTitle());
+        Assertions.assertThat(postResponse.getContent()).isEqualTo(request.getContent());
+        Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(request.getIsAnonymous());
+
+        Assertions.assertThat(postResponse.getIsOwner()).isEqualTo(1);
     }
     
     @Test

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static Project.SangCom.post.dto.PostResponse.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -99,6 +100,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.author").value("nickname"))
                 .andExpect(jsonPath("$.data.title").value("title"))
                 .andExpect(jsonPath("$.data.content").value("content"))
+                .andExpect(jsonPath("$.data.isOwner").value(TRUE))
                 .andExpect(jsonPath("$.data.isAnonymous").value("0"));
     }
     
@@ -124,6 +126,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.author").value("nickname"))
                 .andExpect(jsonPath("$.data.title").value("title"))
                 .andExpect(jsonPath("$.data.content").value("content"))
+                .andExpect(jsonPath("$.data.isOwner").value(TRUE))
                 .andExpect(jsonPath("$.data.isAnonymous").value("0"));
     }
 
@@ -153,6 +156,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.author").value("nickname"))
                 .andExpect(jsonPath("$.data.title").value("title"))
                 .andExpect(jsonPath("$.data.content").value("new-content"))
+                .andExpect(jsonPath("$.data.isOwner").value(TRUE))
                 .andExpect(jsonPath("$.data.isAnonymous").value("0"));
 
     }

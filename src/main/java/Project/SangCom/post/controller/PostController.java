@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static Project.SangCom.post.dto.PostResponse.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -32,12 +34,14 @@ public class PostController {
 
     /**
      * 자유게시판 특정 글 조회
+     * 응답 객체에 isOwner(게시글 작성자 여부)에 대한 값 필요
      */
     @GetMapping("/board/free/{postId}")
     public ResponseEntity<SingleResponse<PostResponse>> inquiryCertainFreePost(@PathVariable Long postId){
         Post postById = postService.findPostById(postId);
         PostResponse postResponse = postService.convertToResponse(postById.getId());
 
+        postService.checkAndSetIsPostOwner(postById.getId(), postResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));
@@ -45,11 +49,14 @@ public class PostController {
 
     /**
      * 자유게시판 특정 글 작성
+     * 응답 객체에 isOwner(게시글 작성자 여부)에 대한 값 필요
      */
     @PostMapping("/board/free")
     public ResponseEntity<SingleResponse<PostResponse>> registerPost(@RequestBody PostRequest postRequest){
         Long savedPostId = postService.savePost(postRequest);
         PostResponse postResponse = postService.convertToResponse(savedPostId);
+
+        postService.checkAndSetIsPostOwner(savedPostId, postResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.CREATED.getStatus(),SuccessCode.CREATED.getMessage(),postResponse));
@@ -57,11 +64,14 @@ public class PostController {
 
     /**
      * 자유게시판 특정 글 수정
+     * 응답 객체에 isOwner(게시글 작성자 여부)에 대한 값 필요
      */
     @PatchMapping("/board/free/{postId}")
     public ResponseEntity<SingleResponse<PostResponse>> modifyPost(@PathVariable Long postId, @RequestBody PostRequest postRequest){
         Long updatedPostId = postService.updatePost(postId, postRequest);
         PostResponse postResponse = postService.convertToResponse(updatedPostId);
+
+        postService.checkAndSetIsPostOwner(updatedPostId, postResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));
