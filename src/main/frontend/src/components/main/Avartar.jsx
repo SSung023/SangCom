@@ -2,17 +2,15 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
-import { authInstance } from "../../utility/api";
+import { authInstance, defaultInstance } from "../../utility/api";
 import { loginAction } from "../../reducers/loginReducer";
-import axios from "axios";
-
-
 
 export default function Avartar(props){
     const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.loginReducer.user.info);
 
     const handleLogout = () => {
+        defaultInstance.post("/api/auth/logout", {})
         localStorage.setItem("token", "");
     };
 
@@ -25,17 +23,6 @@ export default function Avartar(props){
         .catch(function (error) {
             console.log(error);
         })
-        // axios.get("/api/auth/user", {
-        //     headers: {
-        //         Authorization: `${localStorage.getItem("token")}`,
-        //     },
-        // })
-        // .then(function (res) {
-        //     dispatch(loginAction(res.data.data));
-        // })
-        // .catch(function (err) {
-        //     console.log(err);
-        // })
     }, []);
         
     // userInfo가 바뀌면 리렌더링 해야 함.
