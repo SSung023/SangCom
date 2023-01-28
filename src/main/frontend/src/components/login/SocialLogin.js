@@ -5,7 +5,7 @@ export const kakaoBtnStyle = {
     fontWeight: "var(--semi-bold)"
 };
 
-export const googleRedirectURL = "http://localhost:3000/";
+export const googleRedirectURL = "http://localhost:8080/oauth2/authorization/google";
 export const googleBtnStyle = {
     backgroundColor: "var(--white-color)",
     fontFamily: "Roboto",
