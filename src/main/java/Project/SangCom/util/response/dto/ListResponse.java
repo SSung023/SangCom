@@ -2,6 +2,8 @@ package Project.SangCom.util.response.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -19,6 +21,11 @@ public class ListResponse<T> extends CommonResponse {
     public ListResponse(List<T> dataList) {
         this.dataList = dataList;
         this.count = dataList.size();
+    }
+
+    public ListResponse(HttpStatus status, String message, List<T> data) {
+        super(status, message);
+        this.dataList = data;
     }
 }
 

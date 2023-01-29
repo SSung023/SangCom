@@ -1,6 +1,8 @@
 package Project.SangCom.post.service;
 
+import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
@@ -9,9 +11,13 @@ import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static Project.SangCom.post.dto.PostResponse.FALSE;
 import static Project.SangCom.post.dto.PostResponse.TRUE;
@@ -89,6 +95,16 @@ public class PostService {
         else {
             postResponse.setIsOwner(FALSE);
         }
+    }
+
+
+    public Slice<PostResponse> getNotDeletedPostList(PostCategory category, Pageable pageable){
+        Slice<Post> posts = repository.findAllByIsDeletedAndCategory(0, category, pageable);
+        Slice<PostResponse> postResponses
+                = posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
+                p.getTitle(), p.getContent(), 0, p.getIsAnonymous()));
+
+        return postResponses;
     }
 
 

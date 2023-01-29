@@ -14,6 +14,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -207,11 +210,37 @@ public class PostServiceTest {
         //then
         Assertions.assertThat(deletedPost.getIsDeleted()).isEqualTo(1);
     }
-    
-    
+
+    @Test
+    @DisplayName("FREE 자유게시판의 삭제되지 않은 게시글을 조회할 수 있다.")
+    public void pagingNotDeletedPosts(){
+        //given
+        Post post1 = getPost(PostCategory.FREE, 0);
+        Post post2 = getPost(PostCategory.FREE, 1);
+        Post post3 = getPost(PostCategory.GRADE1, 0);
+        repository.save(post1);
+        repository.save(post2);
+        repository.save(post3);
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<PostResponse> postList = service.getNotDeletedPostList(PostCategory.FREE, pageRequest);
+
+        //then
+        Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
+    }
 
 
 
+
+    private Post getPost(PostCategory category, int isDeleted) {
+        return Post.builder()
+                .title("title1")
+                .content("content1")
+                .category(category)
+                .isDeleted(isDeleted)
+                .build();
+    }
     private PostRequest getPostRequest(String content) {
         return PostRequest.builder()
                 .authorNickname("nickname")

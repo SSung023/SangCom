@@ -1,19 +1,27 @@
 package Project.SangCom.post.controller;
 
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.ListResponse;
+import Project.SangCom.util.response.dto.PagingResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static Project.SangCom.post.dto.PostResponse.*;
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -26,11 +34,13 @@ public class PostController {
      * 자유게시판 전체 글 조회
      */
     @GetMapping("/board/free")
-    public ResponseEntity<ListResponse<PostResponse>> getFreePostList(){
+    public ResponseEntity<PagingResponse<PostResponse>> getFreePostList
+    (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
+        Slice<PostResponse> postList = postService.getNotDeletedPostList(PostCategory.FREE, pageable);
 
         return ResponseEntity.ok().body
-                (new ListResponse<>());
+                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
     }
 
     /**

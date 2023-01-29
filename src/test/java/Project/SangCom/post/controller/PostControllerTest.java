@@ -1,7 +1,10 @@
 package Project.SangCom.post.controller;
 
 
+import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
+import Project.SangCom.post.repository.PostRepository;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.security.dto.AccessTokenUserRequest;
 import Project.SangCom.security.service.JwtTokenProvider;
@@ -34,6 +37,8 @@ class PostControllerTest {
     MockMvc mockMvc;
     @Autowired
     WebApplicationContext context;
+    @Autowired
+    PostRepository postRepository;
     @Autowired
     PostService postService;
     @Autowired
@@ -178,6 +183,33 @@ class PostControllerTest {
                 .andExpect(status().isOk());
 
     }
+    
+    @Test
+    @DisplayName("자유게시판에서 글들을 조회할 수 있다.")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void getPosts() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+        Post post1 = getPost(PostCategory.FREE, "title1", "content1", 0);
+        Post post2 = getPost(PostCategory.FREE, "title2", "content2", 0);
+        Post post3 = getPost(PostCategory.FREE, "title3", "content3", 1);
+        Post post4 = getPost(PostCategory.FREE, "title4", "content4", 0);
+
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
+        postRepository.save(post4);
+        
+        //when&then
+        mockMvc.perform(get("/api/board/free")
+                .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+        
+    }
+    
+    
 
 
 
@@ -206,6 +238,14 @@ class PostControllerTest {
                 .title("title")
                 .content(content)
                 .isAnonymous(0)
+                .build();
+    }
+    private Post getPost(PostCategory category, String title, String content, int isDeleted) {
+        return Post.builder()
+                .title(title)
+                .content(content)
+                .category(category)
+                .isDeleted(isDeleted)
                 .build();
     }
 }
