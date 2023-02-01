@@ -117,9 +117,8 @@ export default function StudentRegister(){
                             className={style.select} id="number" name="number" size="1" required>
                             <option value="" hidden>번호 선택</option>
                             {numbers.map(function(i){
-                                return <option value={numbers[i-1]}>{`${numbers[i-1]}`}</option>
-                            })
-                            }
+                                return <option value={numbers[i-1]} key={i}>{`${numbers[i-1]}`}</option>
+                            })}
                         </select>
                     </label>
                     <button

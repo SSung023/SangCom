@@ -1,58 +1,3 @@
-.loginpage {
-    height: 100vh;
-    display: flex;
-    margin: auto;
-    align-items: center;
-    justify-content: center;
-}
-
-.loginmain{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 318px;
-    height: 470px;
-}
-
-.loginmain p {
-    margin: 2rem 0 0 0;
-    font-family: 'Roboto';
-    font-size: 18px;
-    font-weight: var(--medium);
-    color: var(--light-txt-color);
-}
-
-/* Logo */
-.logoContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.serviceName {
-    display: block;
-    font-family: 'Roboto';
-    font-size: 58px;
-    font-weight: var(--semi-bold);
-    color: var(--blue-color);
-}
-
-.serviceInfo {
-    font-family: 'Roboto';
-    font-weight: var(--semi-bold);
-    font-size: 28px;
-    margin-top: 12px;
-    color: var(--txt-color);
-}
-
-/* Divider */
-.verticalDivider {
-    height: 23rem;
-    border: 1px solid var(--line-color);
-    margin: 0 4rem;
-}
-
 /* Social Login */
 .socialBtn {
     border: none;
@@ -77,4 +22,12 @@
 
 .socialIcon {
     margin: auto;
+}
+
+.guide {
+    margin: 2rem 0 0 0;
+    font-family: 'Roboto';
+    font-size: 18px;
+    font-weight: var(--medium);
+    color: var(--light-txt-color);
 }
