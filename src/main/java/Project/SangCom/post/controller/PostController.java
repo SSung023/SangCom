@@ -7,20 +7,16 @@ import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
-import Project.SangCom.util.response.dto.ListResponse;
 import Project.SangCom.util.response.dto.PagingResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController

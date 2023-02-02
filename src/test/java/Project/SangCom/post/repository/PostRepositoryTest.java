@@ -60,6 +60,75 @@ public class PostRepositoryTest {
         Assertions.assertThat(content.size()).isEqualTo(2);
 
     }
+    
+    @Test
+    @DisplayName("자유게시판 제목으로 게시글 검색 페이징 테스트")
+    public void searchPostByTitle(){
+        //given
+        Post post1 = getPost("title1", "content1", PostCategory.FREE, 0);
+        Post post2 = getPost("title2", "2", PostCategory.FREE, 1);
+        Post post3 = getPost("title3", "content3", PostCategory.FREE, 0);
+        Post post4 = getPost("title4", "content4", PostCategory.GRADE1, 0);
+        repository.save(post1);
+        repository.save(post2);
+        repository.save(post3);
+        repository.save(post4);
+        
+        //when
+        String keyword = "title";
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<Post> posts = repository.findByTitleContainingAndCategory(keyword, PostCategory.FREE, pageRequest);
+        List<Post> content = posts.getContent();
+
+        //then
+        Assertions.assertThat(content.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("자유게시판 내용으로 게시글 검색 페이징 테스트")
+    public void searchPostByContent(){
+        //given
+        Post post1 = getPost("title1", "content1", PostCategory.FREE, 0);
+        Post post2 = getPost("title2", "2", PostCategory.FREE, 1);
+        Post post3 = getPost("title3", "content3", PostCategory.FREE, 0);
+        Post post4 = getPost("title4", "content4", PostCategory.GRADE1, 0);
+        repository.save(post1);
+        repository.save(post2);
+        repository.save(post3);
+        repository.save(post4);
+
+        //when
+        String keyword = "content";
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<Post> posts = repository.findByContentContainingAndCategory(keyword, PostCategory.FREE, pageRequest);
+        List<Post> content = posts.getContent();
+
+        //then
+        Assertions.assertThat(content.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("자유게시판 제목과 내용으로 게시글 검색 페이징 테스트")
+    public void searchPostByTitleAndContent(){
+        //given
+        Post post1 = getPost("keyword", "content1", PostCategory.FREE, 0);
+        Post post2 = getPost("title2", "keyword", PostCategory.FREE, 1);
+        Post post3 = getPost("title3", "keyword", PostCategory.GRADE2, 0);
+        Post post4 = getPost("title4", "content4", PostCategory.GRADE1, 0);
+        repository.save(post1);
+        repository.save(post2);
+        repository.save(post3);
+        repository.save(post4);
+
+        //when
+        String keyword = "keyword";
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<Post> posts = repository.findByTitleContainingOrContentContainingAndCategory(keyword, keyword, PostCategory.FREE, pageRequest);
+        List<Post> content = posts.getContent();
+
+        //then
+        Assertions.assertThat(content.size()).isEqualTo(2);
+    }
 
 
 
