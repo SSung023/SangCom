@@ -90,7 +90,8 @@ export default function TeacherRegister(){
                             className={style.select} id="chargeSubject" name="chargeSubject" size="1" required>
                             <option value="" hidden selected>담당 과목 선택</option>
                             {subjects[0].map((subject)=>(
-                                <option value={subject.name}>{`${subject.name}`}</option>)) }
+                                <option value={subject.name} key={subject.name}>{`${subject.name}`}</option>)) 
+                            }
                         </select>
                     </label>
                     <button

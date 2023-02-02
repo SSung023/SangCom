@@ -44,11 +44,21 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String email;
 
+        /**
+         * UserInfo 인터페이스 생성 후 서비스마다 구현체를 만드는 것은 어떨지?
+         * 정보 받는 부분 / 중복 검사 후 저장하는 부분 메소드로 나누는건?
+         */
+
         // 서비스가 카카오인 경우 이메일 정보를 받아온다.
-        if ("kakao".equals(serviceName)){
+        if ("kakao".equals(serviceName)) {
             Map<String, Object> profile = (Map<String, Object>) attributes.get("kakao_account");
             email = (String) profile.get("email");
             log.info("email: " + email);
+        }
+        // 서비스가 구글인 경우 - 카카오처럼 따로 정보 받아올 필요X -> "kakao_accoount" 등..
+        else if ("google".equals(serviceName)){
+            email = (String) attributes.get("email");
+            log.info("google email: " + email);
         }
         else {
             throw new BusinessException(ErrorCode.UNAUTHORIZED_WAY);
@@ -57,6 +67,7 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         User user;
         Optional<User> optionalUser = repository.findByEmail(email);
         String accessToken = userRequest.getAccessToken().getTokenValue();
+        log.info(accessToken);
 
         // DB에서 일치하는 email을 찾은 경우
         if (optionalUser.isPresent()){

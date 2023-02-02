@@ -8,13 +8,19 @@
     --line-color: #D9D9D9;
     --btn-bg-color: #F6F8FA;
     --txt-color: #444444;
-    --light-txt-color: #ADADAD;
+    --light-txt-color: #909090;
+
+    --kakao-color: #FEE500;
+    --naver-color: #03C75A;
     
     --bold: 700;
     --semi-bold: 600;
     --medium : 500;
     --regular: 400;
 }
+
+@import url("http://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700");
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
 
 html, body {
     margin: 0;
