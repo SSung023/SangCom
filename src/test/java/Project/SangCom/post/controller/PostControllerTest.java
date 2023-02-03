@@ -214,6 +214,33 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
         
     }
+
+    @Test
+    @DisplayName("자유게시판에서 글을 검색할 수 있다.")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void searchPost() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+        Post post1 = getPost(PostCategory.FREE, "title1", "content1", 0);
+        Post post2 = getPost(PostCategory.FREE, "title2", "content2", 0);
+        Post post3 = getPost(PostCategory.FREE, "title3", "content3", 1);
+        Post post4 = getPost(PostCategory.FREE, "title4", "content4", 0);
+
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
+        postRepository.save(post4);
+
+        //when&then
+        mockMvc.perform(get("/api/board/free/search?query=title&keyword=title")
+                .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.numberOfElements").value(3))
+                .andExpect(jsonPath("$.data.pageable.offset").value(0))
+                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+
+    }
     
     
 

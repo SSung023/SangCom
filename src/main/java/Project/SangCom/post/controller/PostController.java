@@ -5,7 +5,6 @@ import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
-import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
@@ -34,10 +33,24 @@ public class PostController {
      */
     @GetMapping("/board/free")
     public ResponseEntity<PagingResponse<PostResponse>> getFreePostList
-    (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
         Slice<PostResponse> postList = postService.getNotDeletedPostList(PostCategory.FREE, pageable);
 
+        return ResponseEntity.ok().body
+                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
+    }
+
+    /**
+     * 자유게시판 게시글 검색 - 제목만, 내용만, 제목+내용
+     * ex) /api/board/free/search?page=0&size=3
+     */
+    @GetMapping("/board/free/search")
+    public ResponseEntity<PagingResponse<PostResponse>> searchPosts
+        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+         @RequestParam String query, @RequestParam String keyword){
+
+        Slice<PostResponse> postList = postService.searchPosts(query, keyword, PostCategory.FREE, pageable);
         return ResponseEntity.ok().body
                 (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
     }

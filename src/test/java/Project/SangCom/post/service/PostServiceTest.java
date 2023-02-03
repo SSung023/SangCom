@@ -21,6 +21,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.util.annotation.Nullable;
 
 @SpringBootTest
 @Transactional
@@ -199,9 +200,6 @@ public class PostServiceTest {
 
         Assertions.assertThat(post.getContent()).isEqualTo(modifiedPost.getContent());
         Assertions.assertThat(modifiedPost.getContent()).isEqualTo("new-content");
-
-//        log.info("post: " + post.toString());
-//        log.info("modifiedPost: " + modifiedPost.toString());
     }
 
     @Test
@@ -225,9 +223,9 @@ public class PostServiceTest {
     @DisplayName("FREE 자유게시판의 삭제되지 않은 게시글을 조회할 수 있다.")
     public void pagingNotDeletedPosts(){
         //given
-        Post post1 = getPost(PostCategory.FREE, 0);
-        Post post2 = getPost(PostCategory.FREE, 1);
-        Post post3 = getPost(PostCategory.GRADE1, 0);
+        Post post1 = getPost(PostCategory.FREE, "title", "content", 0);
+        Post post2 = getPost(PostCategory.FREE, "title", "content", 1);
+        Post post3 = getPost(PostCategory.GRADE1, "title", "content", 0);
         repository.save(post1);
         repository.save(post2);
         repository.save(post3);
@@ -240,6 +238,45 @@ public class PostServiceTest {
         Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName("FREE 자유게시판에서 제목을 통해 게시글을 검색할 수 있다.")
+    public void searchPostByTitleInFree(){
+        //given
+        Post post1 = getPost(PostCategory.FREE, "keyword", "content", 0);
+        Post post2 = getPost(PostCategory.FREE, "title", "keyword", 1);
+        Post post3 = getPost(PostCategory.GRADE1, "title2", "keyword", 0);
+        repository.save(post1);
+        repository.save(post2);
+        repository.save(post3);
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<PostResponse> postList = service.searchPosts("title", "keyword", PostCategory.FREE, pageRequest);
+
+        //then
+        Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("FREE 자유게시판에서 내용을 통해 게시글을 검색할 수 있다.")
+    public void searchPostByContentInFree(){
+        //given
+        Post post1 = getPost(PostCategory.FREE, "keyword", "content", 0);
+        Post post2 = getPost(PostCategory.FREE, "title", "keyword", 1);
+        Post post3 = getPost(PostCategory.FREE, "title2", "keyword", 0);
+        repository.save(post1);
+        repository.save(post2);
+        repository.save(post3);
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<PostResponse> postList = service.searchPosts("content", "keyword", PostCategory.FREE, pageRequest);
+
+        //then
+        Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
+    }
+
+
 
 
 
@@ -251,10 +288,10 @@ public class PostServiceTest {
                 .role(Role.STUDENT)
                 .build();
     }
-    private Post getPost(PostCategory category, int isDeleted) {
+    private Post getPost(PostCategory category, String title, String content, int isDeleted) {
         return Post.builder()
-                .title("title1")
-                .content("content1")
+                .title(title)
+                .content(content)
                 .category(category)
                 .isDeleted(isDeleted)
                 .build();

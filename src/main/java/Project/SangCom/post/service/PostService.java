@@ -1,6 +1,5 @@
 package Project.SangCom.post.service;
 
-import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
@@ -16,8 +15,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static Project.SangCom.post.dto.PostResponse.FALSE;
 import static Project.SangCom.post.dto.PostResponse.TRUE;
@@ -100,14 +97,42 @@ public class PostService {
     }
 
 
+    /**
+     * 찾고자 하는 게시판에서 삭제되지 않은 게시글들을 반환
+     * @param category 게시글을 찾고자하는 게시판 종류
+     */
     public Slice<PostResponse> getNotDeletedPostList(PostCategory category, Pageable pageable){
-        Slice<Post> posts = repository.findAllByIsDeletedAndCategory(0, category, pageable);
-        Slice<PostResponse> postResponses
-                = posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
-                p.getTitle(), p.getContent(), 0, p.getIsAnonymous()));
+        Slice<Post> posts = repository.findPostNotDeleted(0, category, pageable);
 
-        return postResponses;
+        return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
+        p.getTitle(), p.getContent(), 0, p.getIsAnonymous()));
     }
+
+    /**
+     * 찾고자 하는 게시판에서 제목/내용/제목+내용
+     * @param query 검색하는 방법: 제목(title)/내용(content)/제목+내용(all)
+     * @param category 검색하고자 하는 게시판 종류
+     */
+    public Slice<PostResponse> searchPosts(String query, String keyword, PostCategory category, Pageable pageable){
+        Slice<Post> posts = null;
+
+        if (query.equals("title")) {
+            posts = repository.searchPostByTitle(keyword, category, pageable);
+        }
+        else if (query.equals("content")) {
+            posts = repository.searchPostByContent(keyword, category, pageable);
+        }
+        else if (query.equals("all")) {
+            posts = repository.searchPost(keyword, keyword, category, pageable);
+        }
+
+        return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
+        p.getTitle(), p.getContent(), 0, p.getIsAnonymous()));
+    }
+
+
+
+
 
 
     /**
