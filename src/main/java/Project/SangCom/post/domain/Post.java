@@ -9,13 +9,9 @@ import Project.SangCom.util.formatter.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +28,7 @@ public class Post extends BaseTimeEntity {
     /**
      * 대안: user의 id를 저장 - private Long author_id;
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -109,7 +105,7 @@ public class Post extends BaseTimeEntity {
 
 
     //=== 연관관계 편의 메서드 ===//
-    public void setUser(User user){
+    public void addUser(User user){
         this.user = user;
         user.getPosts().add(this);
     }

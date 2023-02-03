@@ -5,6 +5,8 @@ import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
+import Project.SangCom.user.domain.Role;
+import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.PagingResponse;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -60,7 +63,9 @@ public class PostController {
      */
     @PostMapping("/board/free")
     public ResponseEntity<SingleResponse<PostResponse>> registerPost(@RequestBody PostRequest postRequest){
-        Long savedPostId = postService.savePost(postRequest);
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long savedPostId = postService.savePost(writer, postRequest);
+
         PostResponse postResponse = postService.convertToResponse(savedPostId);
 
         postService.checkAndSetIsPostOwner(savedPostId, postResponse);

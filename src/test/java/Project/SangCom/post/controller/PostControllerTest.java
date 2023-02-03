@@ -10,6 +10,7 @@ import Project.SangCom.security.dto.AccessTokenUserRequest;
 import Project.SangCom.security.service.JwtTokenProvider;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.utils.WithMockCustomUser;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,8 @@ class PostControllerTest {
     MockMvc mockMvc;
     @Autowired
     WebApplicationContext context;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     PostRepository postRepository;
     @Autowired
@@ -115,11 +119,11 @@ class PostControllerTest {
     public void viewPostDetails() throws Exception {
         //given
         PostRequest postRequest = getPostRequest("content");
-
         String accessToken = getAccessToken();
         
         // when
-        Long savePostId = postService.savePost(postRequest);
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long savePostId = postService.savePost(writer, postRequest);
 
         // then
         mockMvc.perform(get("/api/board/free/" + savePostId)
@@ -140,6 +144,7 @@ class PostControllerTest {
     @WithMockCustomUser(role = Role.STUDENT)
     public void updatePostContent() throws Exception {
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String accessToken = getAccessToken();
         PostRequest postRequest = getPostRequest("content");
         String requestJson = "{\"id\":\"\", \"boardCategory\":\"FREE\"," +
@@ -147,7 +152,7 @@ class PostControllerTest {
                 "\"isAnonymous\":\"0\"}";
 
         //when
-        Long savePostId = postService.savePost(postRequest);
+        Long savePostId = postService.savePost(user, postRequest);
 
         //then
         mockMvc.perform(patch("/api/board/free/" + savePostId)
@@ -171,11 +176,12 @@ class PostControllerTest {
     @WithMockCustomUser
     public void deletePost() throws Exception {
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String accessToken = getAccessToken();
         PostRequest postRequest = getPostRequest("content");
 
         // when
-        Long savePostId = postService.savePost(postRequest);
+        Long savePostId = postService.savePost(user, postRequest);
 
         //then
         mockMvc.perform(delete("/api/board/free/" + savePostId)

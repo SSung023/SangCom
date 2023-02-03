@@ -30,7 +30,7 @@ import java.util.Objects;
 
 // 연관관계 편의 메서드 설정 필요
 @Entity
-@ToString
+@ToString(of = {"id", "nickname", "email", "role"})
 @Getter
 public class User implements UserDetails {
 

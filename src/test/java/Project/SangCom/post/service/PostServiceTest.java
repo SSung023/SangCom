@@ -5,6 +5,8 @@ import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
+import Project.SangCom.user.domain.Role;
+import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import Project.SangCom.utils.WithMockCustomUser;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -74,10 +77,11 @@ public class PostServiceTest {
     @DisplayName("PostRequest 객체를 전달받아 service를 통해 게시글을 DB에 저장할 수 있다.")
     public void canSavePost(){
         //given
+        User user = getUser();
         PostRequest request = getPostRequest("content");
 
         //when
-        Long registeredId = service.savePost(request);
+        Long registeredId = service.savePost(user, request);
         Post savedPost = repository.findById(registeredId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
@@ -94,10 +98,11 @@ public class PostServiceTest {
     @WithMockCustomUser(nickname = "nickname")
     public void checkIsPostOwner(){
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(request); // 게시글 등록
+        Long savedId = service.savePost(user, request); // 게시글 등록
 
         PostResponse postResponse = service.convertToResponse(savedId);
         service.checkAndSetIsPostOwner(savedId, postResponse);
@@ -112,9 +117,10 @@ public class PostServiceTest {
     public void isOwnerIs1_whenUserIsWriter(){
         //given
         PostRequest request = getPostRequest("content");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         //when
-        Long savedId = service.savePost(request); // 게시글 등록
+        Long savedId = service.savePost(user, request); // 게시글 등록
         PostResponse postResponse = service.convertToResponse(savedId);
 
         service.checkAndSetIsPostOwner(savedId, postResponse);
@@ -133,10 +139,11 @@ public class PostServiceTest {
     @DisplayName("postId(PK)를 통해 특정 게시글을 조회할 수 있다.")
     public void canLookupPostById(){
         //given
+        User user = getUser();
         PostRequest request = getPostRequest("content");
         
         //when
-        Long savedId = service.savePost(request); // 게시글 저장
+        Long savedId = service.savePost(user, request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
         
         //then
@@ -151,10 +158,11 @@ public class PostServiceTest {
     @DisplayName("postId(PK)를 통해 조회한 특정 게시글을 PostResponse 객체로 변환할 수 있다.")
     public void convertPostToPostResponse(){
         //given
+        User user = getUser();
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(request); // 게시글 저장
+        Long savedId = service.savePost(user, request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
 
         PostResponse postResponse = service.convertToResponse(postById.getId()); // 조회한 게시글을 Response 객체로 변환
@@ -172,11 +180,12 @@ public class PostServiceTest {
     @DisplayName("postId(PK)를 통해 조회한 특정 게시글의 내용을 수정할 수 있다.")
     public void UpdateCertainPost(){
         //given
+        User user = getUser();
         PostRequest postRequest = getPostRequest("content");
         PostRequest newRequest = getPostRequest("new-content");
 
         //when
-        Long savedId = service.savePost(postRequest);
+        Long savedId = service.savePost(user, postRequest);
         Long modifiedPostId = service.updatePost(savedId, newRequest);
 
         Post post = service.findPostById(savedId);
@@ -191,18 +200,19 @@ public class PostServiceTest {
         Assertions.assertThat(post.getContent()).isEqualTo(modifiedPost.getContent());
         Assertions.assertThat(modifiedPost.getContent()).isEqualTo("new-content");
 
-        log.info("post: " + post.toString());
-        log.info("modifiedPost: " + modifiedPost.toString());
+//        log.info("post: " + post.toString());
+//        log.info("modifiedPost: " + modifiedPost.toString());
     }
 
     @Test
     @DisplayName("postId(PK)를 통해 특정 게시글을 삭제 처리하면 isDeleted가 true가 된다.")
     public void deletePost(){
         //given
+        User user = getUser();
         PostRequest postRequest = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(postRequest);
+        Long savedId = service.savePost(user, postRequest);
         Long deletePostId = service.deletePost(savedId);
 
         Post deletedPost = service.findPostById(deletePostId);
@@ -233,6 +243,14 @@ public class PostServiceTest {
 
 
 
+    private User getUser() {
+        return User.builder()
+                .username("username")
+                .nickname("nickname")
+                .email("test@naver.com")
+                .role(Role.STUDENT)
+                .build();
+    }
     private Post getPost(PostCategory category, int isDeleted) {
         return Post.builder()
                 .title("title1")

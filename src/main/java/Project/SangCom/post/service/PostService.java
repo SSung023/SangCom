@@ -32,11 +32,13 @@ public class PostService {
 
     /**
      * RequestDTO를 Entity로 변환하고 repository를 통해 저장
+     * @param writer 게시글을 작성한 사용자
      * @param postRequest 사용자에게 전달받은 게시글 정보
      */
     @Transactional
-    public Long savePost(PostRequest postRequest) {
+    public Long savePost(User writer, PostRequest postRequest) {
         Post post = postRequest.toEntity();
+        post.addUser(writer);
         Post savedPost = repository.save(post);
 
         return savedPost.getId();
