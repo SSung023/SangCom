@@ -107,17 +107,19 @@ public class JwtTokenProviderServiceTest {
 
         //when
         Long now = System.currentTimeMillis();
-        String accessToken = "Bearer " + createAccessToken(userDTO, now + 100, secretKey); // 유효기간이 짧은 access-token 생성
+        String accessToken = createAccessToken(userDTO, now + 100, secretKey);
+        String fullAccessToken = "Bearer " + accessToken; // 유효기간이 짧은 access-token 생성
         String refreshToken = provider.createRefreshToken(userDTO);
         ResponseCookie cookie = getRefreshTokenToCookie(refreshToken, 6);
 
-        request.addHeader(AUTHORIZATION_HEADER, accessToken);
+        request.addHeader(AUTHORIZATION_HEADER, fullAccessToken);
         request.addHeader(REFRESH_HEADER, cookie.toString());
 
         tokenProviderService.validateAndReissueToken(request, response, accessToken);
 
         //then
-        Assertions.assertThat(accessToken).isNotEqualTo(response.getHeader(AUTHORIZATION_HEADER));
+        Assertions.assertThat(fullAccessToken).isNotEqualTo(response.getHeader(AUTHORIZATION_HEADER));
+        Assertions.assertThat(response.getHeader("Grant-Type")).isEqualTo("reissued-grant");
     }
     
     @Test
@@ -135,7 +137,9 @@ public class JwtTokenProviderServiceTest {
          * validateAndReissueToken에서 사용할 access-token과 refresh-token을 직접 설정
          */
         Long now = System.currentTimeMillis();
-        String accessToken = "Bearer " + createAccessToken(userDTO, now + 100, secretKey);
+        String accessToken = createAccessToken(userDTO, now + 100, secretKey);
+        String fullAccessToken = "Bearer " + accessToken;
+
         String refreshToken = Jwts.builder()
                 .setHeader(createHeader())
                 .setClaims(createClaims(userDTO))
@@ -147,7 +151,7 @@ public class JwtTokenProviderServiceTest {
         provider.refreshLength = refreshToken.length();
 
         // request에 access-token, refresh-token이 왔다고 가정
-        request.addHeader(AUTHORIZATION_HEADER, accessToken);
+        request.addHeader(AUTHORIZATION_HEADER, fullAccessToken);
         request.addHeader(REFRESH_HEADER, cookie.toString());
 
         tokenProviderService.validateAndReissueToken(request, response, accessToken);
@@ -161,18 +165,9 @@ public class JwtTokenProviderServiceTest {
         //then
         Assertions.assertThat(accessToken).isNotEqualTo(newAccessToken);
         Assertions.assertThat(refreshToken).isNotEqualTo(newRefreshToken);
+        Assertions.assertThat(response.getHeader("Grant-Type")).isEqualTo("reissued-grant");
     }
-    
-    @Test
-    @DisplayName("logout 처리 시 Header에 있던 Token들을 모두 삭제해야 한다.")
-    public void deleteTokenWhenLogout(){
-        //given
-        
-        //when
-        
-        //then
-        
-    }
+
 
 
 

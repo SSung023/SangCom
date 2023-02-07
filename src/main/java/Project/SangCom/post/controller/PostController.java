@@ -31,7 +31,7 @@ public class PostController {
     /**
      * 자유게시판 전체 글 조회
      */
-    @GetMapping("/board/free")
+    @GetMapping("/board/free/list")
     public ResponseEntity<PagingResponse<PostResponse>> getFreePostList
         (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
