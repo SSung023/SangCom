@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Main from './pages/Main';
 import Board from './pages/Board';
 import TimeTable from './pages/TimeTable';
+import MealOfMonth from './pages/MealOfMonth';
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Auth from "./pages/Auth";
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       { index: true, element: <Main /> } ,
       { path: 'board', element: <Board />},
       { path: 'timetable', element: <TimeTable />},
+      { path: 'mealPage', element: <MealOfMonth />},
     ],
   },
   {
