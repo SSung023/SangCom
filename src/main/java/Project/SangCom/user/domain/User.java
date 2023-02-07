@@ -1,5 +1,6 @@
 package Project.SangCom.user.domain;
 
+import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.scrap.domain.Scrap;
@@ -45,6 +46,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Scrap> scraps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
 
     @Column(unique = true, length = 10)
