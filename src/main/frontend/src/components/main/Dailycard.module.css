@@ -18,21 +18,24 @@
 
 .mealoft{
     background-color: #FFFFFF;
-    border: solid 1px var(--line-color);
+    border: solid 1px var(--shadow-line-color);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     position: relative;
 }
 
 .todo{
     background-color: #FFFFFF;
-    border: solid 1px var(--line-color);
+    border: solid 1px var(--shadow-line-color);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     position: relative;
 }
 
 .nextclass{
     background-color: #FFFFFF;
-    border: solid 1px var(--line-color);
+    border: solid 1px var(--shadow-line-color);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     position: relative;
 }

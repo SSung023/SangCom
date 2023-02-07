@@ -1,5 +1,6 @@
 import './App.css';
-import { BrowserRouter, createBrowserRouter, RouterProvider, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Root from './pages/Root';
 import Login from './pages/Login';
@@ -27,7 +28,9 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, element: <Main /> } ,
-      { path: 'board', element: <Board />},
+      { path: 'board/free', element: <Board />},
+      { path: 'board/council', element: <Board />},
+      { path: 'board/club', element: <Board />},
       { path: 'timetable', element: <TimeTable />},
       { path: 'mealPage', element: <MealOfMonth />},
     ],
@@ -53,41 +56,6 @@ const router = createBrowserRouter([
     errorElement : <NotFound/>,
   },
 ]);
-
-
-// const router = createBrowserRouter(
-//   <Routes>
-//     <Route 
-//       path='/' 
-//       element={<PrivateRoute component={<Root/>}/>}
-//       children={[
-//         { index: true, element: <Main /> } ,
-//         { path: 'board', element: <Board />},
-//         { path: 'timetable', element: <TimeTable />},
-//       ]}
-//     />
-//     <Route
-//       path='/login'
-//       element={<PublicRoute component={<Login/>} restricted/>}
-//     />
-//     <Route
-//       path='/register'
-//       element={<PublicRoute component={<Register/>} restricted/>}
-//     />
-//     <Route
-//       path='/studentregister'
-//       element={<PublicRoute component={<StudentRegister/>} restricted/>}
-//     />
-//     <Route
-//       path='/teacherregister'
-//       element={<PublicRoute component={<TeacherRegister/>} restricted/>}
-//     />
-//     <Route
-//       path='/auth'
-//       element={<PublicRoute component={<Auth/>} restricted/>}
-//     />
-//   </Routes>
-// );
 
 
 function App() {
