@@ -27,7 +27,7 @@ export default function Avartar(props){
         
     // userInfo가 바뀌면 리렌더링 해야 함.
     useEffect(() => {
-        //console.log(userInfo);
+        console.log(userInfo);
     }, [userInfo]);
 
     return (

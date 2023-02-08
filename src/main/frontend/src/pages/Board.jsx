@@ -6,7 +6,7 @@ export default function Board() {
     useEffect(()=> {
         authInstance.get('api/board/free')
         .then(function (res) {
-            console.log(res.data.data);
+            console.log(res.data);
         })
     }, []);
     return (
