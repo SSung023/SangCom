@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static Project.SangCom.security.config.SecurityConfig.permitURI;
+import static Project.SangCom.security.service.JwtTokenProvider.AUTHORIZATION_HEADER;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -51,6 +52,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = tokenProviderService.resolveAccessToken(request);
 
         if (StringUtils.hasText(accessToken) && tokenProviderService.validateAndReissueToken(request, response, accessToken)) {
+            // 갱신되었을 때를 대비하여 response에서 access-token을 가져온다.
+            if (response.getHeader(AUTHORIZATION_HEADER) != null){
+                accessToken = response.getHeader(AUTHORIZATION_HEADER);
+            }
             Authentication authentication = tokenProviderService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}",

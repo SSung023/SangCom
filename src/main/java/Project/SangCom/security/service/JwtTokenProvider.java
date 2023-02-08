@@ -37,6 +37,7 @@ public class JwtTokenProvider {
     private static String AUTHORITIES_KEY = "role";
     private static String EMAIL_KEY = "email";
     public static String AUTHORIZATION_HEADER = "Authorization";
+    public static String GRANT_HEADER = "Grant-Type";
     public static String REFRESH_HEADER = "Set-Cookie";
 
     public int refreshLength = 0;

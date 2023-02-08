@@ -1,5 +1,6 @@
 package Project.SangCom.like.domain;
 
+import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.user.domain.User;
 import lombok.Getter;
@@ -26,6 +27,10 @@ public class Likes {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
 
     //=== 연관관계 편의 메서드 ===//
     public void setUser(User user){
@@ -36,5 +41,10 @@ public class Likes {
     public void setPost(Post post){
         this.post = post;
         post.getLikes().add(this);
+    }
+
+    public void setComment(Comment comment){
+        this.comment = comment;
+        comment.getLikes().add(this);
     }
 }
