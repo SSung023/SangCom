@@ -153,7 +153,8 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.title").value("title"))
                 .andExpect(jsonPath("$.data.content").value("content"))
                 .andExpect(jsonPath("$.data.isOwner").value(TRUE))
-                .andExpect(jsonPath("$.data.isAnonymous").value("0"));
+                .andExpect(jsonPath("$.data.isLikePressed").value(0))
+                .andExpect(jsonPath("$.data.isAnonymous").value(0));
     }
 
     @Test

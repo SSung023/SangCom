@@ -60,6 +60,7 @@ public class PostServiceTest {
                 .content("content")
                 .isAnonymous(0)
                 .build();
+        post.updateLikes(1);
 
         //when
         Post savedPost = repository.save(post);
@@ -71,6 +72,7 @@ public class PostServiceTest {
         Assertions.assertThat(postResponse.getTitle()).isEqualTo(savedPost.getTitle());
         Assertions.assertThat(postResponse.getContent()).isEqualTo(savedPost.getContent());
         Assertions.assertThat(postResponse.getBoardCategory()).isEqualTo("FREE");
+        Assertions.assertThat(postResponse.getLikeCount()).isEqualTo(savedPost.getLikeCount());
         Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(0);
     }
 
@@ -275,6 +277,9 @@ public class PostServiceTest {
         //then
         Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
     }
+
+
+
 
 
 

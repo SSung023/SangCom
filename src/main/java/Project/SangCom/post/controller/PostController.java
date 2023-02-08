@@ -1,5 +1,6 @@
 package Project.SangCom.post.controller;
 
+import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class PostController {
     private final PostService postService;
+    private final LikeService likeService;
 
 
     @GetMapping("/board/free")
@@ -67,6 +69,7 @@ public class PostController {
     /**
      * 자유게시판 특정 글 조회
      * 응답 객체에 isOwner(게시글 작성자 여부)에 대한 값 필요
+     * 응답 객체에 isLikePressed(좋아요 선택 여부)에 대한 값 필요
      */
     @GetMapping("/board/free/{postId}")
     public ResponseEntity<SingleResponse<PostResponse>> inquiryCertainFreePost(@PathVariable Long postId){
@@ -74,6 +77,7 @@ public class PostController {
         PostResponse postResponse = postService.convertToResponse(postById.getId());
 
         postService.checkAndSetIsPostOwner(postById.getId(), postResponse);
+        likeService.checkAndSetIsLikePressed(postById.getId(), postResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));

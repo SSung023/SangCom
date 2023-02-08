@@ -105,7 +105,7 @@ public class PostService {
         Slice<Post> posts = repository.findPostNotDeleted(0, category, pageable);
 
         return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
-        p.getTitle(), p.getContent(), 0, p.getIsAnonymous()));
+        p.getTitle(), p.getContent(), p.getLikeCount(),0, 0, p.getIsAnonymous()));
     }
 
     /**
@@ -127,7 +127,7 @@ public class PostService {
         }
 
         return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
-        p.getTitle(), p.getContent(), 0, p.getIsAnonymous()));
+        p.getTitle(), p.getContent(), p.getLikeCount(), 0, 0, p.getIsAnonymous()));
     }
 
 
@@ -149,6 +149,7 @@ public class PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .author(post.getAuthor())
+                .likeCount(post.getLikeCount())
                 .isAnonymous(post.getIsAnonymous())
                 .build();
     }

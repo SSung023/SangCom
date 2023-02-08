@@ -22,7 +22,6 @@ public enum ErrorCode {
 	, UNAUTHORIZED_WAY(HttpStatus.UNAUTHORIZED, "허용된 인증 방법이 아닙니다.")
 
 	, TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "JWT token이 유효하지 않습니다.")
-	, TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT token의 유효기간이 만료되었습니다.")
 	, TOKEN_UNSUPPORTED(HttpStatus.UNAUTHORIZED, "지원하지 않는 token입니다.")
 
 	// 404 NOT_FOUND 잘못된 리소스 접근
@@ -35,6 +34,7 @@ public enum ErrorCode {
 	// 409 CONFLICT
 	, NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "닉네임이 중복됩니다. 다른 닉네임으로 설정해주세요.")
 	, NICKNAME_LENGTH_EXCEED(HttpStatus.CONFLICT, "닉네임의 최대 길이는 10입니다. 10 이하로 설정해주세요.")
+	, ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요가 완료되어있습니다.")
 	;
 
 

@@ -55,6 +55,7 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    private int likeCount; // 좋아요 수
 
     /**
      * TINYINT
@@ -90,18 +91,26 @@ public class Post extends BaseTimeEntity {
 
 
     //== 비즈니스 코드 ==//
-
-    /**
-     * 게시글의 content(내용)을 수정
-     */
+    // 게시글의 content(내용)을 수정
     public void updatePost(PostRequest postRequest){
         if (!postRequest.getContent().equals("")) {
             this.content = postRequest.getContent();
         }
     }
+    // 게시글 삭제 처리
     public void deletePost(){
         this.isDeleted = 1; // true
     }
+
+    /**
+     * 좋아요 수 갱신
+     * @param changeAmt 좋아요 수의 변화량
+     */
+    public void updateLikes(int changeAmt){
+        this.likeCount += changeAmt;
+    }
+
+
 
 
     //=== 연관관계 편의 메서드 ===//

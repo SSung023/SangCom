@@ -3,6 +3,7 @@ package Project.SangCom.like.service;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.like.repository.LikeRepository;
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.service.UserService;
@@ -10,8 +11,11 @@ import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,8 +34,14 @@ public class LikeService {
      */
     @Transactional
     public Long likePost(Long saveUserId, Long savePostId) {
+        // 이미 좋아요 되어있다면 예외 처리
+        if (likeRepository.findLikes(saveUserId, savePostId).isPresent()) {
+            throw new BusinessException(ErrorCode.ALREADY_LIKED);
+        }
+
         User user = userService.findUserById(saveUserId);
         Post post = postService.findPostById(savePostId);
+        post.updateLikes(1);
 
         Likes likes = new Likes();
         likes.setUser(user);
@@ -47,7 +57,11 @@ public class LikeService {
      * @param saveUserId 좋아요를 누른 사용자
      * @param savePostId 좋아요가 눌린 게시글
      */
+    @Transactional
     public void unlikePost(Long saveUserId, Long savePostId) {
+        Post post = postService.findPostById(savePostId);
+        post.updateLikes(-1);
+
         Likes savedLike = findSavedLike(saveUserId, savePostId);
         likeRepository.delete(savedLike);
     }
@@ -70,5 +84,23 @@ public class LikeService {
     public Likes findSavedLike(Long userId, Long postId){
         return likeRepository.findLikes(userId, postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+    }
+
+
+    /**
+     * 사용자가 좋아요를 누른 게시글인지 여부를 확인한 후, 응답 객체 필드값 설정
+     * @param postId 좋아요가 눌렸는지 확인 대상인 게시글의 PK
+     * @param postResponse isLikedPressed 필드 값을 수정할 응답 객체
+     */
+    public void checkAndSetIsLikePressed(Long postId, PostResponse postResponse){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Optional<Likes> likes = likeRepository.findLikes(user.getId(), postId);
+        if (likes.isPresent()) {
+            postResponse.setIsLikePressed(1);
+        }
+        else {
+            postResponse.setIsLikePressed(0);
+        }
     }
 }

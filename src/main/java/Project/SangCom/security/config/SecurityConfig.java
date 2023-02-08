@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(permitURI).permitAll()
-                .antMatchers("/api/like/board/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "TEACHER", "ADMIN")
+                .antMatchers("/api/like/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "TEACHER", "ADMIN")
                 .antMatchers("/api/board/free/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "ADMIN")
                 .anyRequest().authenticated()
 
