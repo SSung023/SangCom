@@ -4,8 +4,10 @@ import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.user.domain.User;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 
 /**
@@ -13,6 +15,7 @@ import javax.persistence.*;
  */
 @Entity
 @Getter
+@ToString(exclude = {"post", "comment"})
 public class Likes {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,5 +49,12 @@ public class Likes {
     public void setComment(Comment comment){
         this.comment = comment;
         comment.getLikes().add(this);
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        Likes target = (Likes) obj;
+        return Objects.equals(this.id, target.getId());
     }
 }

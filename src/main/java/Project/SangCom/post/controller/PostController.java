@@ -28,6 +28,15 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
     private final PostService postService;
 
+
+    @GetMapping("/board/free")
+    public ResponseEntity<SingleResponse<PostResponse>> getFreeBoardInfo(){
+
+
+        return ResponseEntity.ok().body
+                (new SingleResponse<>());
+    }
+
     /**
      * 자유게시판 전체 글 조회
      */
