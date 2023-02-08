@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 //@Transactional
@@ -30,7 +29,7 @@ class PostTest {
         Post post = new Post();
         
         //when
-        post.setUser(user1);
+        post.addUser(user1);
         
         //then
         Assertions.assertThat(user1).isEqualTo(post.getUser());

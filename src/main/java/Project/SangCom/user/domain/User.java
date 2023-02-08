@@ -1,5 +1,6 @@
 package Project.SangCom.user.domain;
 
+import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.scrap.domain.Scrap;
@@ -30,7 +31,7 @@ import java.util.Objects;
 
 // 연관관계 편의 메서드 설정 필요
 @Entity
-@ToString
+@ToString(exclude = {"posts", "likes", "scraps", "comments"})
 @Getter
 public class User implements UserDetails {
 
@@ -45,6 +46,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Scrap> scraps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
 
     @Column(unique = true, length = 10)

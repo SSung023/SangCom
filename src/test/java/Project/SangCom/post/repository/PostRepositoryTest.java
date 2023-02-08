@@ -53,7 +53,7 @@ public class PostRepositoryTest {
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<Post> isDeletedFalse = repository.findAllByIsDeletedAndCategory(0, PostCategory.FREE ,pageRequest);
+        Slice<Post> isDeletedFalse = repository.findPostNotDeleted(0, PostCategory.FREE ,pageRequest);
         List<Post> content = isDeletedFalse.getContent();
 
         //then
@@ -77,11 +77,11 @@ public class PostRepositoryTest {
         //when
         String keyword = "title";
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<Post> posts = repository.findByTitleContainingAndCategory(keyword, PostCategory.FREE, pageRequest);
+        Slice<Post> posts = repository.searchPostByTitle(keyword, PostCategory.FREE, pageRequest);
         List<Post> content = posts.getContent();
 
         //then
-        Assertions.assertThat(content.size()).isEqualTo(3);
+        Assertions.assertThat(content.size()).isEqualTo(2);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class PostRepositoryTest {
         //when
         String keyword = "content";
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<Post> posts = repository.findByContentContainingAndCategory(keyword, PostCategory.FREE, pageRequest);
+        Slice<Post> posts = repository.searchPostByContent(keyword, PostCategory.FREE, pageRequest);
         List<Post> content = posts.getContent();
 
         //then
@@ -123,11 +123,11 @@ public class PostRepositoryTest {
         //when
         String keyword = "keyword";
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<Post> posts = repository.findByTitleContainingOrContentContainingAndCategory(keyword, keyword, PostCategory.FREE, pageRequest);
+        Slice<Post> posts = repository.searchPost(keyword, keyword, PostCategory.FREE, pageRequest);
         List<Post> content = posts.getContent();
 
         //then
-        Assertions.assertThat(content.size()).isEqualTo(2);
+        Assertions.assertThat(content.size()).isEqualTo(1);
     }
 
 
