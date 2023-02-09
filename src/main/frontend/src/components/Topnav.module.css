@@ -1,8 +1,15 @@
 header {
-    border-bottom: solid 1px #D9D9D9;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-bottom: solid 1px var(--shadow-line-color);
+    box-shadow: 0px 2px 15px rgba(203, 212, 216, 0.4);
+    border-radius: 0px 0px 30px 0px;
+    margin-bottom: 2rem;
 }
 
 .inner {
+    width: 1308px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -17,17 +24,18 @@ header {
 .logo img{
     height: 50px;
     text-align: center;
-    margin: 5px 0 20px 10px;
+    margin: 5px 0 0 10px;
 }
  
 .navMenus{
-    width: 1005px;
+    min-width: 990px;
     display: inline-block;
 }
 
 .flex{
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 header .mainMenu{
@@ -51,8 +59,8 @@ header .mainMenu ul{
 header .mainMenu ul li .item{
     font-size: 18px;
     display: block;
-    color: #444444;
-    margin: 20px 30px 0 30px;
+    color: var(--txt-color);
+    margin: 0 30px 0 30px;
 }
 
 header .mainMenu ul li .item:hover{
@@ -61,13 +69,19 @@ header .mainMenu ul li .item:hover{
 }
 
 header .mainMenu ul li .item:after{
+    position: relative;
+    top: 18px;
     box-sizing: border-box;
-    margin-top: 18px;
+    margin-top: 0;
     display: block;
     content: "";
     border-bottom: solid 4px #2D81FF;
     transform: scaleX(0);
     transition: transform 250ms ease-in-out;
+}
+
+.item.active{
+    color: var(--blue-color);
 }
 
 header .mainMenu ul li .item:hover:after{
@@ -76,11 +90,11 @@ header .mainMenu ul li .item:hover:after{
 }
 
 .iconMenu{
+    text-align: center;
+    padding: 0;
     display: inline-block;
-    position: relative;
-    right: 40px;
     font-size: 40px;
-    margin-top: 10px;
+    margin: 8px 2rem 0 0;
 }
 
 .iconMenu a{
@@ -88,6 +102,6 @@ header .mainMenu ul li .item:hover:after{
 }
 
 .iconMenu a:hover{
-    color: #2473EA;
+    color: var(--blue-color);
     transition: 250ms ease-in-out;
 }

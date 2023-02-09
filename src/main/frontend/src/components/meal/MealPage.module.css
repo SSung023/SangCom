@@ -1,0 +1,88 @@
+table, th, td {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+th{
+    border-right: 1px solid var(--line-color);
+}
+
+/* table */
+.meal{
+    width: 924px;
+    box-sizing: border-box;
+    border: 1px solid var(--line-color);
+    margin-left: 42px;
+    border-collapse: collapse;
+}
+
+/* thead */
+.dates{
+    height: 30px;
+    border-right: 1px solid var(--line-color);
+}
+
+/* tr */
+.week{
+}
+
+/* td - inactive, active, today */
+.inactive .date{
+    color: var(--line-color);
+}
+
+.today .date{
+    color: var(--white-color);
+    background-color: var(--blue-color);
+}
+
+.date{
+    position: absolute;
+    top: 7px;
+    left: 6px;
+    height: 20px;
+    width: 20px;
+    background-color: var(--btn-bg-color);
+    border-radius: 50%;
+    text-align: center;
+    font-weight: var(--regular);
+    font-size: 0.75rem;
+    line-height: 20px;
+}
+
+.today{
+}
+
+/* 
+    만들어야 할 클래스 리스트
+    inactive
+    active
+    today
+    date 날짜(원형)
+    todayMeal(메뉴 들어갈 자리)
+    week(한 주)
+*/
+
+.todayMeal{
+    table-layout: fixed;
+    white-space: pre-line; /*음식이름 다음에 있는 공백을 개행으로*/
+    display: table-cell;
+    vertical-align: middle;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    word-break:break-all;
+    text-align: center;
+    font-size: 12px;
+    height : 140px;
+    width: 128px;
+    margin: 0 2px 0 2px;
+}
+
+.title{
+    display: block;
+    font-size: 20px;
+    font-weight: var(--bold);
+    margin: 30px 0 12px 42px;
+}

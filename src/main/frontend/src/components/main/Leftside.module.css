@@ -1,28 +1,31 @@
 .leftSide{
-    width: 340px;
-    height: 250vh;
+    height: 150vh;
     display: inline-block;
     background-color: var(--light-grey-color);
-    border: solid 1px var(--line-color);
+    border: solid 1px var(--shadow-line-color);
     box-sizing: border-box;
+    box-shadow: 5px 5px 10px rgba(0, 41, 102, 0.08);
+    border-radius: 20px;
+    padding: 30px;
 }
 
 .wrapper{
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .avartar{
     width: 250px;
     position: relative;
-    padding: 0 20px 0 20px;
-    margin: auto;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column
 }
 
 .photo{
     width: 100%;
-    margin-top: 50px;
+    margin-top: 20px;
     border-radius: 50%;
     box-sizing: border-box;
     border: solid 2px var(--line-color);
@@ -88,8 +91,7 @@
 
 .menus{
     display: flex;
-    flex-direction: column;
-    margin-top: 0 auto 0 auto;
+    flex-direction: column; 
 }
 
 .menus > a{
