@@ -13,8 +13,8 @@ import Register from './pages/Register';
 import Auth from "./pages/Auth";
 import StudentRegister from "./components/register/StudentRegister";
 import TeacherRegister from "./components/register/TeacherRegister";
-import PrivateRoute from './lib/PrivateRoute';
-import PublicRoute from './lib/PublicRoute';
+import PrivateRoute from './utility/PrivateRoute';
+import PublicRoute from './utility/PublicRoute';
 
 const router = createBrowserRouter([
   {

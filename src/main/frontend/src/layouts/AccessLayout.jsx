@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from "./AccessFrame.module.css";
+import styles from "./AccessLayout.module.css";
 
-export default function AccessFrame({ children }) {
+export default function AccessLayout({ children }) {
     return (
         <div className={styles.container}>
             <SangcomLogo />
