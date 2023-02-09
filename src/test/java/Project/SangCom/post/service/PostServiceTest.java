@@ -64,7 +64,7 @@ public class PostServiceTest {
 
         //when
         Post savedPost = repository.save(post);
-        PostResponse postResponse = service.convertToResponse(savedPost.getId());
+        PostResponse postResponse = service.convertToResponse(savedPost);
 
         //then
         Assertions.assertThat(postResponse.getId()).isEqualTo(savedPost.getId());
@@ -168,7 +168,7 @@ public class PostServiceTest {
         Long savedId = service.savePost(user, request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
 
-        PostResponse postResponse = service.convertToResponse(postById.getId()); // 조회한 게시글을 Response 객체로 변환
+        PostResponse postResponse = service.convertToResponse(postById); // 조회한 게시글을 Response 객체로 변환
 
         //then
         Assertions.assertThat(postResponse.getId()).isEqualTo(postById.getId());

@@ -1,6 +1,5 @@
 package Project.SangCom.post.dto;
 
-import Project.SangCom.post.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

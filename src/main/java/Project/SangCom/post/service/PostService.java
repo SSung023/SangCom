@@ -17,8 +17,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static Project.SangCom.post.dto.PostResponse.FALSE;
 import static Project.SangCom.post.dto.PostResponse.TRUE;
@@ -136,14 +138,14 @@ public class PostService {
 
     /**
      * 특정 게시판에서 24시간 내에 좋아요 수가 제일 많은 게시글을 검색
+     * 만일 존재하지 않으면 optional.empty 반환
      * @param category 검색하고자하는 게시판의 종류
      */
-    public Post getMostLikedPost(PostCategory category, Pageable pageable){
+    public List<Post> getMostLikedPost(PostCategory category, Pageable pageable){
         LocalDateTime threshold = LocalDateTime.now().minusDays(1);
 
         List<Post> posts = repository.findMostLikedPost(threshold, category, pageable);
-        Post mostLikedPost = posts.get(0);
-        return mostLikedPost;
+        return posts;
     }
 
 
@@ -161,6 +163,17 @@ public class PostService {
         Post post = repository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
+        return PostResponse.builder()
+                .id(post.getId())
+                .boardCategory(post.getCategory().toString())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .author(post.getAuthor())
+                .likeCount(post.getLikeCount())
+                .isAnonymous(post.getIsAnonymous())
+                .build();
+    }
+    public PostResponse convertToResponse(Post post){
         return PostResponse.builder()
                 .id(post.getId())
                 .boardCategory(post.getCategory().toString())

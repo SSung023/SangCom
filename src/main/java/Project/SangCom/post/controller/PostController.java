@@ -22,6 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -35,13 +38,18 @@ public class PostController {
     /**
      * 자유게시판 진입 시, 자유게시판 페이지에 필요한 정보들을 초기에 한 번에 보내줌
      * 내용: 실시간 인기글, 최근 작성 게시글 10개(페이징)
+     *
+     * 예외 처리 필요 -> 게시글이 하나도 없을 때 아예 반환을 하지 않음.
      */
     @GetMapping("/board/free")
     public ResponseEntity<SingleResponse<FreePostResponse>> getFreeBoardInfo
         (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
-        Post mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageable);
-        PostResponse postResponse = postService.convertToResponse(mostLikedPost.getId());
+        List<Post> mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageable);
+        PostResponse postResponse = null;
+        if (!mostLikedPost.isEmpty()){
+            postResponse = postService.convertToResponse(mostLikedPost.get(0));
+        }
 
         Slice<PostResponse> recentlyPost = postService.getNotDeletedPostList(PostCategory.FREE, pageable);
 
@@ -90,7 +98,7 @@ public class PostController {
     @GetMapping("/board/free/{postId}")
     public ResponseEntity<SingleResponse<PostResponse>> inquiryCertainFreePost(@PathVariable Long postId){
         Post postById = postService.findPostById(postId);
-        PostResponse postResponse = postService.convertToResponse(postById.getId());
+        PostResponse postResponse = postService.convertToResponse(postById);
 
         postService.checkAndSetIsPostOwner(postById.getId(), postResponse);
         likeService.checkAndSetIsLikePressed(postById.getId(), postResponse);

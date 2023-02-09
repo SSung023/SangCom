@@ -25,6 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -205,10 +207,10 @@ public class LikeServiceTest {
         postService.getMostLikedPost(PostCategory.FREE, pageRequest);
 
         //then
-        Post mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageRequest);
+        List<Post> mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageRequest);
 
-        Assertions.assertThat(mostLikedPost.getLikeCount()).isEqualTo(2);
-        Assertions.assertThat(mostLikedPost).isEqualTo(postService.findPostById(postId1));
+        Assertions.assertThat(mostLikedPost.get(0).getLikeCount()).isEqualTo(2);
+        Assertions.assertThat(mostLikedPost.get(0)).isEqualTo(postService.findPostById(postId1));
     }
 
 
