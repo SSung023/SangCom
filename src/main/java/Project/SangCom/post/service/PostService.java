@@ -10,11 +10,15 @@ import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static Project.SangCom.post.dto.PostResponse.FALSE;
 import static Project.SangCom.post.dto.PostResponse.TRUE;
@@ -129,6 +133,20 @@ public class PostService {
         return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
         p.getTitle(), p.getContent(), p.getLikeCount(), 0, 0, p.getIsAnonymous()));
     }
+
+    /**
+     * 특정 게시판에서 24시간 내에 좋아요 수가 제일 많은 게시글을 검색
+     * @param category 검색하고자하는 게시판의 종류
+     */
+    public Post getMostLikedPost(PostCategory category, Pageable pageable){
+        LocalDateTime threshold = LocalDateTime.now().minusDays(1);
+
+        List<Post> posts = repository.findMostLikedPost(threshold, category, pageable);
+        Post mostLikedPost = posts.get(0);
+        return mostLikedPost;
+    }
+
+
 
 
 

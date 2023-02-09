@@ -2,12 +2,16 @@ package Project.SangCom.post.repository;
 
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -36,9 +40,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 게시글 검색 - 제목 + 내용 검색
      */
-    @Query("select p from Post p where (p.title like %:title% OR p.content like %:content%) " +
-            "AND p.category = :category AND p.isDeleted = 0")
+    @Query("select p from Post p where (p.title like %:title% OR p.content like %:content%) AND p.category = :category AND p.isDeleted = 0")
     Slice<Post> searchPost
                         (@Param("title") String title, @Param("content") String content,
                          @Param("category") PostCategory category, Pageable pageable);
+
+    /**
+     * threshold 이내에 작성된 게시글을 대상으로 좋아요 수가 제일 높은 게시글을 하나 선택
+     */
+    @Query("select p from Post p where p.createdDate > :threshold and p.category = :category order by p.likeCount desc")
+    List<Post> findMostLikedPost
+                        (@Param("threshold") LocalDateTime threshold, @Param("category") PostCategory category, Pageable pageable);
 }

@@ -3,6 +3,7 @@ package Project.SangCom.post.controller;
 import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
+import Project.SangCom.post.dto.FreePostResponse;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
@@ -31,16 +32,31 @@ public class PostController {
     private final LikeService likeService;
 
 
+    /**
+     * 자유게시판 진입 시, 자유게시판 페이지에 필요한 정보들을 초기에 한 번에 보내줌
+     * 내용: 실시간 인기글, 최근 작성 게시글 10개(페이징)
+     */
     @GetMapping("/board/free")
-    public ResponseEntity<SingleResponse<PostResponse>> getFreeBoardInfo(){
+    public ResponseEntity<SingleResponse<FreePostResponse>> getFreeBoardInfo
+        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
+        Post mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageable);
+        PostResponse postResponse = postService.convertToResponse(mostLikedPost.getId());
+
+        Slice<PostResponse> recentlyPost = postService.getNotDeletedPostList(PostCategory.FREE, pageable);
+
+        FreePostResponse freePostResponse = FreePostResponse.builder()
+                .mostLikedPost(postResponse)
+                .recentlyPost(recentlyPost)
+                .build();
 
         return ResponseEntity.ok().body
-                (new SingleResponse<>());
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), freePostResponse));
     }
 
     /**
      * 자유게시판 전체 글 조회
+     * ex) /board/free/list?page=0&size=10
      */
     @GetMapping("/board/free/list")
     public ResponseEntity<PagingResponse<PostResponse>> getFreePostList
