@@ -18,7 +18,6 @@ export default function Board() {
 
     return (
         <div className='container'>
-            Board Page 📃
             <button onClick={handleClick} >db 생성 버튼</button>
             <ArticleCreate category="FREE" />
         </div>
