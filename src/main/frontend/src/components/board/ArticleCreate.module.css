@@ -1,0 +1,7 @@
+.form{
+    position: relative;
+}
+
+::placeholder {
+    color: var(--light-txt-color);
+}

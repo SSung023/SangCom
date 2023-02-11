@@ -10,10 +10,17 @@ export default function Board() {
             console.log(res.data);
         })
     }, []);
+
+    const handleClick = (e) => {
+        e.preventDefault();
+        authInstance.get('api/board/test');
+    }
+
     return (
         <div className='container'>
             Board Page 📃
-            <ArticleCreate category="FREE" nickname="단두대" />
+            <button onClick={handleClick} >db 생성 버튼</button>
+            <ArticleCreate category="FREE" />
         </div>
     );
 }

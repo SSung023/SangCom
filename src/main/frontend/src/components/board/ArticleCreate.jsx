@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { authInstance } from '../../utility/api';
+import styles from './ArticleCreate.module.css';
 
 export default function ArticleCreate({ category }) {
     
@@ -8,53 +9,55 @@ export default function ArticleCreate({ category }) {
     const [content, setContent] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
+    const postArticle = (url) => {
         const article = {
             id: 0,
             boardCategory: category,
+            authorNickname: "",
             title: title,
             content: content,
             isAnonymous: isAnonymous*1
         };
 
-        console.log(article);
-
-        authInstance.post("api/board/free", { ...article })
+        authInstance.post(url, { ...article })
         .then(function (res) {
             console.log(res.data);
         })
         .catch(function (err) {
             console.log(err);
         })
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        postArticle("api/board/free");
     };
 
     return (
         <form
             onSubmit={handleSubmit}
+            className={`${styles.form}`}
         >
             <label>익명
                 <input 
                     type="checkbox"
-                    id="anonymous"
-                    name='isAnonymous'
+                    className={`${styles.anonumous}`}
                     checked={isAnonymous}
                     onChange={(e) => { setIsAnonymous(e.target.checked) }}
                 />
             </label>
+            <div className={`${styles.verticalDivider}`}></div>
             <input 
                 type="text"
-                id="title"
-                name='title'
+                className={`${styles.title}`}
                 value={title}
                 maxLength="30"
+                placeholder='제목을 입력하세요. (최대 30자)'
                 onChange={(e) => { setTitle(e.target.value) }}
             />
             <textarea 
                 type="text"
-                id="content"
-                name='content'
+                className={`${styles.content}`}
                 value={content}
                 onChange={(e) => { setContent(e.target.value) }}
             />
