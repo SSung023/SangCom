@@ -6,8 +6,12 @@ import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.FreePostResponse;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
+import Project.SangCom.post.repository.PostRepository;
 import Project.SangCom.post.service.PostService;
+import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.domain.embedded.StudentInfo;
+import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.PagingResponse;
@@ -32,6 +36,8 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final LikeService likeService;
+    //for test
+    private final UserRepository userRepository;
 
 
     /**
@@ -143,6 +149,53 @@ public class PostController {
     @DeleteMapping("/board/free/{postId}")
     public ResponseEntity<CommonResponse> deletePost(@PathVariable Long postId){
         postService.deletePost(postId);
+
+        return ResponseEntity.ok().body
+                (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
+    }
+
+
+
+
+    //=== 테스트용 컨트롤러 ===//
+    @GetMapping("/board/test")
+    public ResponseEntity<CommonResponse> testPost(){
+        // User 객체 생성
+        User mine = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = User.builder()
+                .role(Role.STUDENT)
+                .email("test@naver.com")
+                .nickname("닉네임")
+                .username("이름이름")
+                .studentInfo(new StudentInfo("1", "4", "2"))
+                .build();
+        User savedUser = userRepository.save(user);
+
+        // Post 저장
+        for (int i = 0; i < 13; i++){
+            PostRequest postRequest = PostRequest.builder()
+                    .authorNickname("")
+                    .title("title" + i)
+                    .content("content" + i)
+                    .boardCategory(PostCategory.FREE.toString())
+                    .isAnonymous(i % 2)
+                    .build();
+            postRequest.updateAuthor(savedUser.getNickname());
+            postService.savePost(savedUser.getId(), postRequest);
+        }
+        PostRequest postRequest = PostRequest.builder()
+                .authorNickname("")
+                .title("title13")
+                .content("content13")
+                .boardCategory(PostCategory.FREE.toString())
+                .isAnonymous(1)
+                .build();
+        postRequest.updateAuthor(mine.getNickname());
+        Long savedPostId = postService.savePost(mine.getId(), postRequest);
+
+        // Like 설정
+        likeService.likePost(mine.getId(), savedPostId);
+        likeService.likePost(user.getId(), savedPostId);
 
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
