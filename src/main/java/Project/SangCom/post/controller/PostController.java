@@ -36,6 +36,7 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final LikeService likeService;
+
     //for test
     private final UserRepository userRepository;
 
