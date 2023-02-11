@@ -9,6 +9,7 @@ import Project.SangCom.util.formatter.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -48,7 +49,7 @@ public class Post extends BaseTimeEntity {
     private PostCategory category; // 게시글 카테고리(분류)
 
     @NotNull
-    @Column(length = 50)
+    @Column(length = 30)
     private String title;
 
     @NotNull
@@ -114,6 +115,7 @@ public class Post extends BaseTimeEntity {
 
 
     //=== 연관관계 편의 메서드 ===//
+//    @Transactional
     public void addUser(User user){
         this.user = user;
         user.getPosts().add(this);

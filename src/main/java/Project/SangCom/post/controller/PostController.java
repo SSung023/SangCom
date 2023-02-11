@@ -23,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -38,8 +37,6 @@ public class PostController {
     /**
      * 자유게시판 진입 시, 자유게시판 페이지에 필요한 정보들을 초기에 한 번에 보내줌
      * 내용: 실시간 인기글, 최근 작성 게시글 10개(페이징)
-     *
-     * 예외 처리 필요 -> 게시글이 하나도 없을 때 아예 반환을 하지 않음.
      */
     @GetMapping("/board/free")
     public ResponseEntity<SingleResponse<FreePostResponse>> getFreeBoardInfo

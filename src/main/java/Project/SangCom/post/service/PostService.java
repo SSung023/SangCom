@@ -6,18 +6,18 @@ import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.repository.UserRepository;
+import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +30,8 @@ import static Project.SangCom.post.dto.PostResponse.TRUE;
 @RequiredArgsConstructor
 @Slf4j
 public class PostService {
-    private final PostRepository repository;
+    private final UserService userService;
+    private final PostRepository postRepository;
 
 
     /**
@@ -40,9 +41,11 @@ public class PostService {
      */
     @Transactional
     public Long savePost(User writer, PostRequest postRequest) {
+        User user = userService.findUserById(writer.getId());
         Post post = postRequest.toEntity();
-        post.addUser(writer);
-        Post savedPost = repository.save(post);
+
+        Post savedPost = postRepository.save(post);
+        savedPost.addUser(user); // 여기서 오류 발생
 
         return savedPost.getId();
     }
@@ -52,7 +55,7 @@ public class PostService {
      * @param postId repository(DB)에서 찾고자 하는 Post의 id
      */
     public Post findPostById(Long postId) {
-        return repository.findById(postId)
+        return postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 
@@ -63,7 +66,7 @@ public class PostService {
      */
     @Transactional
     public Long updatePost(Long postId, PostRequest postRequest){
-        Post post = repository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
         post.updatePost(postRequest);
 
@@ -76,7 +79,7 @@ public class PostService {
      */
     @Transactional
     public Long deletePost(Long postId){
-        Post post = repository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
         post.deletePost();
 
@@ -91,7 +94,7 @@ public class PostService {
     public void checkAndSetIsPostOwner(Long postId, PostResponse postResponse){
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Post post = repository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
         if (post.getAuthor().equals(principal.getNickname())){
@@ -108,7 +111,7 @@ public class PostService {
      * @param category 게시글을 찾고자하는 게시판 종류
      */
     public Slice<PostResponse> getNotDeletedPostList(PostCategory category, Pageable pageable){
-        Slice<Post> posts = repository.findPostNotDeleted(0, category, pageable);
+        Slice<Post> posts = postRepository.findPostNotDeleted(0, category, pageable);
 
         return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
         p.getTitle(), p.getContent(), p.getLikeCount(),0, 0, p.getIsAnonymous()));
@@ -123,13 +126,13 @@ public class PostService {
         Slice<Post> posts = null;
 
         if (query.equals("title")) {
-            posts = repository.searchPostByTitle(keyword, category, pageable);
+            posts = postRepository.searchPostByTitle(keyword, category, pageable);
         }
         else if (query.equals("content")) {
-            posts = repository.searchPostByContent(keyword, category, pageable);
+            posts = postRepository.searchPostByContent(keyword, category, pageable);
         }
         else if (query.equals("all")) {
-            posts = repository.searchPost(keyword, keyword, category, pageable);
+            posts = postRepository.searchPost(keyword, keyword, category, pageable);
         }
 
         return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
@@ -144,7 +147,7 @@ public class PostService {
     public List<Post> getMostLikedPost(PostCategory category, Pageable pageable){
         LocalDateTime threshold = LocalDateTime.now().minusDays(1);
 
-        List<Post> posts = repository.findMostLikedPost(threshold, category, pageable);
+        List<Post> posts = postRepository.findMostLikedPost(threshold, category, pageable);
         return posts;
     }
 
@@ -160,7 +163,7 @@ public class PostService {
      * @param postId PostResponse로 변환하고 싶은 post의 PK
      */
     public PostResponse convertToResponse(Long postId){
-        Post post = repository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
         return PostResponse.builder()

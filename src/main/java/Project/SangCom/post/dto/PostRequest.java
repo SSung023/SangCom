@@ -2,12 +2,9 @@ package Project.SangCom.post.dto;
 
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-@Data
+@Getter
 @NoArgsConstructor
 @ToString
 public class PostRequest {

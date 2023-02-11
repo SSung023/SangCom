@@ -14,6 +14,7 @@ export default function ArticleCreate({ category }) {
         const article = {
             id: 0,
             boardCategory: category,
+            authorNickname: "",
             title: title,
             content: content,
             isAnonymous: isAnonymous*1
