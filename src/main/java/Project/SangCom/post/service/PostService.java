@@ -36,16 +36,16 @@ public class PostService {
 
     /**
      * RequestDTO를 Entity로 변환하고 repository를 통해 저장
-     * @param writer 게시글을 작성한 사용자
+     * @param writerId 게시글을 작성한 사용자의 id(PK)
      * @param postRequest 사용자에게 전달받은 게시글 정보
      */
     @Transactional
-    public Long savePost(User writer, PostRequest postRequest) {
-        User user = userService.findUserById(writer.getId());
+    public Long savePost(Long writerId, PostRequest postRequest) {
+        User user = userService.findUserById(writerId);
         Post post = postRequest.toEntity();
 
         Post savedPost = postRepository.save(post);
-        savedPost.addUser(user); // 여기서 오류 발생
+        savedPost.addUser(user); // user는 이 메서드 안에서 찾아서 넣어주어야 한다.
 
         return savedPost.getId();
     }
@@ -107,7 +107,7 @@ public class PostService {
 
 
     /**
-     * 찾고자 하는 게시판에서 삭제되지 않은 게시글들을 반환
+     * 찾고자 하는 게시판에서 삭제되지 않은 게시글들을 페이징하여 반환
      * @param category 게시글을 찾고자하는 게시판 종류
      */
     public Slice<PostResponse> getNotDeletedPostList(PostCategory category, Pageable pageable){
@@ -171,7 +171,7 @@ public class PostService {
                 .boardCategory(post.getCategory().toString())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .author(post.getAuthor())
+                .author(checkIsAnonymous(post))
                 .likeCount(post.getLikeCount())
                 .isAnonymous(post.getIsAnonymous())
                 .build();
@@ -182,9 +182,17 @@ public class PostService {
                 .boardCategory(post.getCategory().toString())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .author(post.getAuthor())
+                .author(checkIsAnonymous(post))
                 .likeCount(post.getLikeCount())
                 .isAnonymous(post.getIsAnonymous())
                 .build();
+    }
+    private String checkIsAnonymous(Post post){
+        if (post.getIsAnonymous() == 0){
+            return post.getAuthor();
+        }
+        else {
+            return "익명";
+        }
     }
 }

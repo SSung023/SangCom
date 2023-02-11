@@ -111,10 +111,11 @@ public class PostController {
     @PostMapping("/board/free")
     public ResponseEntity<SingleResponse<PostResponse>> registerPost(@RequestBody PostRequest postRequest){
         User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long savedPostId = postService.savePost(writer, postRequest);
+        postRequest.updateAuthor(writer.getNickname());
+
+        Long savedPostId = postService.savePost(writer.getId(), postRequest);
 
         PostResponse postResponse = postService.convertToResponse(savedPostId);
-
         postService.checkAndSetIsPostOwner(savedPostId, postResponse);
 
         return ResponseEntity.ok().body

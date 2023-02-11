@@ -37,4 +37,8 @@ public class PostRequest {
                 .isAnonymous(this.isAnonymous)
                 .build();
     }
+
+    public void updateAuthor(String nickname) {
+        this.authorNickname = nickname;
+    }
 }

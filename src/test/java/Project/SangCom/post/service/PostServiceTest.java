@@ -7,6 +7,7 @@ import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import Project.SangCom.utils.WithMockCustomUser;
@@ -21,7 +22,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.util.annotation.Nullable;
 
 @SpringBootTest
 @Transactional
@@ -29,7 +29,9 @@ import reactor.util.annotation.Nullable;
 public class PostServiceTest {
 
     @Autowired
-    private PostRepository repository;
+    private PostRepository postRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private PostService service;
 
@@ -43,7 +45,7 @@ public class PostServiceTest {
 
         //when
         Post receivedPost = postRequest.toEntity();
-        Post savedPost = repository.save(receivedPost);
+        Post savedPost = postRepository.save(receivedPost);
 
         //then
         Assertions.assertThat(receivedPost).isEqualTo(savedPost);
@@ -63,7 +65,7 @@ public class PostServiceTest {
         post.updateLikes(1);
 
         //when
-        Post savedPost = repository.save(post);
+        Post savedPost = postRepository.save(post);
         PostResponse postResponse = service.convertToResponse(savedPost);
 
         //then
@@ -84,8 +86,9 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
 
         //when
-        Long registeredId = service.savePost(user, request);
-        Post savedPost = repository.findById(registeredId)
+        User save = userRepository.save(user);
+        Long registeredId = service.savePost(save.getId(), request);
+        Post savedPost = postRepository.findById(registeredId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
         //then
@@ -105,7 +108,7 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(user, request); // 게시글 등록
+        Long savedId = service.savePost(user.getId(), request); // 게시글 등록
 
         PostResponse postResponse = service.convertToResponse(savedId);
         service.checkAndSetIsPostOwner(savedId, postResponse);
@@ -123,19 +126,59 @@ public class PostServiceTest {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         //when
-        Long savedId = service.savePost(user, request); // 게시글 등록
+        Long savedId = service.savePost(user.getId(), request); // 게시글 등록
         PostResponse postResponse = service.convertToResponse(savedId);
 
         service.checkAndSetIsPostOwner(savedId, postResponse);
 
         //then
         Assertions.assertThat(postResponse.getId()).isEqualTo(savedId);
-        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(request.getAuthorNickname());
+        Assertions.assertThat(postResponse.getAuthor()).isEqualTo("익명");
         Assertions.assertThat(postResponse.getTitle()).isEqualTo(request.getTitle());
         Assertions.assertThat(postResponse.getContent()).isEqualTo(request.getContent());
         Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(request.getIsAnonymous());
 
         Assertions.assertThat(postResponse.getIsOwner()).isEqualTo(1);
+    }
+    
+    @Test
+    @DisplayName("익명으로 작성한 게시글일 때 응답 객체의 author에 익명으로 전달되어야 한다.")
+    public void passAsAnonymous(){
+        //given
+        Post post = Post.builder()
+                .category(PostCategory.FREE)
+                .title("title")
+                .content("content")
+                .author("nickname1")
+                .isAnonymous(1)
+                .build();
+        
+        //when
+        Post savedPost = postRepository.save(post);
+        PostResponse postResponse = service.convertToResponse(savedPost);
+
+        //then
+        Assertions.assertThat(postResponse.getAuthor()).isEqualTo("익명");
+    }
+
+    @Test
+    @DisplayName("실명으로 작성한 게시글일 때 응답 객체의 author에 닉네임으로 전달되어야 한다.")
+    public void passAsNickname(){
+        //given
+        Post post = Post.builder()
+                .category(PostCategory.FREE)
+                .title("title")
+                .content("content")
+                .author("nickname1")
+                .isAnonymous(0)
+                .build();
+
+        //when
+        Post savedPost = postRepository.save(post);
+        PostResponse postResponse = service.convertToResponse(savedPost);
+
+        //then
+        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(post.getAuthor());
     }
     
     @Test
@@ -146,7 +189,8 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
         
         //when
-        Long savedId = service.savePost(user, request); // 게시글 저장
+        User save = userRepository.save(user);
+        Long savedId = service.savePost(save.getId(), request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
         
         //then
@@ -165,14 +209,15 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(user, request); // 게시글 저장
+        User save = userRepository.save(user);
+        Long savedId = service.savePost(save.getId(), request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
 
         PostResponse postResponse = service.convertToResponse(postById); // 조회한 게시글을 Response 객체로 변환
 
         //then
         Assertions.assertThat(postResponse.getId()).isEqualTo(postById.getId());
-        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(postById.getAuthor());
+        Assertions.assertThat(postResponse.getAuthor()).isEqualTo("익명");
         Assertions.assertThat(postResponse.getTitle()).isEqualTo(postById.getTitle());
         Assertions.assertThat(postResponse.getContent()).isEqualTo(postById.getContent());
         Assertions.assertThat(postResponse.getBoardCategory()).isEqualTo(postById.getCategory().toString());
@@ -188,7 +233,8 @@ public class PostServiceTest {
         PostRequest newRequest = getPostRequest("new-content");
 
         //when
-        Long savedId = service.savePost(user, postRequest);
+        User save = userRepository.save(user);
+        Long savedId = service.savePost(save.getId(), postRequest);
         Long modifiedPostId = service.updatePost(savedId, newRequest);
 
         Post post = service.findPostById(savedId);
@@ -212,7 +258,8 @@ public class PostServiceTest {
         PostRequest postRequest = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(user, postRequest);
+        User save = userRepository.save(user);
+        Long savedId = service.savePost(save.getId(), postRequest);
         Long deletePostId = service.deletePost(savedId);
 
         Post deletedPost = service.findPostById(deletePostId);
@@ -228,9 +275,9 @@ public class PostServiceTest {
         Post post1 = getPost(PostCategory.FREE, "title", "content", 0);
         Post post2 = getPost(PostCategory.FREE, "title", "content", 1);
         Post post3 = getPost(PostCategory.GRADE1, "title", "content", 0);
-        repository.save(post1);
-        repository.save(post2);
-        repository.save(post3);
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
@@ -247,9 +294,9 @@ public class PostServiceTest {
         Post post1 = getPost(PostCategory.FREE, "keyword", "content", 0);
         Post post2 = getPost(PostCategory.FREE, "title", "keyword", 1);
         Post post3 = getPost(PostCategory.GRADE1, "title2", "keyword", 0);
-        repository.save(post1);
-        repository.save(post2);
-        repository.save(post3);
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
@@ -266,9 +313,9 @@ public class PostServiceTest {
         Post post1 = getPost(PostCategory.FREE, "keyword", "content", 0);
         Post post2 = getPost(PostCategory.FREE, "title", "keyword", 1);
         Post post3 = getPost(PostCategory.FREE, "title2", "keyword", 0);
-        repository.save(post1);
-        repository.save(post2);
-        repository.save(post3);
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));

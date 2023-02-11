@@ -111,7 +111,7 @@ class PostControllerTest {
         //given
         String accessToken = getAccessToken();
         String requestJson = "{\"id\":\"\", \"boardCategory\":\"FREE\"," +
-                "\"authorNickname\":\"nickname\", \"title\":\"title\", \"content\":\"content\"," +
+                "\"authorNickname\":\"\", \"title\":\"title\", \"content\":\"content\"," +
                 "\"isAnonymous\":\"0\"}";
 
         //when&then
@@ -129,6 +129,32 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.isOwner").value(TRUE))
                 .andExpect(jsonPath("$.data.isAnonymous").value("0"));
     }
+
+    @Test
+    @DisplayName("자유게시판 카테고리에 익명으로 게시글을 작성(저장)할 수 있다.")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void registerFreePostAsAnonymous() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+        String requestJson = "{\"id\":\"\", \"boardCategory\":\"FREE\"," +
+                "\"authorNickname\":\"\", \"title\":\"title\", \"content\":\"content\"," +
+                "\"isAnonymous\":\"1\"}";
+
+        //when&then
+        mockMvc.perform(post("/api/board/free")
+                        .header(AUTHORIZATION_HEADER, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(SuccessCode.CREATED.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.CREATED.getMessage()))
+                .andExpect(jsonPath("$.data.boardCategory").value("FREE"))
+                .andExpect(jsonPath("$.data.author").value("익명"))
+                .andExpect(jsonPath("$.data.title").value("title"))
+                .andExpect(jsonPath("$.data.content").value("content"))
+                .andExpect(jsonPath("$.data.isOwner").value(TRUE))
+                .andExpect(jsonPath("$.data.isAnonymous").value("1"));
+    }
     
     @Test
     @DisplayName("자유게시판 카테고리에서 특정 글을 상세 조회할 수 있다.")
@@ -140,7 +166,7 @@ class PostControllerTest {
         
         // when
         User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long savePostId = postService.savePost(writer, postRequest);
+        Long savePostId = postService.savePost(writer.getId(), postRequest);
 
         // then
         mockMvc.perform(get("/api/board/free/" + savePostId)
@@ -170,7 +196,7 @@ class PostControllerTest {
                 "\"isAnonymous\":\"0\"}";
 
         //when
-        Long savePostId = postService.savePost(user, postRequest);
+        Long savePostId = postService.savePost(user.getId(), postRequest);
 
         //then
         mockMvc.perform(patch("/api/board/free/" + savePostId)
@@ -199,7 +225,7 @@ class PostControllerTest {
         PostRequest postRequest = getPostRequest("content");
 
         // when
-        Long savePostId = postService.savePost(user, postRequest);
+        Long savePostId = postService.savePost(user.getId(), postRequest);
 
         //then
         mockMvc.perform(delete("/api/board/free/" + savePostId)

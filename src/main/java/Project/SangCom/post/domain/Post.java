@@ -115,7 +115,6 @@ public class Post extends BaseTimeEntity {
 
 
     //=== 연관관계 편의 메서드 ===//
-//    @Transactional
     public void addUser(User user){
         this.user = user;
         user.getPosts().add(this);
