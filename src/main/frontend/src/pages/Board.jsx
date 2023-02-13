@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect } from 'react';
 import ArticleCreate from '../components/board/ArticleCreate';
-import Modal from '../ui/Modal';
+import Modal from '../components/ui/Modal';
 import { authInstance } from '../utility/api';
 
 export default function Board() {
