@@ -2,7 +2,7 @@ import React from "react";
 import style from './Register.module.css';
 import {MdPerson, MdSchool} from "react-icons/md";
 import {Link} from "react-router-dom";
-import AccessFrame from "../frames/AccessFrame";
+import AccessLayout from "../../layouts/AccessLayout";
 
 export default function RegisterSelection(props){
     const email = new URL(window.location.href).searchParams.get("email");
@@ -10,7 +10,7 @@ export default function RegisterSelection(props){
     const teacherUrl = "/register/teacher?email=" + email;
 
     return(
-        <AccessFrame>
+        <AccessLayout>
             <Link to = {studentUrl}>
                 <button
                     type="button"
@@ -24,6 +24,6 @@ export default function RegisterSelection(props){
                     <MdSchool className={style.icon}/>교사로 가입
                 </button>
             </Link>
-        </AccessFrame>
+        </AccessLayout>
     );
 }

@@ -2,6 +2,7 @@ package Project.SangCom.like.service;
 
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.like.repository.LikeRepository;
+import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
@@ -12,15 +13,20 @@ import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import Project.SangCom.utils.WithMockCustomUser;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -54,7 +60,7 @@ public class LikeServiceTest {
     @DisplayName("사용자는 게시글(Post)에 좋아요를 누를 수 있다.")
     public void UserCanLikePost(){
         //given
-        Long saveUserId = setUserAndSave();
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
         Long savePostId = setPostAndSave(saveUserId);
 
         //when
@@ -73,7 +79,7 @@ public class LikeServiceTest {
     @DisplayName("좋아요를 누른 게시글에 대해 좋아요를 한 번 더 눌렀을 때 예외가 발생한다.")
     public void ThrowException_WhenAlreadyLiked(){
         //given
-        Long saveUserId = setUserAndSave();
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
         Long savePostId = setPostAndSave(saveUserId);
 
         //when
@@ -90,7 +96,7 @@ public class LikeServiceTest {
     @DisplayName("사용자는 게시글(Post)에 좋아요를 다시 한 번 눌러서 취소할 수 있다.")
     public void UserCanUnlikePost(){
         //given
-        Long saveUserId = setUserAndSave();
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
         Long savePostId = setPostAndSave(saveUserId);
 
         //when
@@ -107,7 +113,7 @@ public class LikeServiceTest {
     @DisplayName("좋아요하지 않은 게시글에 대해 좋아요 취소를 하면 예외가 발생한다.")
     public void ThrowException_WhenNonExistLike(){
         //given
-        Long saveUserId = setUserAndSave();
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
         Long savePostId = setPostAndSave(saveUserId);
         
         //when & then
@@ -120,7 +126,7 @@ public class LikeServiceTest {
     @DisplayName("사용자가 좋아요를 누르면 게시글(Post)의 likeCount 값이 1 증가한다.")
     public void updateLikeCount(){
         //given
-        Long saveUserId = setUserAndSave();
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
         Long savePostId = setPostAndSave(saveUserId);
         
         //when
@@ -134,7 +140,7 @@ public class LikeServiceTest {
     @DisplayName("사용자가 좋아요 취소를 하면 게시글(Post)의 likeCount 값이 1 감소한다.")
     public void updateUnlikeCount(){
         //given
-        Long saveUserId = setUserAndSave();
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
         Long savePostId = setPostAndSave(saveUserId);
         
         // like post
@@ -179,6 +185,33 @@ public class LikeServiceTest {
         //then
         Assertions.assertThat(postResponse.getIsLikePressed()).isEqualTo(0);
     }
+    
+    @Test
+    @DisplayName("일정 시간 내에 좋아요가 제일 높은 게시글을 하나 추출할 수 있다.")
+    public void getHotPost(){
+        //given
+        Long userId1 = setUserAndSave("test@naver.com", "nickname");
+        Long userId2 = setUserAndSave("test1@naver.com", "nickname1");
+
+        Long postId1 = setPostAndSave(userId1);
+        Long postId2 = setPostAndSave(userId2);
+        Long postId3 = setPostAndSave(userId1);
+
+        //when
+        likeService.likePost(userId1, postId1);
+        likeService.likePost(userId2, postId1);
+        likeService.likePost(userId1, postId2);
+        likeService.likePost(userId1, postId3);
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        postService.getMostLikedPost(PostCategory.FREE, pageRequest);
+
+        //then
+        List<Post> mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageRequest);
+
+        Assertions.assertThat(mostLikedPost.get(0).getLikeCount()).isEqualTo(2);
+        Assertions.assertThat(mostLikedPost.get(0)).isEqualTo(postService.findPostById(postId1));
+    }
 
 
 
@@ -189,11 +222,11 @@ public class LikeServiceTest {
 
 
 
-    private Long setUserAndSave(){
+    private Long setUserAndSave(String email, String nickname){
         User user = User.builder()
                 .role(Role.STUDENT)
-                .email("test@naver.com")
-                .nickname("nickname")
+                .email(email)
+                .nickname(nickname)
                 .username("username")
                 .build();
         return userService.saveUser(user);
@@ -206,6 +239,6 @@ public class LikeServiceTest {
                 .content("content1")
                 .isAnonymous(0)
                 .build();
-        return postService.savePost(userService.findUserById(saveUserId), postRequest);
+        return postService.savePost(saveUserId, postRequest);
     }
 }

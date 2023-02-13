@@ -27,3 +27,13 @@ authInstance.interceptors.request.use(function (config) {
     config.headers["Authorization"] = token;
     return config;
 });
+
+// 요청 후 access token 만료 여부에 따라 토큰 업데이트
+authInstance.interceptors.response.use(async (res) => {
+    const grantType = res.headers.get("Grant-Type");
+    if(grantType === "reissued-grant"){
+        localStorage.setItem("token", res.headers.get("Authorization"));
+        return authInstance.request(res.config);
+    }
+    return res;
+})

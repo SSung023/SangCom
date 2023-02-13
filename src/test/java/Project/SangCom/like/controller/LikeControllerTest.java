@@ -153,6 +153,6 @@ class LikeControllerTest {
                 .content("content1")
                 .isAnonymous(0)
                 .build();
-        return postService.savePost(userService.findUserById(saveUserId), postRequest);
+        return postService.savePost(saveUserId, postRequest);
     }
 }

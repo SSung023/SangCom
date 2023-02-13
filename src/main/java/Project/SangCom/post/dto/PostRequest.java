@@ -3,16 +3,15 @@ package Project.SangCom.post.dto;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Data
+@Getter
 @NoArgsConstructor
 @ToString
 public class PostRequest {
 
-    private Long id;
     private String boardCategory;
     private String authorNickname; // 닉네임
     private String title;
@@ -21,8 +20,7 @@ public class PostRequest {
 
 
     @Builder
-    public PostRequest(Long id, String boardCategory, String authorNickname, String title, String content, int isAnonymous) {
-        this.id = id;
+    public PostRequest(String boardCategory, String authorNickname, String title, String content, int isAnonymous) {
         this.boardCategory = boardCategory;
         this.authorNickname = authorNickname;
         this.title = title;
@@ -39,5 +37,9 @@ public class PostRequest {
                 .content(this.content)
                 .isAnonymous(this.isAnonymous)
                 .build();
+    }
+
+    public void updateAuthor(String nickname) {
+        this.authorNickname = nickname;
     }
 }

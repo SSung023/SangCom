@@ -1,5 +1,5 @@
 import React from "react";
-import AccessFrame from "../frames/AccessFrame";
+import AccessLayout from "../../layouts/AccessLayout";
 import styles from './login.module.css';
 import kakaoIcon from '../../images/kakaoIcon.svg';
 import naverIcon from '../../images/naverIcon.svg';
@@ -11,7 +11,7 @@ import { googleBtnStyle, googleRedirectURL,
 
 export default function Loginmain (){
     return(
-        <AccessFrame>
+        <AccessLayout>
             <SocialLoginBtn 
                 icon={googleIcon} 
                 socialName="구글 로그인" 
@@ -31,7 +31,7 @@ export default function Loginmain (){
                 style={naverBtnStyle}
             />
             <p className={styles.guide}>소셜 계정으로 간편하게 로그인하세요!</p>
-        </AccessFrame>
+        </AccessLayout>
     );
 }
 

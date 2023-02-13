@@ -17,7 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
@@ -48,13 +53,11 @@ class LikeRepositoryTest {
     @DisplayName("userId와 postId를 통해 Likes 객체를 찾을 수 있다.")
     public void findLike(){
         //given
-        Long userId = setUserAndSave();
+        Long userId = setUserAndSave("test@naver.com", "nickname");
         Long postId = setPostAndSave(userId);
 
         //when
-        Likes likes = new Likes();
-        likes.setUser(userRepository.findById(userId).get());
-        likes.setPost(postRepository.findById(postId).get());
+        Likes likes = setLikes(userId, postRepository.findById(postId));
 
         likeRepository.save(likes);
         Likes foundLike = likeRepository.findLikes(userId, postId).get();
@@ -68,13 +71,11 @@ class LikeRepositoryTest {
     @DisplayName("저장되어 있는 Likes 객체를 삭제할 수 있다.")
     public void deleteLike(){
         //given
-        Long userId = setUserAndSave();
+        Long userId = setUserAndSave("test@naver.com", "nickname");
         Long postId = setPostAndSave(userId);
 
         //when
-        Likes likes = new Likes();
-        likes.setUser(userRepository.findById(userId).get());
-        likes.setPost(postRepository.findById(postId).get());
+        Likes likes = setLikes(userId, postRepository.findById(postId));
 
         Likes savedLike = likeRepository.save(likes);
         likeRepository.delete(savedLike);
@@ -83,15 +84,67 @@ class LikeRepositoryTest {
         Assertions.assertThat(likeRepository.findById(savedLike.getId())).isEqualTo(Optional.empty());
     }
 
+    @Test
+    @DisplayName("일정 시간 내에 좋아요 수가 제일 높은 게시글을 얻을 수 있다.")
+    public void canGetMostLikePost(){
+        //given
+        Long userId1 = setUserAndSave("test1@naver.com", "nickname1");
+        Long userId2 = setUserAndSave("test2@naver.com", "nickname2");
+        Long userId3 = setUserAndSave("test3@naver.com", "nickname3");
+
+        Long postId1 = setPostAndSave(userId1);
+        Long postId2 = setPostAndSave(userId1);
+        Long postId3 = setPostAndSave(userId2);
+
+        //when
+        Likes likes1 = setLikes(userId1, postRepository.findById(postId1));
+        Likes likes2 = setLikes(userId2, postRepository.findById(postId1));
+        Likes likes3 = setLikes(userId3, postRepository.findById(postId1));
+        postRepository.findById(postId1).get().updateLikes(3);
+
+        Likes likes4 = setLikes(userId1, postRepository.findById(postId2));
+        Likes likes5 = setLikes(userId2, postRepository.findById(postId2));
+        postRepository.findById(postId2).get().updateLikes(2);
+
+        Likes likes6 = setLikes(userId1, postRepository.findById(postId3));
+        postRepository.findById(postId3).get().updateLikes(1);
+
+        likeRepository.save(likes1);
+        likeRepository.save(likes2);
+        likeRepository.save(likes3);
+        likeRepository.save(likes4);
+        likeRepository.save(likes5);
+        likeRepository.save(likes6);
+
+        //then
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
+        LocalDateTime threshold = LocalDateTime.now().minusMinutes(10);
+
+        List<Post> mostLikedPost = postRepository.findMostLikedPost(threshold, PostCategory.FREE, pageRequest);
+        Post post = mostLikedPost.get(0);
+
+        Assertions.assertThat(post.getLikeCount()).isEqualTo(3);
+    }
 
 
 
 
-    private Long setUserAndSave(){
+
+
+
+
+    private Likes setLikes(Long userId, Optional<Post> optionalPost) {
+        Likes likes = new Likes();
+        likes.setUser(userRepository.findById(userId).get());
+        likes.setPost(optionalPost.get());
+
+        return likes;
+    }
+    private Long setUserAndSave(String email, String nickname){
         User user = User.builder()
                 .role(Role.STUDENT)
-                .email("test@naver.com")
-                .nickname("nickname")
+                .email(email)
+                .nickname(nickname)
                 .username("username")
                 .build();
         User save = userRepository.save(user);
