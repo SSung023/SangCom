@@ -1,0 +1,22 @@
+.wrapper {
+    box-sizing: border-box;
+    width: 100%;
+
+    padding: 12px 16px 12px 16px;
+    border: 1px solid var(--line-color);
+    border-radius: 1em;
+    margin: 1em 0 1em 0;
+
+    background-color: var(--white-color);
+}
+
+.title {
+    font-weight: var(--bold);
+    margin-bottom: 12px;
+}
+
+@media screen and (max-width: 786px) {
+    .wrapper {
+        font-size: 14px;
+    }
+}
