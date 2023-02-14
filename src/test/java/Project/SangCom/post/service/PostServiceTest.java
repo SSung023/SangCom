@@ -53,8 +53,10 @@ public class PostServiceTest {
 
     @Test
     @DisplayName("Post 객체를 PostResponse 객체로 변환할 수 있다.")
+    @WithMockCustomUser
     public void convertToPostResponse(){
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Post post = Post.builder()
                 .category(PostCategory.FREE)
                 .author("author")
@@ -66,28 +68,28 @@ public class PostServiceTest {
 
         //when
         Post savedPost = postRepository.save(post);
-        PostResponse postResponse = service.convertToResponse(savedPost);
+        PostResponse postDetailResponse = service.convertToDetailResponse(user, savedPost);
 
         //then
-        Assertions.assertThat(postResponse.getId()).isEqualTo(savedPost.getId());
-        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(savedPost.getAuthor());
-        Assertions.assertThat(postResponse.getTitle()).isEqualTo(savedPost.getTitle());
-        Assertions.assertThat(postResponse.getContent()).isEqualTo(savedPost.getContent());
-        Assertions.assertThat(postResponse.getBoardCategory()).isEqualTo("FREE");
-        Assertions.assertThat(postResponse.getLikeCount()).isEqualTo(savedPost.getLikeCount());
-        Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(0);
+        Assertions.assertThat(postDetailResponse.getId()).isEqualTo(savedPost.getId());
+        Assertions.assertThat(postDetailResponse.getAuthor()).isEqualTo(savedPost.getAuthor());
+        Assertions.assertThat(postDetailResponse.getTitle()).isEqualTo(savedPost.getTitle());
+        Assertions.assertThat(postDetailResponse.getContent()).isEqualTo(savedPost.getContent());
+        Assertions.assertThat(postDetailResponse.getBoardCategory()).isEqualTo("FREE");
+        Assertions.assertThat(postDetailResponse.getLikeCount()).isEqualTo(savedPost.getLikeCount());
+        Assertions.assertThat(postDetailResponse.getIsAnonymous()).isEqualTo(0);
     }
 
     @Test
     @DisplayName("PostRequest 객체를 전달받아 service를 통해 게시글을 DB에 저장할 수 있다.")
+    @WithMockCustomUser
     public void canSavePost(){
         //given
-        User user = getUser();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PostRequest request = getPostRequest("content");
 
         //when
-        User save = userRepository.save(user);
-        Long registeredId = service.savePost(save.getId(), request);
+        Long registeredId = service.savePost(user.getId(), request);
         Post savedPost = postRepository.findById(registeredId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
@@ -110,11 +112,10 @@ public class PostServiceTest {
         //when
         Long savedId = service.savePost(user.getId(), request); // 게시글 등록
 
-        PostResponse postResponse = service.convertToResponse(savedId);
-        service.checkAndSetIsPostOwner(savedId, postResponse);
+        PostResponse postDetailResponse = service.convertToDetailResponse(user, savedId);
 
         //then
-        Assertions.assertThat(postResponse.getIsOwner()).isEqualTo(1);
+        Assertions.assertThat(postDetailResponse.getIsOwner()).isEqualTo(1);
     }
     
     @Test
@@ -127,24 +128,24 @@ public class PostServiceTest {
         
         //when
         Long savedId = service.savePost(user.getId(), request); // 게시글 등록
-        PostResponse postResponse = service.convertToResponse(savedId);
-
-        service.checkAndSetIsPostOwner(savedId, postResponse);
+        PostResponse postDetailResponse = service.convertToDetailResponse(user, savedId);
 
         //then
-        Assertions.assertThat(postResponse.getId()).isEqualTo(savedId);
-        Assertions.assertThat(postResponse.getAuthor()).isEqualTo("익명");
-        Assertions.assertThat(postResponse.getTitle()).isEqualTo(request.getTitle());
-        Assertions.assertThat(postResponse.getContent()).isEqualTo(request.getContent());
-        Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(request.getIsAnonymous());
+        Assertions.assertThat(postDetailResponse.getId()).isEqualTo(savedId);
+        Assertions.assertThat(postDetailResponse.getAuthor()).isEqualTo("익명");
+        Assertions.assertThat(postDetailResponse.getTitle()).isEqualTo(request.getTitle());
+        Assertions.assertThat(postDetailResponse.getContent()).isEqualTo(request.getContent());
+        Assertions.assertThat(postDetailResponse.getIsAnonymous()).isEqualTo(request.getIsAnonymous());
 
-        Assertions.assertThat(postResponse.getIsOwner()).isEqualTo(1);
+        Assertions.assertThat(postDetailResponse.getIsOwner()).isEqualTo(1);
     }
     
     @Test
     @DisplayName("익명으로 작성한 게시글일 때 응답 객체의 author에 익명으로 전달되어야 한다.")
+    @WithMockCustomUser
     public void passAsAnonymous(){
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Post post = Post.builder()
                 .category(PostCategory.FREE)
                 .title("title")
@@ -155,16 +156,18 @@ public class PostServiceTest {
         
         //when
         Post savedPost = postRepository.save(post);
-        PostResponse postResponse = service.convertToResponse(savedPost);
+        PostResponse postDetailResponse = service.convertToDetailResponse(user, savedPost);
 
         //then
-        Assertions.assertThat(postResponse.getAuthor()).isEqualTo("익명");
+        Assertions.assertThat(postDetailResponse.getAuthor()).isEqualTo("익명");
     }
 
     @Test
     @DisplayName("실명으로 작성한 게시글일 때 응답 객체의 author에 닉네임으로 전달되어야 한다.")
+    @WithMockCustomUser
     public void passAsNickname(){
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Post post = Post.builder()
                 .category(PostCategory.FREE)
                 .title("title")
@@ -175,10 +178,10 @@ public class PostServiceTest {
 
         //when
         Post savedPost = postRepository.save(post);
-        PostResponse postResponse = service.convertToResponse(savedPost);
+        PostResponse postDetailResponse = service.convertToDetailResponse(user, savedPost);
 
         //then
-        Assertions.assertThat(postResponse.getAuthor()).isEqualTo(post.getAuthor());
+        Assertions.assertThat(postDetailResponse.getAuthor()).isEqualTo(post.getAuthor());
     }
     
     @Test
@@ -202,26 +205,56 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("postId(PK)를 통해 조회한 특정 게시글을 PostResponse 객체로 변환할 수 있다.")
+    @DisplayName("postId(PK)를 통해 조회한 특정 게시글을 필드가 모두 유의미한 PostResponse 객체로 변환할 수 있다.")
+    @WithMockCustomUser
     public void convertPostToPostResponse(){
         //given
-        User user = getUser();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PostRequest request = getPostRequest("content");
 
         //when
-        User save = userRepository.save(user);
-        Long savedId = service.savePost(save.getId(), request); // 게시글 저장
+        Long savedId = service.savePost(user.getId(), request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
 
-        PostResponse postResponse = service.convertToResponse(postById); // 조회한 게시글을 Response 객체로 변환
+        PostResponse postDetailResponse = service.convertToDetailResponse(user, postById); // 조회한 게시글을 Response 객체로 변환
 
         //then
-        Assertions.assertThat(postResponse.getId()).isEqualTo(postById.getId());
-        Assertions.assertThat(postResponse.getAuthor()).isEqualTo("익명");
-        Assertions.assertThat(postResponse.getTitle()).isEqualTo(postById.getTitle());
-        Assertions.assertThat(postResponse.getContent()).isEqualTo(postById.getContent());
-        Assertions.assertThat(postResponse.getBoardCategory()).isEqualTo(postById.getCategory().toString());
-        Assertions.assertThat(postResponse.getIsAnonymous()).isEqualTo(postById.getIsAnonymous());
+        Assertions.assertThat(postDetailResponse.getId()).isEqualTo(postById.getId());
+        Assertions.assertThat(postDetailResponse.getAuthor()).isEqualTo("익명");
+        Assertions.assertThat(postDetailResponse.getTitle()).isEqualTo(postById.getTitle());
+        Assertions.assertThat(postDetailResponse.getContent()).isEqualTo(postById.getContent());
+        Assertions.assertThat(postDetailResponse.getBoardCategory()).isEqualTo(postById.getCategory().toString());
+        Assertions.assertThat(postDetailResponse.getCommentCount()).isEqualTo(postById.getComments().size());
+        Assertions.assertThat(postDetailResponse.getLikeCount()).isEqualTo(0);
+        Assertions.assertThat(postDetailResponse.getIsLikePressed()).isEqualTo(0);
+        Assertions.assertThat(postDetailResponse.getIsOwner()).isEqualTo(1);
+        Assertions.assertThat(postDetailResponse.getCreatedDate()).isEqualTo(postById.getCreatedDate());
+        Assertions.assertThat(postDetailResponse.getIsAnonymous()).isEqualTo(postById.getIsAnonymous());
+    }
+
+    @Test
+    @DisplayName("postId(PK)를 통해 조회한 특정 게시글을 특정 필드민 유의미한 PostResponse 객체로 변환할 수 있다.")
+    @WithMockCustomUser
+    public void convertPostToPreviewPostResponse(){
+        //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PostRequest request = getPostRequest("content");
+
+        //when
+        Long savedId = service.savePost(user.getId(), request); // 게시글 저장
+        Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
+
+        PostResponse postDetailResponse = service.convertToPreviewResponse(user, postById); // 조회한 게시글을 Response 객체로 변환
+
+        //then
+        Assertions.assertThat(postDetailResponse.getId()).isEqualTo(postById.getId());
+        Assertions.assertThat(postDetailResponse.getAuthor()).isEqualTo("익명");
+        Assertions.assertThat(postDetailResponse.getTitle()).isEqualTo(postById.getTitle());
+        Assertions.assertThat(postDetailResponse.getContent()).isEqualTo(postById.getContent());
+        Assertions.assertThat(postDetailResponse.getCommentCount()).isEqualTo(postById.getComments().size());
+        Assertions.assertThat(postDetailResponse.getLikeCount()).isEqualTo(0);
+        Assertions.assertThat(postDetailResponse.getIsLikePressed()).isEqualTo(0);
+        Assertions.assertThat(postDetailResponse.getCreatedDate()).isEqualTo(postById.getCreatedDate());
     }
 
     @Test
@@ -270,8 +303,11 @@ public class PostServiceTest {
 
     @Test
     @DisplayName("FREE 자유게시판의 삭제되지 않은 게시글을 조회할 수 있다.")
+    @WithMockCustomUser
     public void pagingNotDeletedPosts(){
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Post post1 = getPost(PostCategory.FREE, "title", "content", 0);
         Post post2 = getPost(PostCategory.FREE, "title", "content", 1);
         Post post3 = getPost(PostCategory.GRADE1, "title", "content", 0);
@@ -281,7 +317,7 @@ public class PostServiceTest {
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<PostResponse> postList = service.getNotDeletedPostList(PostCategory.FREE, pageRequest);
+        Slice<PostResponse> postList = service.getNotDeletedPostList(user, PostCategory.FREE, pageRequest);
 
         //then
         Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
@@ -289,8 +325,10 @@ public class PostServiceTest {
 
     @Test
     @DisplayName("FREE 자유게시판에서 제목을 통해 게시글을 검색할 수 있다.")
+    @WithMockCustomUser
     public void searchPostByTitleInFree(){
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Post post1 = getPost(PostCategory.FREE, "keyword", "content", 0);
         Post post2 = getPost(PostCategory.FREE, "title", "keyword", 1);
         Post post3 = getPost(PostCategory.GRADE1, "title2", "keyword", 0);
@@ -300,7 +338,7 @@ public class PostServiceTest {
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<PostResponse> postList = service.searchPosts("title", "keyword", PostCategory.FREE, pageRequest);
+        Slice<PostResponse> postList = service.searchPosts(user, "title", "keyword", PostCategory.FREE, pageRequest);
 
         //then
         Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
@@ -308,8 +346,10 @@ public class PostServiceTest {
 
     @Test
     @DisplayName("FREE 자유게시판에서 내용을 통해 게시글을 검색할 수 있다.")
+    @WithMockCustomUser
     public void searchPostByContentInFree(){
         //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Post post1 = getPost(PostCategory.FREE, "keyword", "content", 0);
         Post post2 = getPost(PostCategory.FREE, "title", "keyword", 1);
         Post post3 = getPost(PostCategory.FREE, "title2", "keyword", 0);
@@ -319,7 +359,7 @@ public class PostServiceTest {
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<PostResponse> postList = service.searchPosts("content", "keyword", PostCategory.FREE, pageRequest);
+        Slice<PostResponse> postList = service.searchPosts(user, "content", "keyword", PostCategory.FREE, pageRequest);
 
         //then
         Assertions.assertThat(postList.getContent().size()).isEqualTo(1);

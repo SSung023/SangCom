@@ -4,20 +4,19 @@ import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.comment.dto.CommentRequest;
 import Project.SangCom.comment.dto.CommentResponse;
 import Project.SangCom.comment.repository.CommentRepository;
-import Project.SangCom.post.domain.Post;
-import Project.SangCom.post.domain.PostCategory;
-import Project.SangCom.post.dto.PostResponse;
-import Project.SangCom.post.repository.PostRepository;
 import Project.SangCom.user.domain.User;
-import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.security.SecurityUtil;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
+
+import java.util.List;
 
 import static Project.SangCom.post.dto.PostResponse.FALSE;
 import static Project.SangCom.post.dto.PostResponse.TRUE;
@@ -27,7 +26,8 @@ import static Project.SangCom.post.dto.PostResponse.TRUE;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    //private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     /**
      * 댓글 저장
@@ -35,8 +35,26 @@ public class CommentService {
      * @param commentRequest 사용자에게 받은 댓글 정보
      */
     @Transactional
-    public Long saveComment(CommentRequest commentRequest){
+    public Long saveComment(User writer, Post post, CommentRequest commentRequest){
         Comment comment = commentRequest.toEntity();
+        comment.addUser(writer);
+        comment.setPost(post);
+
+        Comment saveComment = commentRepository.save(comment);
+
+        return saveComment.getId();
+    }
+
+    /**
+     * 대댓글 저장
+     */
+    @Transactional
+    public Long saveReComment(User writer, Post post, Comment pComment, CommentRequest commentRequest){
+        Comment comment = commentRequest.toEntity();
+        comment.addUser(writer);
+        comment.setPost(post);
+        comment.setParent(pComment);
+
         Comment saveComment = commentRepository.save(comment);
 
         return saveComment.getId();
@@ -59,7 +77,11 @@ public class CommentService {
     public Long deleteComment(Long commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
-        comment.deleteComment();
+        comment.delComment();
+
+        // DB에는 남아있지만 (isDeleted에 의해) 논리적으로 삭제된 댓글 리스트 (한 댓글의 부모-자식에 대해서)
+        List<Comment> removeableCommentList = comment.findRemoveableList();
+        commentRepository.deleteAll(removeableCommentList);
 
         return comment.getId();
     }

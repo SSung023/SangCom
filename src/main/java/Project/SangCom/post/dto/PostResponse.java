@@ -14,6 +14,7 @@ public class PostResponse {
     private String author; // 익명 or 닉네임
     private String title; // 게시글 제목
     private String content; // 게시글 내용
+    private int commentCount; // 댓글 수
     private int likeCount; // 좋아요 수
     private int isLikePressed; // 좋아요 눌렀는지 여부
     private int isOwner; // 게시글 작성자 여부
@@ -23,13 +24,14 @@ public class PostResponse {
     public static int TRUE = 1, FALSE = 0;
 
     @Builder
-    public PostResponse(Long id, String boardCategory, String author, String title, String content,
+    public PostResponse(Long id, String boardCategory, String author, String title, String content, int commentCount,
                         int likeCount, int isLikePressed, int isOwner, int isAnonymous, LocalDateTime createdDate) {
         this.id = id;
         this.boardCategory = boardCategory;
         this.author = author;
         this.title = title;
         this.content = content;
+        this.commentCount = commentCount;
         this.likeCount = likeCount;
         this.isLikePressed = isLikePressed;
         this.isOwner = isOwner;

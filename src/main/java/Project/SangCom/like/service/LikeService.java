@@ -90,17 +90,17 @@ public class LikeService {
     /**
      * 사용자가 좋아요를 누른 게시글인지 여부를 확인한 후, 응답 객체 필드값 설정
      * @param postId 좋아요가 눌렸는지 확인 대상인 게시글의 PK
-     * @param postResponse isLikedPressed 필드 값을 수정할 응답 객체
+     * @param postDetailResponse isLikedPressed 필드 값을 수정할 응답 객체
      */
-    public void checkAndSetIsLikePressed(Long postId, PostResponse postResponse){
+    public void checkAndSetIsLikePressed(Long postId, PostResponse postDetailResponse){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Optional<Likes> likes = likeRepository.findLikes(user.getId(), postId);
         if (likes.isPresent()) {
-            postResponse.setIsLikePressed(1);
+            postDetailResponse.setIsLikePressed(1);
         }
         else {
-            postResponse.setIsLikePressed(0);
+            postDetailResponse.setIsLikePressed(0);
         }
     }
 }

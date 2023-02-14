@@ -2,7 +2,6 @@ package Project.SangCom.scrap.service;
 
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
-import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.Role;
@@ -17,11 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @SpringBootTest
 @Transactional

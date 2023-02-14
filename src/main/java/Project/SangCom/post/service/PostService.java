@@ -1,12 +1,14 @@
 package Project.SangCom.post.service;
 
+import Project.SangCom.like.domain.Likes;
+import Project.SangCom.like.repository.LikeRepository;
+import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
 import Project.SangCom.user.domain.User;
-import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
@@ -32,6 +34,7 @@ import static Project.SangCom.post.dto.PostResponse.TRUE;
 public class PostService {
     private final UserService userService;
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
 
 
     /**
@@ -91,17 +94,15 @@ public class PostService {
      * 작성자가 맞으므로 postResponse 객체의 isOwner를 TRUE(1)로 설정,
      * 작성자가 아니라면 postRepsonse 객체의 isOwner를 FALSE(0)으로 설정
      */
-    public void checkAndSetIsPostOwner(Long postId, PostResponse postResponse){
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+    public int checkIsPostOwner(User user, Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
-        if (post.getAuthor().equals(principal.getNickname())){
-            postResponse.setIsOwner(TRUE);
+        if (post.getAuthor().equals(user.getNickname())){
+            return 1;
         }
         else {
-            postResponse.setIsOwner(FALSE);
+            return 0;
         }
     }
 
@@ -110,11 +111,10 @@ public class PostService {
      * 찾고자 하는 게시판에서 삭제되지 않은 게시글들을 페이징하여 반환
      * @param category 게시글을 찾고자하는 게시판 종류
      */
-    public Slice<PostResponse> getNotDeletedPostList(PostCategory category, Pageable pageable){
+    public Slice<PostResponse> getNotDeletedPostList(User user, PostCategory category, Pageable pageable){
         Slice<Post> posts = postRepository.findPostNotDeleted(0, category, pageable);
 
-        return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
-        p.getTitle(), p.getContent(), p.getLikeCount(),0, 0, p.getIsAnonymous(), p.getCreatedDate()));
+        return posts.map(p -> convertToPreviewResponse(user, p));
     }
 
     /**
@@ -122,7 +122,7 @@ public class PostService {
      * @param query 검색하는 방법: 제목(title)/내용(content)/제목+내용(all)
      * @param category 검색하고자 하는 게시판 종류
      */
-    public Slice<PostResponse> searchPosts(String query, String keyword, PostCategory category, Pageable pageable){
+    public Slice<PostResponse> searchPosts(User user, String query, String keyword, PostCategory category, Pageable pageable){
         Slice<Post> posts = null;
 
         if (query.equals("title")) {
@@ -135,8 +135,7 @@ public class PostService {
             posts = postRepository.searchPost(keyword, keyword, category, pageable);
         }
 
-        return posts.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
-        p.getTitle(), p.getContent(), p.getLikeCount(), 0, 0, p.getIsAnonymous(), p.getCreatedDate()));
+        return posts.map(p -> convertToPreviewResponse(user, p));
     }
 
     /**
@@ -156,43 +155,93 @@ public class PostService {
 
 
 
-
-
     /**
      * 자유게시판에 전달할 PostResponse(Post) 객체로 반환
+     *
+     * 상황에 따른 유의미한 필드 값
+     * 1. 게시글 목록으로 전달 시 convertToPreviewResponse
+     *    -> id, author, title, content, commentCount, likeCount, isLikePressed에만 유의미한 값
+     * 2. 게시글 상세 조회 시 convertToDetailResponse
+     *    -> 모든 필드에 유의미한 값 전달
      * @param postId PostResponse로 변환하고 싶은 post의 PK
      */
-    public PostResponse convertToResponse(Long postId){
+    public PostResponse convertToDetailResponse(User user, Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
         return PostResponse.builder()
                 .id(post.getId())
                 .boardCategory(post.getCategory().toString())
+                .author(checkIsAnonymous(post))
                 .title(post.getTitle())
                 .content(post.getContent())
-                .author(checkIsAnonymous(post))
+                .commentCount(post.getComments().size())
                 .likeCount(post.getLikeCount())
+                .isLikePressed(checkIsLikePressed(user, post))
+                .isOwner(checkIsPostOwner(user, post.getId()))
                 .isAnonymous(post.getIsAnonymous())
+                .createdDate(post.getCreatedDate())
                 .build();
     }
-    public PostResponse convertToResponse(Post post){
+    public PostResponse convertToDetailResponse(User user, Post post){
         return PostResponse.builder()
                 .id(post.getId())
                 .boardCategory(post.getCategory().toString())
+                .author(checkIsAnonymous(post))
                 .title(post.getTitle())
                 .content(post.getContent())
-                .author(checkIsAnonymous(post))
+                .commentCount(post.getComments().size())
                 .likeCount(post.getLikeCount())
+                .isLikePressed(checkIsLikePressed(user, post))
+                .isOwner(checkIsPostOwner(user, post.getId()))
                 .isAnonymous(post.getIsAnonymous())
+                .createdDate(post.getCreatedDate())
                 .build();
     }
+
+    public PostResponse convertToPreviewResponse(User user, Long postId){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+
+        return PostResponse.builder()
+                .id(post.getId())
+                .author(checkIsAnonymous(post))
+                .title(post.getTitle())
+                .content(post.getContent())
+                .commentCount(post.getComments().size())
+                .likeCount(post.getLikeCount())
+                .isLikePressed(checkIsLikePressed(user, post))
+                .createdDate(post.getCreatedDate())
+                .build();
+    }
+    public PostResponse convertToPreviewResponse(User user, Post post){
+        return PostResponse.builder()
+                .id(post.getId())
+                .author(checkIsAnonymous(post))
+                .title(post.getTitle())
+                .content(post.getContent())
+                .commentCount(post.getComments().size())
+                .likeCount(post.getLikeCount())
+                .isLikePressed(checkIsLikePressed(user, post))
+                .createdDate(post.getCreatedDate())
+                .build();
+    }
+
     private String checkIsAnonymous(Post post){
         if (post.getIsAnonymous() == 0){
             return post.getAuthor();
         }
         else {
             return "익명";
+        }
+    }
+    private int checkIsLikePressed(User user, Post post){
+        Optional<Likes> likes = likeRepository.findLikes(user.getId(), post.getId());
+        if (likes.isPresent()) {
+            return 1;
+        }
+        else {
+            return 0;
         }
     }
 }

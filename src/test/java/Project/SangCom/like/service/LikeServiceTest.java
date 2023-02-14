@@ -13,7 +13,6 @@ import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import Project.SangCom.utils.WithMockCustomUser;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -25,9 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -161,13 +158,13 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(user.getId());
 
         //when
-        PostResponse postResponse = postService.convertToResponse(savePostId);
+        PostResponse postDetailResponse = postService.convertToDetailResponse(user, savePostId);
 
         likeService.likePost(user.getId(), savePostId);
-        likeService.checkAndSetIsLikePressed(savePostId, postResponse);
+        likeService.checkAndSetIsLikePressed(savePostId, postDetailResponse);
 
         //then
-        Assertions.assertThat(postResponse.getIsLikePressed()).isEqualTo(1);
+        Assertions.assertThat(postDetailResponse.getIsLikePressed()).isEqualTo(1);
     }
 
     @Test
@@ -179,11 +176,11 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(user.getId());
 
         //when
-        PostResponse postResponse = postService.convertToResponse(savePostId);
-        likeService.checkAndSetIsLikePressed(savePostId, postResponse);
+        PostResponse postDetailResponse = postService.convertToDetailResponse(user, savePostId);
+        likeService.checkAndSetIsLikePressed(savePostId, postDetailResponse);
 
         //then
-        Assertions.assertThat(postResponse.getIsLikePressed()).isEqualTo(0);
+        Assertions.assertThat(postDetailResponse.getIsLikePressed()).isEqualTo(0);
     }
     
     @Test
