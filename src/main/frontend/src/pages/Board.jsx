@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect } from 'react';
 import ArticleCreate from '../components/board/ArticleCreate';
+import Modal from '../components/ui/Modal';
 import { authInstance } from '../utility/api';
 
 export default function Board() {
@@ -11,17 +12,16 @@ export default function Board() {
         })
     }, []);
 
-    const handleClick = (e) => {
-        e.preventDefault();
-        authInstance.get('api/board/test');
-    }
-
     return (
-        <div className='container'>
-            Board Page 📃
-            <button onClick={handleClick} >db 생성 버튼</button>
-            <ArticleCreate category="FREE" />
+        <div>
+            <Modal iconName="MdCreate" feature={"글을 작성하세요!"}>
+                <ArticleCreate category="FREE" />
+            </Modal>
+            <div className='container'>
+                
+            </div>
         </div>
+        
     );
 }
 
