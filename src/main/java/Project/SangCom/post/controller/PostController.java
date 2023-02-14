@@ -42,8 +42,7 @@ public class PostController {
 
 
     /**
-     * 자유게시판 진입 시, 자유게시판 페이지에 필요한 정보들을 초기에 한 번에 보내줌
-     * 내용: 실시간 인기글, 최근 작성 게시글 10개(페이징)
+     * 자유게시판의 실시간 인기글 조회
      */
     @GetMapping("/board/free/best")
     public ResponseEntity<SingleResponse<PostResponse>> getFreeBoardInfo
