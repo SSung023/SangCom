@@ -1,7 +1,6 @@
 package Project.SangCom.scrap.service;
 
 import Project.SangCom.post.domain.Post;
-import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.scrap.repository.ScrapRepository;
@@ -11,13 +10,8 @@ import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)

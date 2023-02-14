@@ -3,10 +3,8 @@ package Project.SangCom.post.controller;
 import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
-import Project.SangCom.post.dto.FreePostResponse;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
-import Project.SangCom.post.repository.PostRepository;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
@@ -47,11 +45,12 @@ public class PostController {
     @GetMapping("/board/free/best")
     public ResponseEntity<SingleResponse<PostResponse>> getFreeBoardInfo
         (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<Post> mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageable);
         PostResponse postResponse = null;
         if (!mostLikedPost.isEmpty()){
-            postResponse = postService.convertToResponse(mostLikedPost.get(0));
+            postResponse = postService.convertToPreviewResponse(user, mostLikedPost.get(0));
         }
 
         return ResponseEntity.ok().body
@@ -66,7 +65,9 @@ public class PostController {
     public ResponseEntity<PagingResponse<PostResponse>> getFreePostList
         (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
-        Slice<PostResponse> postList = postService.getNotDeletedPostList(PostCategory.FREE, pageable);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Slice<PostResponse> postList = postService.getNotDeletedPostList(user, PostCategory.FREE, pageable);
 
         return ResponseEntity.ok().body
                 (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
@@ -81,7 +82,9 @@ public class PostController {
         (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
          @RequestParam String query, @RequestParam String keyword){
 
-        Slice<PostResponse> postList = postService.searchPosts(query, keyword, PostCategory.FREE, pageable);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Slice<PostResponse> postList = postService.searchPosts(user, query, keyword, PostCategory.FREE, pageable);
         return ResponseEntity.ok().body
                 (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
     }
@@ -93,14 +96,13 @@ public class PostController {
      */
     @GetMapping("/board/free/{postId}")
     public ResponseEntity<SingleResponse<PostResponse>> inquiryCertainFreePost(@PathVariable Long postId){
-        Post postById = postService.findPostById(postId);
-        PostResponse postResponse = postService.convertToResponse(postById);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        postService.checkAndSetIsPostOwner(postById.getId(), postResponse);
-        likeService.checkAndSetIsLikePressed(postById.getId(), postResponse);
+        Post postById = postService.findPostById(postId);
+        PostResponse postDetailResponse = postService.convertToDetailResponse(user, postById);
 
         return ResponseEntity.ok().body
-                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postDetailResponse));
     }
 
     /**
@@ -114,11 +116,10 @@ public class PostController {
 
         Long savedPostId = postService.savePost(writer.getId(), postRequest);
 
-        PostResponse postResponse = postService.convertToResponse(savedPostId);
-        postService.checkAndSetIsPostOwner(savedPostId, postResponse);
+        PostResponse postDetailResponse = postService.convertToDetailResponse(writer, savedPostId);
 
         return ResponseEntity.ok().body
-                (new SingleResponse<>(SuccessCode.CREATED.getStatus(),SuccessCode.CREATED.getMessage(),postResponse));
+                (new SingleResponse<>(SuccessCode.CREATED.getStatus(),SuccessCode.CREATED.getMessage(), postDetailResponse));
     }
 
     /**
@@ -127,13 +128,13 @@ public class PostController {
      */
     @PatchMapping("/board/free/{postId}")
     public ResponseEntity<SingleResponse<PostResponse>> modifyPost(@PathVariable Long postId, @RequestBody PostRequest postRequest){
-        Long updatedPostId = postService.updatePost(postId, postRequest);
-        PostResponse postResponse = postService.convertToResponse(updatedPostId);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        postService.checkAndSetIsPostOwner(updatedPostId, postResponse);
+        Long updatedPostId = postService.updatePost(postId, postRequest);
+        PostResponse postDetailResponse = postService.convertToDetailResponse(user, updatedPostId);
 
         return ResponseEntity.ok().body
-                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postDetailResponse));
     }
 
     /**
