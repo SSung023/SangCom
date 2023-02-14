@@ -45,17 +45,7 @@ public class ScrapControllerTest {
                 .build();
     }
     
-    
-    @Test
-    @DisplayName("")
-    public void (){
-        //given
-        
-        //when
-        
-        //then
-        
-    }
+
     
     
     

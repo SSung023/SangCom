@@ -20,7 +20,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
      * @param userId 현재 사용자의 아이디(PK)
      */
     @Query("select s from Scrap s where s.user.id = :userId")
-    Slice<Post> findMyScraps (@Param("userId") Long userId, Pageable pageable);
+    Slice<Scrap> findMyScraps (@Param("userId") Long userId, Pageable pageable);
 
 
     /**

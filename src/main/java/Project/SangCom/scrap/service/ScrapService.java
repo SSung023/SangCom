@@ -74,10 +74,11 @@ public class ScrapService {
      * PostResponse에 대해서 좋아요/스크랩한 글인지 확인하는 과정이 필요
      * @param userId 작성한 글을 조회할 대상의 사용자
      */
-    public Slice<PostResponse> findAllScrapedPost(Long userId, Pageable pageable){
-        Slice<Post> postList = scrapRepository.findMyScraps(userId, pageable);
-
-        return postList.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
-                p.getTitle(), p.getContent(), p.getLikeCount(), 0, 0, p.getIsAnonymous()));
-    }
+//    public Slice<PostResponse> findAllScrapedPost(Long userId, Pageable pageable){
+//        List<Post> postList = scrapRepository.findMyScraps(userId, pageable).stream()
+//                .map(s -> s.getPost()).toList();
+//
+//        return postList.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
+//                p.getTitle(), p.getContent(), p.getLikeCount(), 0, 0, p.getIsAnonymous()));
+//    }
 }

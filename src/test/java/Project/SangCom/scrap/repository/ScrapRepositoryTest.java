@@ -95,7 +95,7 @@ class ScrapRepositoryTest {
         scrapRepository.save(scrap2);
 
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<Post> myScraps = scrapRepository.findMyScraps(savedUserId.getId(), pageRequest);
+        Slice<Scrap> myScraps = scrapRepository.findMyScraps(savedUserId.getId(), pageRequest);
 
         //then
         Assertions.assertThat(myScraps.getContent().size()).isEqualTo(2);

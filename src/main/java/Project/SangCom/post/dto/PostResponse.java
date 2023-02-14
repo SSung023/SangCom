@@ -2,6 +2,8 @@ package Project.SangCom.post.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor
 @ToString
@@ -16,12 +18,13 @@ public class PostResponse {
     private int isLikePressed; // 좋아요 눌렀는지 여부
     private int isOwner; // 게시글 작성자 여부
     private int isAnonymous; // 익명 여부
+    private LocalDateTime createdDate; // 생성된 날짜
 
     public static int TRUE = 1, FALSE = 0;
 
     @Builder
     public PostResponse(Long id, String boardCategory, String author, String title, String content,
-                        int likeCount, int isLikePressed, int isOwner, int isAnonymous) {
+                        int likeCount, int isLikePressed, int isOwner, int isAnonymous, LocalDateTime createdDate) {
         this.id = id;
         this.boardCategory = boardCategory;
         this.author = author;
@@ -31,6 +34,7 @@ public class PostResponse {
         this.isLikePressed = isLikePressed;
         this.isOwner = isOwner;
         this.isAnonymous = isAnonymous;
+        this.createdDate = createdDate;
     }
 
     /**

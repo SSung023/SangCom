@@ -45,8 +45,8 @@ public class PostController {
      * 자유게시판 진입 시, 자유게시판 페이지에 필요한 정보들을 초기에 한 번에 보내줌
      * 내용: 실시간 인기글, 최근 작성 게시글 10개(페이징)
      */
-    @GetMapping("/board/free")
-    public ResponseEntity<SingleResponse<FreePostResponse>> getFreeBoardInfo
+    @GetMapping("/board/free/best")
+    public ResponseEntity<SingleResponse<PostResponse>> getFreeBoardInfo
         (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
         List<Post> mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageable);
@@ -55,15 +55,8 @@ public class PostController {
             postResponse = postService.convertToResponse(mostLikedPost.get(0));
         }
 
-        Slice<PostResponse> recentlyPost = postService.getNotDeletedPostList(PostCategory.FREE, pageable);
-
-        FreePostResponse freePostResponse = FreePostResponse.builder()
-                .mostLikedPost(postResponse)
-                .recentlyPost(recentlyPost)
-                .build();
-
         return ResponseEntity.ok().body
-                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), freePostResponse));
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postResponse));
     }
 
     /**

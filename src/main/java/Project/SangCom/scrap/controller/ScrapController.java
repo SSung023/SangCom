@@ -28,14 +28,14 @@ public class ScrapController {
     /**
      * 사용자가 스크랩한 글들을 전달
      */
-    @GetMapping ("/scrap")
-    public ResponseEntity<PagingResponse<PostResponse>> getScrapedPost
-            (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Slice<PostResponse> scrapedPost = scrapService.findAllScrapedPost(user.getId(), pageable);
-
-        return ResponseEntity.ok().body
-                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),scrapedPost));
-    }
+//    @GetMapping ("/scrap")
+//    public ResponseEntity<PagingResponse<PostResponse>> getScrapedPost
+//            (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+//
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Slice<PostResponse> scrapedPost = scrapService.findAllScrapedPost(user.getId(), pageable);
+//
+//        return ResponseEntity.ok().body
+//                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),scrapedPost));
+//    }
 }
