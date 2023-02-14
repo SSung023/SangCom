@@ -20,8 +20,8 @@ p{
 
     white-space: nowrap;
     overflow: hidden;
-    line-height: 1em;
-    max-height: 1em;
+    line-height: 14px;
+    max-height: 14px;
     text-overflow: ellipsis;
 }
 
@@ -29,6 +29,8 @@ p{
     width: 100%;
     display: flex;
     justify-content: space-between;
+
+    margin-top: 8px;
 }
 
 .basicInfo {
@@ -43,19 +45,32 @@ p{
 
 .basicInfo > p{
     margin-left: 0.5em;
+    color: var(--txt-color);
 }
 
 .responseInfo {
     display: flex;
     align-items: center;
+    font-size: 14px;
+}
+
+.responseInfo > svg {
+    color: var(--blue-color);
+    margin-right: 4px;
+}
+
+.responseInfo > p {
+    margin-right: 4px;
 }
 
 @media screen and (max-width: 786px) {
-    .articleContent {
-        font-size: 12px;
-    }
     .articleTitle {
         font-size: 14px;
+    }
+    .articleContent {
+        font-size: 12px;
+        line-height: 12px;
+        max-height: 12px;
     }
     .basicInfo {
         font-size: 8px;

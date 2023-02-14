@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import styles from './ArticlePreview.module.css';
+import { MdChatBubbleOutline, MdFavoriteBorder, MdOutlineFavorite } from 'react-icons/md';
 
 export default function ArticlePreview({ articleInfo, customStyle }) {
     const [article, setArticle] = useState(articleInfo);
@@ -10,32 +11,35 @@ export default function ArticlePreview({ articleInfo, customStyle }) {
             <p className={styles.articleTitle}>{article.title}</p>
             <p className={styles.articleContent}>{article.content}</p>
             <div className={styles.infos}>
-                <BasicInfo createdDate={`02/14 20:23`} author={`익명`} />
-                <ResponseInfo likeCnt={`0`} commentCnt={`0`} />
+                <BasicInfo createdDate={article.createdDate} author={article.author} />
+                <ResponseInfo isLike={article.isLikePressed} likeCnt={article.likeCount} commentCnt={article.commentCount} />
             </div>
         </div>
     );
 }
 
 function BasicInfo({ createdDate, author }){
-    //const formatter = new Intl.RelativeTimeFormat('ko', {numeric: 'auto'});
-    //const today = new Date();
-    //const createdTime = new Date(createdDate);
-    //const timePassed = Math.ceil((createdTime - today) / 1000 * 60 * 60 * 24);
+    const rformatter = new Intl.RelativeTimeFormat('ko', {numeric: 'auto'});
+    const dformatter = new Intl.DateTimeFormat('ko', {dateStyle: 'short', timeStyle: 'short'});
+    const today = new Date();
+    const createdTime = new Date(createdDate);
+    const timePassed = Math.ceil((createdTime - today) / (1000 * 60));
 
     return (
         <div className={styles.basicInfo}>
-            {/* <p>{formatter.format(timePassed, 'day')}</p> */}
-            <time>{createdDate}</time>
+            {timePassed >= 60 ? <time>{rformatter.format(timePassed, 'minute')}</time> : <time>{dformatter.format(createdTime)}</time>}
             <p>{author}</p>
         </div>
     );
 }
 
-function ResponseInfo({ likeCnt, commentCnt }){
+function ResponseInfo({ isLike, likeCnt, commentCnt }){
     return (
         <div className={styles.responseInfo}>
+            {isLike ? <MdOutlineFavorite/> : <MdFavoriteBorder/>}
             <p>{likeCnt}</p>
+
+            <MdChatBubbleOutline/>
             <p>{commentCnt}</p>
         </div>
     );

@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ArticleCreate from '../components/board/ArticleCreate';
 import Modal from '../components/ui/Modal';
 import BoardBodyLayout from '../layouts/BoardBodyLayout';
+import { authInstance } from '../utility/api';
 
 export default function Board() {
+
+    useEffect(() => {
+        authInstance.get('api/board/test');
+    }, []);
     return (
         <div>
             <div className='container'>

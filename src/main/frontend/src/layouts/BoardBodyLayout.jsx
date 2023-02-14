@@ -44,22 +44,13 @@ function Search() {
 function Previews({ api }) {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
-    const [articles, setArticles] = useState({
-        title: "",
-        content: "",
-        author: "",
-        id: 0,
-        isAnonymous: 0,
-        isLikePressed: 0,
-        isOwner: 0,
-        likeCount: 0,
-    });
+    const [articles, setArticles] = useState({});
 
     const previewsRef = useRef();
 
     const handleClickBtn = async () => {
         setLoading(true);
-        const getArticles = await (await authInstance.get(`${api}/?page=${page + 1}`)).data.data;
+        const getArticles = await (await authInstance.get(`${api}/?page=${page + 1}`)).data.data.content;
         
         setArticles(getArticles);
         setPage((prev) => prev + 1);
@@ -69,13 +60,13 @@ function Previews({ api }) {
         setLoading(true);
         
         authInstance.get(api)
-        .then(function (res) { console.log(res) })
-        //.then(function (data) { setArticles(data) })
+        .then(function (res) { return res.data.data })
+        .then(function (data) { setArticles(data.content) })
     }, []);
 
     useEffect(() => {
         setLoading(false);
-        console.log(articles);
+        // console.log(articles);
     }, [articles]);
 
     return (
@@ -83,8 +74,7 @@ function Previews({ api }) {
             <div className={styles.previews} ref={previewsRef}>
                 {/* 여기서 받아온 페이지 숫자 만큼 ArticlePreview 컴포넌트를 추가. */}
             </div>
-            {console.log(articles)}
-            {/* {articles.content.length != 0 && <button onClick={handleClickBtn}>더보기</button>} */}
+            {articles && articles.length != 0 && <button onClick={handleClickBtn}>더보기</button>}
         </>
         
     );
