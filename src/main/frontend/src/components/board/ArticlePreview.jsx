@@ -19,15 +19,20 @@ export default function ArticlePreview({ articleInfo, customStyle }) {
 }
 
 function BasicInfo({ createdDate, author }){
-    const rformatter = new Intl.RelativeTimeFormat('ko', {numeric: 'auto'});
-    const dformatter = new Intl.DateTimeFormat('ko', {dateStyle: 'short', timeStyle: 'short'});
     const today = new Date();
     const createdTime = new Date(createdDate);
+    
+    const rformatter = new Intl.RelativeTimeFormat('ko', {numeric: 'auto'});
+    const dformatter = new Intl.DateTimeFormat('ko', {dateStyle: 'short', timeStyle: 'short'});
+    
     const timePassed = Math.ceil((createdTime - today) / (1000 * 60));
 
     return (
         <div className={styles.basicInfo}>
-            {timePassed >= 60 ? <time>{rformatter.format(timePassed, 'minute')}</time> : <time>{dformatter.format(createdTime)}</time>}
+            {timePassed >= 60 
+                ? <time>{rformatter.format(timePassed, 'minute')}</time> 
+                : <time>{dformatter.format(createdTime)}</time>
+            }
             <p>{author}</p>
         </div>
     );
