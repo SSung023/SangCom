@@ -365,6 +365,29 @@ public class PostServiceTest {
         Assertions.assertThat(postList.getContent().size()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName("내가 쓴 글을 모두 조회할 수 있다")
+    @WithMockCustomUser
+    public void canFindAllWritePost(){
+        //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PostRequest postRequest1 = getPostRequest("content1");
+        PostRequest postRequest2 = getPostRequest("content2");
+        PostRequest postRequest3 = getPostRequest("content3");
+        PostRequest postRequest4 = getPostRequest( "content4");
+
+        service.savePost(user.getId(), PostCategory.FREE, postRequest1);
+        service.savePost(user.getId(), PostCategory.FREE, postRequest2);
+        service.savePost(user.getId(), PostCategory.FREE, postRequest3);
+        service.savePost(user.getId(), PostCategory.FREE, postRequest4);
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<PostResponse> wrotePost = service.getAllWritePostList(user, pageRequest);
+
+        //then
+        Assertions.assertThat(wrotePost.getContent().size()).isEqualTo(4);
+    }
 
 
 

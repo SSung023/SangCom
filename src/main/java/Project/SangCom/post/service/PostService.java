@@ -127,6 +127,15 @@ public class PostService {
     }
 
     /**
+     * 대상 사용자가 작성한 모든 글을 조회하여 페이징하여 반환
+     * @param user 내가 쓴 글을 조회하는 사용자
+     */
+    public Slice<PostResponse> getAllWritePostList(User user, Pageable pageable){
+        Slice<Post> posts = postRepository.findAllWrotePosts(user.getId(), pageable);
+        return posts.map(p -> convertToPreviewResponse(user, p));
+    }
+
+    /**
      * 찾고자 하는 게시판에서 제목/내용/제목+내용
      * @param query 검색하는 방법: 제목(title)/내용(content)/제목+내용(all)
      * @param category 검색하고자 하는 게시판 종류

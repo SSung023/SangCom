@@ -24,6 +24,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                         (@Param("isDeleted") int isDeleted, @Param("category") PostCategory category, Pageable pageable);
 
     /**
+     * 사용자가 작성한 글들 중 삭제되지 않은 게시글들을 모두 반환
+     */
+    @Query("select p from Post p where p.user.id = :userId and p.isDeleted = 0")
+    Slice<Post> findAllWrotePosts(@Param("userId") Long userId, Pageable pageable);
+
+    /**
      * 게시글 검색 - 제목만 검색
      */
     @Query("select p from Post p where p.title like %:title% AND p.category = :category AND p.isDeleted = 0")
