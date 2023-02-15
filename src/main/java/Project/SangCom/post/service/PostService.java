@@ -89,6 +89,11 @@ public class PostService {
         return post.getId();
     }
 
+    @Transactional
+    public void clearAll(){
+        postRepository.deleteAllInBatch();
+    }
+
     /**
      * postId에 저장되어 있는 nickname과 사용자의 nickname이 일치하는지 확인
      * 작성자가 맞으므로 postResponse 객체의 isOwner를 TRUE(1)로 설정,

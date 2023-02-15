@@ -10,6 +10,7 @@ import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.repository.UserRepository;
+import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.PagingResponse;
@@ -25,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -36,6 +38,7 @@ public class PostController {
     private final LikeService likeService;
 
     //for test
+    private final UserService userService;
     private final UserRepository userRepository;
 
 
@@ -156,16 +159,26 @@ public class PostController {
     public ResponseEntity<CommonResponse> testPost(){
         // User 객체 생성
         User mine = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = User.builder()
-                .role(Role.STUDENT)
-                .email("test@naver.com")
-                .nickname("닉네임")
-                .username("이름이름")
-                .studentInfo(new StudentInfo("1", "4", "2"))
-                .build();
-        User savedUser = userRepository.save(user);
+
+        Optional<User> byEmail = userRepository.findByEmail("test@naver.com");
+        User savedUser;
+        if (byEmail.isEmpty()){
+            User user = User.builder()
+                    .role(Role.STUDENT)
+                    .email("test@naver.com")
+                    .nickname("닉네임")
+                    .username("이름이름")
+                    .studentInfo(new StudentInfo("1", "4", "2"))
+                    .build();
+            Long userId = userService.saveUser(user);
+            savedUser = userService.findUserById(userId);
+        }
+        else {
+            savedUser = byEmail.get();
+        }
 
         // Post 저장
+        postService.clearAll();
         for (int i = 0; i < 13; i++){
             PostRequest postRequest = PostRequest.builder()
                     .authorNickname("")
@@ -189,7 +202,7 @@ public class PostController {
 
         // Like 설정
         likeService.likePost(mine.getId(), savedPostId);
-        likeService.likePost(user.getId(), savedPostId);
+        likeService.likePost(savedUser.getId(), savedPostId);
 
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
