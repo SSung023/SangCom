@@ -40,12 +40,13 @@ public class PostService {
     /**
      * RequestDTO를 Entity로 변환하고 repository를 통해 저장
      * @param writerId 게시글을 작성한 사용자의 id(PK)
+     * @param postCategory 게시글의 게시판 종류 정보
      * @param postRequest 사용자에게 전달받은 게시글 정보
      */
     @Transactional
-    public Long savePost(Long writerId, PostRequest postRequest) {
+    public Long savePost(Long writerId, PostCategory postCategory, PostRequest postRequest) {
         User user = userService.findUserById(writerId);
-        Post post = postRequest.toEntity();
+        Post post = postRequest.toEntity(postCategory);
 
         Post savedPost = postRepository.save(post);
         savedPost.addUser(user); // user는 이 메서드 안에서 찾아서 넣어주어야 한다.
@@ -89,6 +90,9 @@ public class PostService {
         return post.getId();
     }
 
+    /**
+     * Post DB 테이블에 있는 모든 정보들을 삭제
+     */
     @Transactional
     public void clearAll(){
         postRepository.deleteAllInBatch();
@@ -153,6 +157,26 @@ public class PostService {
 
         List<Post> posts = postRepository.findMostLikedPost(threshold, category, pageable);
         return posts;
+    }
+
+    public PostCategory checkCategory(String category){
+        switch (category) {
+            case "free":
+                return PostCategory.FREE;
+            case "grade1":
+                return PostCategory.GRADE1;
+            case "grade2":
+                return PostCategory.GRADE2;
+            case "grade3":
+                return PostCategory.GRADE3;
+            case "council":
+                return PostCategory.COUNCIL;
+            case "suggestion":
+                return PostCategory.SUGGESTION;
+            case "club":
+                return PostCategory.CLUB;
+        }
+        throw new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND);
     }
 
 

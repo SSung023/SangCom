@@ -44,7 +44,7 @@ public class PostServiceTest {
         PostRequest postRequest = getPostRequest("content");
 
         //when
-        Post receivedPost = postRequest.toEntity();
+        Post receivedPost = postRequest.toEntity(PostCategory.FREE);
         Post savedPost = postRepository.save(receivedPost);
 
         //then
@@ -89,7 +89,7 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
 
         //when
-        Long registeredId = service.savePost(user.getId(), request);
+        Long registeredId = service.savePost(user.getId(), PostCategory.FREE, request);
         Post savedPost = postRepository.findById(registeredId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
@@ -97,7 +97,7 @@ public class PostServiceTest {
         Assertions.assertThat(request.getAuthorNickname()).isEqualTo(savedPost.getAuthor());
         Assertions.assertThat(request.getTitle()).isEqualTo(savedPost.getTitle());
         Assertions.assertThat(request.getContent()).isEqualTo(savedPost.getContent());
-        Assertions.assertThat(request.getBoardCategory()).isEqualTo(savedPost.getCategory().toString());
+        Assertions.assertThat(PostCategory.FREE.toString()).isEqualTo(savedPost.getCategory().toString());
         Assertions.assertThat(request.getIsAnonymous()).isEqualTo(savedPost.getIsAnonymous());
     }
 
@@ -110,7 +110,7 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(user.getId(), request); // 게시글 등록
+        Long savedId = service.savePost(user.getId(), PostCategory.FREE, request); // 게시글 등록
 
         PostResponse postDetailResponse = service.convertToDetailResponse(user, savedId);
 
@@ -127,7 +127,7 @@ public class PostServiceTest {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         //when
-        Long savedId = service.savePost(user.getId(), request); // 게시글 등록
+        Long savedId = service.savePost(user.getId(), PostCategory.FREE, request); // 게시글 등록
         PostResponse postDetailResponse = service.convertToDetailResponse(user, savedId);
 
         //then
@@ -193,14 +193,14 @@ public class PostServiceTest {
         
         //when
         User save = userRepository.save(user);
-        Long savedId = service.savePost(save.getId(), request); // 게시글 저장
+        Long savedId = service.savePost(save.getId(), PostCategory.FREE, request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
         
         //then
         Assertions.assertThat(request.getAuthorNickname()).isEqualTo(postById.getAuthor());
         Assertions.assertThat(request.getTitle()).isEqualTo(postById.getTitle());
         Assertions.assertThat(request.getContent()).isEqualTo(postById.getContent());
-        Assertions.assertThat(request.getBoardCategory()).isEqualTo(postById.getCategory().toString());
+        Assertions.assertThat(PostCategory.FREE.toString()).isEqualTo(postById.getCategory().toString());
         Assertions.assertThat(request.getIsAnonymous()).isEqualTo(postById.getIsAnonymous());
     }
 
@@ -213,7 +213,7 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(user.getId(), request); // 게시글 저장
+        Long savedId = service.savePost(user.getId(), PostCategory.FREE, request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
 
         PostResponse postDetailResponse = service.convertToDetailResponse(user, postById); // 조회한 게시글을 Response 객체로 변환
@@ -241,7 +241,7 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
 
         //when
-        Long savedId = service.savePost(user.getId(), request); // 게시글 저장
+        Long savedId = service.savePost(user.getId(), PostCategory.FREE, request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
 
         PostResponse postDetailResponse = service.convertToPreviewResponse(user, postById); // 조회한 게시글을 Response 객체로 변환
@@ -267,7 +267,7 @@ public class PostServiceTest {
 
         //when
         User save = userRepository.save(user);
-        Long savedId = service.savePost(save.getId(), postRequest);
+        Long savedId = service.savePost(save.getId(), PostCategory.FREE, postRequest);
         Long modifiedPostId = service.updatePost(savedId, newRequest);
 
         Post post = service.findPostById(savedId);
@@ -292,7 +292,7 @@ public class PostServiceTest {
 
         //when
         User save = userRepository.save(user);
-        Long savedId = service.savePost(save.getId(), postRequest);
+        Long savedId = service.savePost(save.getId(), PostCategory.FREE, postRequest);
         Long deletePostId = service.deletePost(savedId);
 
         Post deletedPost = service.findPostById(deletePostId);
@@ -394,7 +394,7 @@ public class PostServiceTest {
                 .isAnonymous(1) // true
                 .title("title")
                 .content(content)
-                .boardCategory("FREE")
+                .boardCategory("")
                 .build();
     }
 }

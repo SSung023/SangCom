@@ -37,7 +37,7 @@ class ScrapServiceTest {
 
         //when
         Long savedUserId = userService.saveUser(user);
-        Long savedPostId = postService.savePost(savedUserId, postRequest);
+        Long savedPostId = postService.savePost(savedUserId, PostCategory.FREE, postRequest);
         Long savedScrapId = scrapService.saveScrap(savedUserId, savedPostId);
     }
 
@@ -50,7 +50,7 @@ class ScrapServiceTest {
 
         //when
         Long savedUserId = userService.saveUser(user);
-        Long savedPostId = postService.savePost(savedUserId, postRequest);
+        Long savedPostId = postService.savePost(savedUserId, PostCategory.FREE, postRequest);
         Long savedScrapId = scrapService.saveScrap(savedUserId, savedPostId);
 
         Scrap scrap = scrapService.findScrapById(savedScrapId);
@@ -68,7 +68,7 @@ class ScrapServiceTest {
 
         //when
         Long savedUserId = userService.saveUser(user);
-        Long savedPostId = postService.savePost(savedUserId, postRequest);
+        Long savedPostId = postService.savePost(savedUserId, PostCategory.FREE, postRequest);
         scrapService.saveScrap(savedUserId, savedPostId);
 
         //then
@@ -86,7 +86,7 @@ class ScrapServiceTest {
 
         //when
         Long savedUserId = userService.saveUser(user);
-        Long savedPostId = postService.savePost(savedUserId, postRequest);
+        Long savedPostId = postService.savePost(savedUserId, PostCategory.FREE, postRequest);
         Long savedScrapId = scrapService.saveScrap(savedUserId, savedPostId);
 
         scrapService.unscrap(savedUserId, savedPostId);
@@ -107,8 +107,8 @@ class ScrapServiceTest {
 
         //when
         Long savedUserId = userService.saveUser(user);
-        Long savedPostId1 = postService.savePost(savedUserId, postRequest1);
-        Long savedPostId2 = postService.savePost(savedUserId, postRequest2);
+        Long savedPostId1 = postService.savePost(savedUserId, PostCategory.FREE, postRequest1);
+        Long savedPostId2 = postService.savePost(savedUserId, PostCategory.FREE, postRequest2);
 
         scrapService.saveScrap(savedUserId, savedPostId1);
         scrapService.saveScrap(savedUserId, savedPostId2);

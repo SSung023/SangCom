@@ -36,6 +36,7 @@ public enum ErrorCode {
 	, NICKNAME_LENGTH_EXCEED(HttpStatus.CONFLICT, "닉네임의 최대 길이는 10입니다. 10 이하로 설정해주세요.")
 	, ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요가 완료되어있습니다.")
 	, ALREADY_SCRAPED(HttpStatus.CONFLICT, "이미 스크랩이 완료되어있습니다.")
+	, OWNER_NOT_ALLOWED(HttpStatus.CONFLICT, "작성자에게 허용되지 않는 기능입니다.")
 	;
 
 

@@ -38,6 +38,15 @@ public class PostRequest {
                 .isAnonymous(this.isAnonymous)
                 .build();
     }
+    public Post toEntity(PostCategory postCategory){
+        return Post.builder()
+                .category(postCategory)
+                .author(this.authorNickname)
+                .title(this.title)
+                .content(this.content)
+                .isAnonymous(this.isAnonymous)
+                .build();
+    }
 
     public void updateAuthor(String nickname) {
         this.authorNickname = nickname;

@@ -236,6 +236,6 @@ public class LikeServiceTest {
                 .content("content1")
                 .isAnonymous(0)
                 .build();
-        return postService.savePost(saveUserId, postRequest);
+        return postService.savePost(saveUserId, PostCategory.FREE, postRequest);
     }
 }

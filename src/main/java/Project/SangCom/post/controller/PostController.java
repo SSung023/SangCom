@@ -43,14 +43,18 @@ public class PostController {
 
 
     /**
-     * 자유게시판의 실시간 인기글 조회
+     * 실시간 인기글 조회 -> 자유게시판, 학년별게시판, (동아리게시판)
+     * ex) /api/board/free/best
      */
-    @GetMapping("/board/free/best")
+    @GetMapping("/board/{category}/best")
     public ResponseEntity<SingleResponse<PostResponse>> getFreeBoardInfo
-        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+        , @PathVariable String category){
 
-        List<Post> mostLikedPost = postService.getMostLikedPost(PostCategory.FREE, pageable);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PostCategory postCategory = postService.checkCategory(category);
+
+        List<Post> mostLikedPost = postService.getMostLikedPost(postCategory, pageable);
         PostResponse postResponse = null;
         if (!mostLikedPost.isEmpty()){
             postResponse = postService.convertToPreviewResponse(user, mostLikedPost.get(0));
@@ -61,33 +65,36 @@ public class PostController {
     }
 
     /**
-     * 자유게시판 전체 글 조회
-     * ex) /board/free/list?page=0&size=10
+     * 전체 글 조회
+     * ex) /board/free/list?page=0
      */
-    @GetMapping("/board/free/list")
+    @GetMapping("/board/{category}/list")
     public ResponseEntity<PagingResponse<PostResponse>> getFreePostList
-        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+        , @PathVariable String category){
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PostCategory postCategory = postService.checkCategory(category);
 
-        Slice<PostResponse> postList = postService.getNotDeletedPostList(user, PostCategory.FREE, pageable);
+        Slice<PostResponse> postList = postService.getNotDeletedPostList(user, postCategory, pageable);
 
         return ResponseEntity.ok().body
                 (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
     }
 
     /**
-     * 자유게시판 게시글 검색 - 제목만, 내용만, 제목+내용
-     * ex) /api/board/free/search?page=0&size=3
+     * 자유게시판 게시글 검색 - 검색하는 방법(query): 제목(title)/내용(content)/제목+내용(all)
+     * ex) /api/board/free/search?query=title&keyword=something&page=0
      */
-    @GetMapping("/board/free/search")
+    @GetMapping("/board/{category}/search")
     public ResponseEntity<PagingResponse<PostResponse>> searchPosts
         (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-         @RequestParam String query, @RequestParam String keyword){
+         @PathVariable String category, @RequestParam String query, @RequestParam String keyword){
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PostCategory postCategory = postService.checkCategory(category);
 
-        Slice<PostResponse> postList = postService.searchPosts(user, query, keyword, PostCategory.FREE, pageable);
+        Slice<PostResponse> postList = postService.searchPosts(user, query, keyword, postCategory, pageable);
         return ResponseEntity.ok().body
                 (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
     }
@@ -96,9 +103,13 @@ public class PostController {
      * 자유게시판 특정 글 조회
      * 응답 객체에 isOwner(게시글 작성자 여부)에 대한 값 필요
      * 응답 객체에 isLikePressed(좋아요 선택 여부)에 대한 값 필요
+     *
+     * ex) /api/board/free/23
      */
-    @GetMapping("/board/free/{postId}")
-    public ResponseEntity<SingleResponse<PostResponse>> inquiryCertainFreePost(@PathVariable Long postId){
+    @GetMapping("/board/{category}/{postId}")
+    public ResponseEntity<SingleResponse<PostResponse>> inquiryCertainFreePost
+            (@PathVariable Long postId, @PathVariable String category){
+
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Post postById = postService.findPostById(postId);
@@ -111,13 +122,18 @@ public class PostController {
     /**
      * 자유게시판 특정 글 작성
      * 응답 객체에 isOwner(게시글 작성자 여부)에 대한 값 필요
+     *
+     * ex) /api/board/free
      */
-    @PostMapping("/board/free")
-    public ResponseEntity<SingleResponse<PostResponse>> registerPost(@RequestBody PostRequest postRequest){
+    @PostMapping("/board/{category}")
+    public ResponseEntity<SingleResponse<PostResponse>> registerPost
+            (@RequestBody PostRequest postRequest, @PathVariable String category){
+
         User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         postRequest.updateAuthor(writer.getNickname());
 
-        Long savedPostId = postService.savePost(writer.getId(), postRequest);
+        PostCategory postCategory = postService.checkCategory(category);
+        Long savedPostId = postService.savePost(writer.getId(), postCategory, postRequest);
 
         PostResponse postDetailResponse = postService.convertToDetailResponse(writer, savedPostId);
 
@@ -128,10 +144,15 @@ public class PostController {
     /**
      * 자유게시판 특정 글 수정
      * 응답 객체에 isOwner(게시글 작성자 여부)에 대한 값 필요
+     *
+     * ex) /api/board/free/23
      */
-    @PatchMapping("/board/free/{postId}")
-    public ResponseEntity<SingleResponse<PostResponse>> modifyPost(@PathVariable Long postId, @RequestBody PostRequest postRequest){
+    @PatchMapping("/board/{category}/{postId}")
+    public ResponseEntity<SingleResponse<PostResponse>> modifyPost
+            (@PathVariable Long postId, @PathVariable String category, @RequestBody PostRequest postRequest){
+
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PostCategory postCategory = postService.checkCategory(category);
 
         Long updatedPostId = postService.updatePost(postId, postRequest);
         PostResponse postDetailResponse = postService.convertToDetailResponse(user, updatedPostId);
@@ -142,8 +163,9 @@ public class PostController {
 
     /**
      * 자유게시판 특정 글 삭제
+     * ex) /api/board/2
      */
-    @DeleteMapping("/board/free/{postId}")
+    @DeleteMapping("/board/{postId}")
     public ResponseEntity<CommonResponse> deletePost(@PathVariable Long postId){
         postService.deletePost(postId);
 
@@ -188,7 +210,7 @@ public class PostController {
                     .isAnonymous(i % 2)
                     .build();
             postRequest.updateAuthor(savedUser.getNickname());
-            postService.savePost(savedUser.getId(), postRequest);
+            postService.savePost(savedUser.getId(), PostCategory.FREE, postRequest);
         }
         PostRequest postRequest = PostRequest.builder()
                 .authorNickname("")
@@ -198,7 +220,7 @@ public class PostController {
                 .isAnonymous(1)
                 .build();
         postRequest.updateAuthor(mine.getNickname());
-        Long savedPostId = postService.savePost(mine.getId(), postRequest);
+        Long savedPostId = postService.savePost(mine.getId(), PostCategory.FREE, postRequest);
 
         // Like 설정
         likeService.likePost(mine.getId(), savedPostId);
