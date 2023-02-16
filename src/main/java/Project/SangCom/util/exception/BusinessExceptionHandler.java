@@ -22,8 +22,9 @@ public class BusinessExceptionHandler {
     protected CommonResponse globalBusinessExceptionHandler(BusinessException e) {
         log.info("[Error]" + e.getMessage());
 
-        return new CommonResponse(e.getStatus(), e.getMessage());
 
+        return new CommonResponse(e.getStatus(), e.getMessage());
+//        return ResponseEntity.badRequest().body(new CommonResponse(e.getStatus(), e.getMessage()));
 //        return responseService.failResult(e.getMessage());
     }
 }

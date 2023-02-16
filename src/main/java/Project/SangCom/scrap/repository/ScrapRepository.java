@@ -1,6 +1,5 @@
 package Project.SangCom.scrap.repository;
 
-import Project.SangCom.post.domain.Post;
 import Project.SangCom.scrap.domain.Scrap;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

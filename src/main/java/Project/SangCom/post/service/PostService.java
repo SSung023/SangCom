@@ -99,7 +99,7 @@ public class PostService {
     }
 
     /**
-     * postId에 저장되어 있는 nickname과 사용자의 nickname이 일치하는지 확인
+     * Post에 저장되어 있는 User의 id와 사용자의 id가 일치하는지 확인
      * 작성자가 맞으므로 postResponse 객체의 isOwner를 TRUE(1)로 설정,
      * 작성자가 아니라면 postRepsonse 객체의 isOwner를 FALSE(0)으로 설정
      */
@@ -107,7 +107,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
-        if (post.getAuthor().equals(user.getNickname())){
+        if (post.getUser().getId().equals(user.getId())){
             return 1;
         }
         else {

@@ -1,6 +1,7 @@
 package Project.SangCom.scrap.service;
 
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.scrap.repository.ScrapRepository;
@@ -10,8 +11,13 @@ import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,6 +40,11 @@ public class ScrapService {
 
         User user = userService.findUserById(userId);
         Post post = postService.findPostById(postId);
+
+        if (postService.checkIsPostOwner(user, postId) == 1){
+            // 게시글 작성자라면 예외 발생
+            throw new BusinessException(ErrorCode.OWNER_NOT_ALLOWED);
+        }
 
         Scrap scrap = new Scrap();
         scrap.setUser(user);
@@ -66,13 +77,14 @@ public class ScrapService {
     /**
      * 사용자가 스크랩했던 글들을 조회하여 PostResponse로 변환하여 반환
      * PostResponse에 대해서 좋아요/스크랩한 글인지 확인하는 과정이 필요
-     * @param userId 작성한 글을 조회할 대상의 사용자
+     * @param user 작성한 글을 조회할 대상의 사용자
      */
-//    public Slice<PostResponse> findAllScrapedPost(Long userId, Pageable pageable){
-//        List<Post> postList = scrapRepository.findMyScraps(userId, pageable).stream()
-//                .map(s -> s.getPost()).toList();
-//
-//        return postList.map(p -> new PostResponse(p.getId(), p.getCategory().toString(), p.getAuthor(),
-//                p.getTitle(), p.getContent(), p.getLikeCount(), 0, 0, p.getIsAnonymous()));
-//    }
+    public Slice<PostResponse> findAllScrapedPost(User user, Pageable pageable){
+        List<PostResponse> posts = scrapRepository.findMyScraps(user.getId(), pageable).stream()
+                .map(s -> s.getPost())
+                .toList()
+                .stream().map(p -> postService.convertToPreviewResponse(user, p)).toList();
+
+        return new PageImpl<>(posts);
+    }
 }

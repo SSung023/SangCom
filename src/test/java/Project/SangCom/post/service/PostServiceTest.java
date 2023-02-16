@@ -68,6 +68,7 @@ public class PostServiceTest {
 
         //when
         Post savedPost = postRepository.save(post);
+        savedPost.addUser(user);
         PostResponse postDetailResponse = service.convertToDetailResponse(user, savedPost);
 
         //then
@@ -156,6 +157,7 @@ public class PostServiceTest {
         
         //when
         Post savedPost = postRepository.save(post);
+        savedPost.addUser(user);
         PostResponse postDetailResponse = service.convertToDetailResponse(user, savedPost);
 
         //then
@@ -178,6 +180,7 @@ public class PostServiceTest {
 
         //when
         Post savedPost = postRepository.save(post);
+        savedPost.addUser(user);
         PostResponse postDetailResponse = service.convertToDetailResponse(user, savedPost);
 
         //then
