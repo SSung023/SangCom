@@ -1,6 +1,12 @@
 .article {
     box-sizing: border-box;
     padding: 1em;
+    border: 1px solid var(--line-color);
+    margin-bottom: 6px;
+}
+
+.article:hover {
+    cursor: pointer;
 }
 
 p{

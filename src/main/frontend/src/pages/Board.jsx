@@ -5,7 +5,8 @@ import BoardBodyLayout from '../layouts/BoardBodyLayout';
 import { authInstance } from '../utility/api';
 
 export default function Board() {
-
+    
+    // TODO: 배포 판에서는 지워야 하나?
     useEffect(() => {
         authInstance.get('api/board/test');
     }, []);

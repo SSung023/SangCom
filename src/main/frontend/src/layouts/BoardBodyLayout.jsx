@@ -1,23 +1,15 @@
 import React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import ArticlePreview from '../components/board/ArticlePreview';
 import BestArticle from '../components/board/BestArticle';
 import { authInstance } from '../utility/api';
 import styles from './BoardBodyLayout.module.css';
+import { MdKeyboardArrowDown } from 'react-icons/md';
 
 export default function BoardBodyLayout({ boardTitle, bestApi, listApi }) {
     return (
         <div className={styles.wrapper}>
-            {/* 
-                1. BoardTitle 
-                2. BestArticle
-                3. Search
-                4. Previews
-                    ㄴ ArticlePreview
-                    ㄴ ArticlePreview
-                    ㄴ ArticlePreview
-                    ㄴ MoreButton
-            */}
             <BoardTitle boardTitle={boardTitle} />
             <BestArticle api={bestApi}/>
             <Previews api={listApi}/>
@@ -42,40 +34,47 @@ function Search() {
 }
 
 function Previews({ api }) {
-    const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [articles, setArticles] = useState({});
-
-    const previewsRef = useRef();
+    const [isNewArticleExist, setIsNewArticleExist] = useState(true);
 
     const handleClickBtn = async () => {
-        setLoading(true);
-        const getArticles = await (await authInstance.get(`${api}/?page=${page + 1}`)).data.data.content;
-        
-        setArticles(getArticles);
-        setPage((prev) => prev + 1);
+        const getArticles = await (await authInstance.get(`${api}/?page=${page + 1}`)).data.data;
+
+        // first: 첫 통신
+        // empty: 받아 온 글이 없는 상태
+        // last: 더 이상 받아 올 글이 없는 상태
+        // console.log(`isEmpty: ${getArticles.empty}`);
+        // console.log(`isLast: ${getArticles.last}`);
+
+        if(!getArticles.empty) {
+            setArticles((prev) => [...prev, ...getArticles.content]);
+            setPage((prev) => prev + 1);
+        }
+        getArticles.last && setIsNewArticleExist(false);
     };
 
     useEffect(() => {
-        setLoading(true);
-        
         authInstance.get(api)
         .then(function (res) { return res.data.data })
-        .then(function (data) { setArticles(data.content) })
+        .then(function (data) { 
+            setArticles(data.content);
+            data.last && setIsNewArticleExist(false);
+        })
     }, []);
 
-    useEffect(() => {
-        setLoading(false);
-        // console.log(articles);
-    }, [articles]);
+    const memoizedArticles = useMemo(() => {
+        return Object.values(articles).map((article)=> {
+            return <ArticlePreview articleInfo={article} key={article.id}/>
+        })
+    }, [articles])
 
     return (
         <>
-            <div className={styles.previews} ref={previewsRef}>
-                {/* 여기서 받아온 페이지 숫자 만큼 ArticlePreview 컴포넌트를 추가. */}
+            <div className={styles.previews}>
+                {memoizedArticles}
             </div>
-            {articles && articles.length != 0 && <button onClick={handleClickBtn}>더보기</button>}
+            {isNewArticleExist && <button className={styles.addBtn} onClick={handleClickBtn}>더보기<MdKeyboardArrowDown/></button>}
         </>
-        
     );
 }

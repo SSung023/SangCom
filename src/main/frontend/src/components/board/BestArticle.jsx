@@ -8,9 +8,10 @@ export default function BestArticle({ api }) {
     const [article, setArticle] = useState();
     const customStyle = {
         backgroundColor: `var(--btn-bg-color)`,
-        borderRadius: `10px`
+        borderRadius: `10px`,
+        border: `none`
     };
-
+    
     useEffect(() => {
         authInstance.get(api)
         .then(function(res) {

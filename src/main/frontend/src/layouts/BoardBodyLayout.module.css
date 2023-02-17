@@ -1,4 +1,4 @@
-.wrapper{
+.wrapper {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -10,7 +10,7 @@
     padding: 1em;
 }
 
-.boardTitle{
+.boardTitle {
     box-sizing: border-box;
     width: 100%;
     font-size: 18px;
@@ -19,7 +19,26 @@
     color: var(--txt-color);
     background-color: var(--white-color);
     border: 1px solid var(--line-color);
-    padding: 1em;
+    padding: 0.8em 1em 0.8em 1em;
+}
+
+.previews {
+    width: 100%;
+}
+
+.addBtn {
+    display: flex;
+    align-items: center;
+    
+    font-size: 1em;
+    margin-top: 16px;
+    border: none;
+    background-color: var(--white-color);
+    color: var(--blue-color);
+}
+
+.addBtn:hover {
+    cursor:pointer;
 }
 
 @media screen and (max-width: 786px) {

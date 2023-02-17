@@ -14,14 +14,13 @@ export default function ArticleCreate({ category }) {
     })
 
     const postArticle = (url) => {
-        console.log(form);
-
         authInstance.post(url, { ...form })
         .then(function (res) {
             console.log(res.data);
         })
         .catch(function (err) {
             console.log(err);
+            alert("글 작성이 완료되지 않았습니다. 잠시 후에 다시 시도해 주세요.")
         })
     }
 
