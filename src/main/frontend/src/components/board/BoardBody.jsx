@@ -1,26 +1,21 @@
 import React from 'react';
-import { useMemo } from 'react';
-import { useState, useEffect } from 'react';
-import ArticlePreview from '../components/board/ArticlePreview';
-import BestArticle from '../components/board/BestArticle';
-import { authInstance } from '../utility/api';
-import styles from './BoardBodyLayout.module.css';
+import { useState, useEffect, useMemo } from 'react';
+
+import BoardTitle from './BoardTitle';
+import BestArticle from './BestArticle';
+import ArticlePreview from './ArticlePreview';
+
+import { authInstance } from '../../utility/api';
+import styles from './BoardBody.module.css';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-export default function BoardBodyLayout({ boardTitle, bestApi, listApi }) {
+
+export default function BoardBody({ category }) {
     return (
         <div className={styles.wrapper}>
-            <BoardTitle boardTitle={boardTitle} />
-            <BestArticle api={bestApi}/>
-            <Previews api={listApi}/>
-        </div>
-    );
-}
-
-function BoardTitle({ boardTitle }) {
-    return (
-        <div className={styles.boardTitle}>
-            {boardTitle}
+            <BoardTitle category={category} />
+            <BestArticle api={`api/board/${category}/best`}/>
+            <Previews api={`api/board/${category}/list`}/>
         </div>
     );
 }
@@ -40,12 +35,6 @@ function Previews({ api }) {
 
     const handleClickBtn = async () => {
         const getArticles = await (await authInstance.get(`${api}/?page=${page + 1}`)).data.data;
-
-        // first: 첫 통신
-        // empty: 받아 온 글이 없는 상태
-        // last: 더 이상 받아 올 글이 없는 상태
-        // console.log(`isEmpty: ${getArticles.empty}`);
-        // console.log(`isLast: ${getArticles.last}`);
 
         if(!getArticles.empty) {
             setArticles((prev) => [...prev, ...getArticles.content]);

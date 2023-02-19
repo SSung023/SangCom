@@ -3,17 +3,21 @@ import { useState } from 'react';
 import styles from './ArticlePreview.module.css';
 import { MdChatBubbleOutline, MdFavoriteBorder, MdOutlineFavorite } from 'react-icons/md';
 import { authInstance } from '../../utility/api';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function ArticlePreview({ articleInfo, customStyle }) {
     const [article, setArticle] = useState(() => articleInfo);
+    const navigate = useNavigate();
 
     const handleClick = async (e) => {
-        const articleData = await authInstance(`/api/board/free/${article.id}`)
-        console.log(articleData.data);
+        // TODO: 백엔드에 boardCategory를 보내달라고 요청. 변경되면 아래 코드로 교체하기.
+        // navigate(`board/${article.boardCategory}/${article.id}`);
+        navigate(`${article.id}`);
     };
 
     return (
         <div className={styles.article} style={customStyle} onClick={handleClick}>
+            
             <p className={styles.articleTitle}>{article.title}</p>
             <p className={styles.articleContent}>{article.content}</p>
             <div className={styles.infos}>

@@ -16,6 +16,7 @@ import TeacherRegister from "./components/register/TeacherRegister";
 import PrivateRoute from './utility/PrivateRoute';
 import PublicRoute from './utility/PublicRoute';
 
+
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -28,9 +29,8 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, element: <Main /> } ,
-      { path: 'board/free', element: <Board />},
-      { path: 'board/council', element: <Board />},
-      { path: 'board/club', element: <Board />},
+      { path: 'board/:category', element: <Board />},
+      { path: 'board/:category/:id', element: <Board />},
       { path: 'timetable', element: <TimeTable />},
       { path: 'mealPage', element: <MealOfMonth />},
     ],

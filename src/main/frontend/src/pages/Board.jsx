@@ -1,30 +1,32 @@
 import React, { useEffect } from 'react';
 import ArticleCreate from '../components/board/ArticleCreate';
 import Modal from '../components/ui/Modal';
-import BoardBodyLayout from '../layouts/BoardBodyLayout';
+import BoardBody from '../components/board/BoardBody';
 import { authInstance } from '../utility/api';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import BoardDetail from '../components/board/BoardDetail';
 
 export default function Board() {
+    // const userInfo = useSelector((state) => state.loginReducer.user.info);
+    const params = useParams();
+    const category = params.category;
+    const id = params.id;
     
-    // TODO: 배포 판에서는 지워야 하나?
+    // TODO: 배포 판에서는 지우기
     useEffect(() => {
         authInstance.get('api/board/test');
     }, []);
+
     return (
         <div>
             <div className='container'>
-                <BoardBodyLayout 
-                    boardTitle="자유 게시판" 
-                    bestApi="api/board/free/best"
-                    listApi="api/board/free/list"
-                />
+                {id ? <BoardDetail /> : <BoardBody category={category} />}
+                {/* BoardRightSide */}
             </div>
-
-            <Modal iconName="MdCreate" feature={"글을 작성하세요!"}>
-                <ArticleCreate category="FREE" />
-            </Modal>
+            
+            { !id &&  <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category="FREE" /></Modal>}
         </div>
-        
     );
 }
 
