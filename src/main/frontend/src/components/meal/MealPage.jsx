@@ -105,6 +105,7 @@ function CalenderBody({ today }){
                                   FROM_YMD = {year.toString() + monthString(monthStart.getMonth()+1) + dateString(monthStart.getDate())}
                                   TO_YMD = {year.toString() + monthString(monthEnd.getMonth()+1) + dateString(monthEnd.getDate())}
                                   dateOfToday = {day.getFullYear().toString() + monthString(day.getMonth()+1) + dateString(day.getDate())}
+                                  name = "meal-page"
                         />
                     </div>
                 </td>

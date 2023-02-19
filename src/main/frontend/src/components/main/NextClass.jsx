@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import CardButton from "./CardButton";
+import ClassTime from "./ClassTime";
 import styles from './Dailycard.module.css';
+import ClassList from "./ClassList";
 
 export default function NextClass(props){
         return(
@@ -8,15 +10,12 @@ export default function NextClass(props){
                     <div className={styles.todaytitle}>{props.title}</div>
                     <div className={styles.classtime}>
                         {/*시간별 교시 구하기*/}
-                        3교시
+                        <ClassTime name="time"/>
                     </div>
                     <div className={styles.cardcontent}>
-                        {/*시간표*/}
-                        <ul className={styles.Listul}>
-                            <li>수학</li>
-                        </ul>
+                        <ClassTime name="course"/>
                     </div>
-                    <CardButton title = {props.button}/>
+                    <CardButton title = {props.button} name = "course"/>
                 </div>
         );
 }

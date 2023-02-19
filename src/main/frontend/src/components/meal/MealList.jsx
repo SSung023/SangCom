@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {defaultInstance} from "../../utility/api";
-export default function MealList(props) {
+import styles from '../main/Dailycard.module.css';
 
+export default function MealList(props) {
     // 나이스 급식 주소
-    const url = "https://open.neis.go.kr/hub/mealServiceDietInfo" +
+    const url = process.env.REACT_APP_NEIS_MEAL_URL +
         "?KEY=" + process.env.REACT_APP_NEIS_KEY +
         "&Type=json&pIndex=1&pSize=31" +
         "&ATPT_OFCDC_SC_CODE=" + process.env.REACT_APP_NEIS_ATPT_OFCDC_SC_CODE +
@@ -53,25 +54,47 @@ export default function MealList(props) {
         console.log(lists);
         console.log(data);
         */
+
         for (let i = 0; i < lists.length; i++) {
             if (props.dateOfToday === lists?.[i]?.[0]) { // 해당 날짜와 일치하는 급식메뉴 return
-                return (
-                    <div>
+                lists[i][1] = lists?.[i]?.[1]
+                    .replace(/\<br\/\>/g, "\n") //<br/> 태그 삭제
+                    .replace(/\*/g, "") // 별표시(*) 삭제
+                    .replace(/\(.*(?=\))/g, "") // 알러지정보 삭제
+                    .replace(/\)/g, "")  //알러지정보 마지막 괄호 삭제
+
+                lists[i][1] = lists[i][1].split("\n")
+
+                if (props.name === "meal-today") {
+                    return (
                         <div>
-                            {lists?.[i]?.[1]
-                                .replace(/\<br\/\>/g, "\n") //<br/> 태그 삭제
-                                .replace(/\*/g, "") // 별표시(*) 삭제
-                                .replace(/\(.*(?=\))/g,"") // 알러지정보 삭제
-                                .replace(/\)/g,"")  //알러지정보 마지막 괄호 삭제
-                            }
+                            {lists[i][1].map(n => (
+                                    <ul className={styles.Listul}
+                                        key={n}>
+                                        <li>{n}</li>
+                                    </ul>
+                                )
+                            )}
                         </div>
-                    </div>
-                );
+                    )
+                } else if (props.name === "meal-page") {
+                    return (
+                        <div>
+                            <div>
+                                {lists[i][1].map(n => {
+                                    return(
+                                        <div key={n}> {n + "\n"} </div>)
+                                })}
+                            </div>
+                        </div>
+                    );
+                }
+
+            } else {
+                    lists.push([props.dateOfToday,"급식 없음"])
             }
+
         }
-
     }
-
-
 }
 
