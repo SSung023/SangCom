@@ -29,7 +29,6 @@ export default function TeacherRegister(){
             ...formData
         }).then(function (response){
             if(response.status === 200) {
-                console.log(formData)
                 console.log('register success')
                 return navigate(`/`); //로그인 페이지로 이동
             }else{ // 실패
@@ -56,7 +55,7 @@ export default function TeacherRegister(){
                 </div>
                 <form
                     name="teacher-info"
-                    method="post"
+                    onSubmit={handleSubmit}
                     className={style.Form}>
                     <label><span>이메일</span>
                         <input
@@ -95,7 +94,6 @@ export default function TeacherRegister(){
                         </select>
                     </label>
                     <button
-                        onClick={handleSubmit}
                         type="submit"
                         className={style.teacherSubmitBtn}>
                         확인

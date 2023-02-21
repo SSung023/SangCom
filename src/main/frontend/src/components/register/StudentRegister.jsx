@@ -26,7 +26,6 @@ export default function StudentRegister(){
             ...formData
         }).then(function (response){
             if(response.status === 200) {
-                console.log(formData)
                 console.log('register success')
                 return navigate(`/`); //로그인 페이지로 이동
             }else{ // 실패
@@ -42,7 +41,7 @@ export default function StudentRegister(){
             ...formData,
             [event.target.name]: event.target.value
         });
-
+        console.log(formData);
     }
 
     /***********************************/
@@ -60,8 +59,9 @@ export default function StudentRegister(){
                 </div>
                 <form
                     name="student-info"
-                    method="post"
-                    className={style.Form}>
+                    className={style.Form}
+                    onSubmit={handleSubmit}
+                >
                     <label><span>이메일</span>
                         <input
                             type="text"
@@ -122,7 +122,6 @@ export default function StudentRegister(){
                         </select>
                     </label>
                     <button
-                        onClick={handleSubmit}
                         type="submit"
                         className={style.studentSubmitBtn}>
                         확인
