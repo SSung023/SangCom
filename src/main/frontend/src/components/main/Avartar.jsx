@@ -4,9 +4,19 @@ import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
 import { authInstance, defaultInstance } from "../../utility/api";
 import { loginAction } from "../../reducers/loginReducer";
+import { useState } from "react";
 
 export default function Avartar(props){
     const dispatch = useDispatch();
+    const [setUser, ] = useState(() => {
+        authInstance.get("/api/auth/user")
+        .then(function(res) {
+            dispatch(loginAction(res.data.data));
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    });
     const userInfo = useSelector((state) => state.loginReducer.user.info);
 
     const handleLogout = () => {
@@ -15,20 +25,15 @@ export default function Avartar(props){
     };
 
     // userInfo 받아 오기
-    useEffect(() => {
-        authInstance.get("/api/auth/user")
-        .then(function(res) {
-            dispatch(loginAction(res.data.data));
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-    }, []);
-        
-    // userInfo가 바뀌면 리렌더링 해야 함.
-    useEffect(() => {
-        //console.log(userInfo);
-    }, [userInfo]);
+    // useEffect(() => {
+    //     authInstance.get("/api/auth/user")
+    //     .then(function(res) {
+    //         dispatch(loginAction(res.data.data));
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     })
+    // }, []);
 
     return (
         <div className={styles.avartar}>

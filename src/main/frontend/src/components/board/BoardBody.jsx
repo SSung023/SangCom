@@ -3,28 +3,24 @@ import { useState, useEffect, useMemo } from 'react';
 
 import BoardTitle from './BoardTitle';
 import BestArticle from './BestArticle';
+import Search from './Search';
 import ArticlePreview from './ArticlePreview';
+import { boardTitle } from '../../utility/setBoardTitle.js';
 
 import { authInstance } from '../../utility/api';
 import styles from './BoardBody.module.css';
-import { MdKeyboardArrowDown } from 'react-icons/md';
-
+import { MdKeyboardArrowDown, MdSearch } from 'react-icons/md';
 
 export default function BoardBody({ category }) {
+    const title = boardTitle(category);
+
     return (
         <div className={styles.wrapper}>
-            <BoardTitle category={category} />
+            <BoardTitle title={title} />
             <BestArticle api={`api/board/${category}/best`}/>
+            <Search category={category} boardTitle={title}/>
             <Previews api={`api/board/${category}/list`}/>
         </div>
-    );
-}
-
-function Search() {
-    return (
-        <div>
-            
-        </div>    
     );
 }
 
