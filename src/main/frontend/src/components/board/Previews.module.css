@@ -1,0 +1,18 @@
+.previews {
+    width: 100%;
+}
+
+.addBtn {
+    display: flex;
+    align-items: center;
+    
+    font-size: 1em;
+    margin-top: 16px;
+    border: none;
+    background-color: var(--white-color);
+    color: var(--blue-color);
+}
+
+.addBtn:hover {
+    cursor:pointer;
+}

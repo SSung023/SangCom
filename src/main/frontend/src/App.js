@@ -31,6 +31,7 @@ const router = createBrowserRouter([
       { index: true, element: <Main /> } ,
       { path: 'board/:category', element: <Board />},
       { path: 'board/:category/:id', element: <Board />},
+      { path: 'board/:category/:selection/:search', element: <Board />},
       { path: 'timetable', element: <TimeTable />},
       { path: 'mealPage', element: <MealOfMonth />},
     ],

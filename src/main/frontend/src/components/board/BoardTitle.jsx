@@ -10,6 +10,7 @@ export default function BoardTitle({ title }) {
         color: `var(--txt-color)`,
         backgroundColor: `var(--white-color)`,
         border: `1px solid var(--line-color)`,
+        borderRadius: `5px`,
         padding: `0.8em 1em 0.8em 1em`,
     }
 

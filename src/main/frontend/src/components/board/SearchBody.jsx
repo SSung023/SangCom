@@ -7,9 +7,9 @@ import Previews from './Previews';
 
 import { boardTitle } from '../../utility/setBoardTitle.js';
 
-import styles from './BoardBody.module.css';
+import styles from './SearchBody.module.css';
 
-export default function BoardBody({ category }) {
+export default function SearchBody({ category }) {
     const title = boardTitle(category);
 
     return (
@@ -21,4 +21,3 @@ export default function BoardBody({ category }) {
         </div>
     );
 }
-

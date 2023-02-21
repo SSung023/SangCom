@@ -6,12 +6,14 @@ import { authInstance } from '../utility/api';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import BoardDetail from '../components/board/BoardDetail';
+import SearchBody from '../components/board/SearchBody';
 
 export default function Board() {
     // const userInfo = useSelector((state) => state.loginReducer.user.info);
     const params = useParams();
     const category = params.category;
     const id = params.id;
+    const search = params.search;
     
     // TODO: 배포 판에서는 지우기
     useEffect(() => {
@@ -21,7 +23,8 @@ export default function Board() {
     return (
         <div>
             <div className='container'>
-                {id ? <BoardDetail /> : <BoardBody category={category} />}
+                {/* {id ? <BoardDetail /> : search ? <BoardBody category={category} /> : <BoardBody category={category} />} */}
+                {id ? <BoardDetail /> : (search ? <SearchBody category={category} /> : <BoardBody category={category} />)}
                 {/* BoardRightSide */}
             </div>
             

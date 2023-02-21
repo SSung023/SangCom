@@ -2,17 +2,17 @@ import React from 'react';
 import { useState } from 'react';
 import styles from './ArticlePreview.module.css';
 import { MdChatBubbleOutline, MdFavoriteBorder, MdOutlineFavorite } from 'react-icons/md';
-import { authInstance } from '../../utility/api';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function ArticlePreview({ articleInfo, customStyle }) {
-    const [article, setArticle] = useState(() => articleInfo);
+    const [article, ] = useState(() => articleInfo);
     const navigate = useNavigate();
+    const params = useParams();
 
     const handleClick = async (e) => {
         // TODO: 백엔드에 boardCategory를 보내달라고 요청. 변경되면 아래 코드로 교체하기.
         // navigate(`board/${article.boardCategory}/${article.id}`);
-        navigate(`${article.id}`);
+        window.location.href = `/board/${params.category}/${article.id}`;
     };
 
     return (
