@@ -36,8 +36,8 @@ public class CommentController {
      */
     @GetMapping("{postId}/comment")
     public ResponseEntity<ListResponse<CommentResponse>> getCommentList (@PathVariable Long postId){
-
-        List<CommentResponse> commentList = commentService.findPostCommentList(postId);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, postId);
 
         return ResponseEntity.ok().body
                 (new ListResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), commentList));
@@ -54,8 +54,8 @@ public class CommentController {
 
         Long saveCommentId = commentService.saveComment(writer.getId(), postId, commentRequest);
 
-        CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
-        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
+        CommentResponse commentResponse = commentService.convertToResponse(writer, saveCommentId);
+//        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage(), commentResponse));
@@ -72,8 +72,8 @@ public class CommentController {
 
         Long saveCommentId = commentService.saveReComment(writer.getId(), postId, commentId, commentRequest);
 
-        CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
-        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
+        CommentResponse commentResponse = commentService.convertToResponse(writer, saveCommentId);
+//        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage(), commentResponse));

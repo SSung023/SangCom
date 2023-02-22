@@ -329,7 +329,7 @@ public class LikeServiceTest {
         Long saveCommentId = setCommentAndSave(user.getId(), savePostId);
 
         //when
-        CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
+        CommentResponse commentResponse = commentService.convertToResponse(user, saveCommentId);
 
         likeService.likeComment(user.getId(), saveCommentId);
         likeService.checkAndSetIsCommentLikePressed(saveCommentId, commentResponse);
@@ -348,7 +348,7 @@ public class LikeServiceTest {
         Long saveCommentId = setCommentAndSave(user.getId(), savePostId);
 
         //when
-        CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
+        CommentResponse commentResponse = commentService.convertToResponse(user, saveCommentId);
         likeService.checkAndSetIsCommentLikePressed(saveCommentId, commentResponse);
 
         //then

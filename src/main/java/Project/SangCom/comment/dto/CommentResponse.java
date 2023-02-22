@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class CommentResponse {
     private int isLikePressed; // 좋아요 누른 여부
     private int isOwner; // 댓글 작성자 여부
     private int isAnonymous; // 익명 여부
+    private LocalDateTime createdDate; // 작성 일자
 
     private List<CommentResponse> childComment = new ArrayList<>();
 
@@ -28,7 +30,8 @@ public class CommentResponse {
     /* Entity -> Dto*/
     @Builder
     public CommentResponse(Long id, String authorName, String content, int likeCount,
-                           int isLikePressed, int isOwner, int isAnonymous, List<CommentResponse> childComment) {
+                           int isLikePressed, int isOwner, int isAnonymous,
+                           LocalDateTime createdDate, List<CommentResponse> childComment) {
         this.id = id;
         this.authorName = authorName;
         this.content = content;
@@ -37,6 +40,8 @@ public class CommentResponse {
         this.isLikePressed = isLikePressed;
         this.isOwner = isOwner;
         this.isAnonymous = isAnonymous;
+
+        this.createdDate = createdDate;
 
         this.childComment = childComment;
     }

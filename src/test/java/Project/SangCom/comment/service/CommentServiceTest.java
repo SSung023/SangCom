@@ -12,12 +12,14 @@ import Project.SangCom.user.domain.User;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
+import Project.SangCom.utils.WithMockCustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,23 +65,58 @@ public class CommentServiceTest {
 
     @Test
     @DisplayName("Comment 객체를 CommentResponse 객체로 변환할 수 있다.")
-    public void convertToCommentResponse(){
+    @WithMockCustomUser
+    public void convertToCommentResponse_1(){
         //given
-        Comment comment = Comment.builder()
-                .author("author")
-                .content("content")
-                .isAnonymous(0)
-                .build();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Post post = getPost();
+        CommentRequest request = getCommentRequest("comment");
+        Long savedCommentId = commentService.saveComment(user.getId(), post.getId(), request);
 
         //when
-        Comment savedComment = commentRepository.save(comment);
-        CommentResponse commentResponse = commentService.convertToResponse(savedComment);
+        Comment savedComment = commentService.findCommentById(savedCommentId);
+        CommentResponse commentResponse = commentService.convertToResponse(user, savedComment);
 
         //then
         assertThat(commentResponse.getId()).isEqualTo(savedComment.getId());
-        assertThat(commentResponse.getAuthorName()).isEqualTo(savedComment.getAuthor());
+        assertThat(commentResponse.getAuthorName()).isEqualTo("익명");
         assertThat(commentResponse.getContent()).isEqualTo(savedComment.getContent());
-        assertThat(commentResponse.getIsAnonymous()).isEqualTo(0);
+        assertThat(commentResponse.getIsAnonymous()).isEqualTo(1);
+        assertThat(commentResponse.getIsLikePressed()).isEqualTo(0);
+        assertThat(commentResponse.getIsOwner()).isEqualTo(1);
+        assertThat(commentResponse.getLikeCount()).isEqualTo(0);
+
+        assertThat(commentResponse.getChildComment().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Comment 대댓글 객체들까지 CommentResponse 객체로 변환할 수 있다.")
+    @WithMockCustomUser
+    public void convertToCommentResponse_2(){
+        //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        Long reCommentId1 = saveReComment(user.getId(), post.getId(), commentId);
+        Long reCommentId2 = saveReComment(user.getId(), post.getId(), commentId);
+
+        //when
+        Comment savedComment = commentService.findCommentById(commentId);
+        CommentResponse commentResponse = commentService.convertToResponse(user, savedComment);
+
+        //then
+        assertThat(commentResponse.getId()).isEqualTo(savedComment.getId());
+        assertThat(commentResponse.getAuthorName()).isEqualTo("익명");
+        assertThat(commentResponse.getContent()).isEqualTo(savedComment.getContent());
+        assertThat(commentResponse.getIsAnonymous()).isEqualTo(1);
+        assertThat(commentResponse.getIsLikePressed()).isEqualTo(0);
+        assertThat(commentResponse.getIsOwner()).isEqualTo(1);
+        assertThat(commentResponse.getLikeCount()).isEqualTo(0);
+
+        assertThat(commentResponse.getChildComment().size()).isEqualTo(2);
+
+        assertThat(commentResponse.getChildComment().get(0).getIsOwner()).isEqualTo(1);
+        assertThat(commentResponse.getChildComment().get(1).getIsOwner()).isEqualTo(1);
     }
 
     @Test
@@ -461,7 +498,7 @@ public class CommentServiceTest {
 
         //when
         commentService.deleteComment(commentId);
-        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
         assertThat(commentList.size()).isEqualTo(0);
@@ -480,7 +517,7 @@ public class CommentServiceTest {
         saveComment(user.getId(), post);
 
         //when
-        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
         assertThat(commentList.size()).isEqualTo(1);
@@ -501,7 +538,7 @@ public class CommentServiceTest {
         saveReComment(user.getId(), post.getId(), commentId);
 
         //when
-        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
         assertThat(commentList.size()).isEqualTo(1);
@@ -524,7 +561,7 @@ public class CommentServiceTest {
 
         //when
         commentService.deleteComment(reCommentId);
-        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
         assertThat(commentList.size()).isEqualTo(1);
@@ -548,7 +585,7 @@ public class CommentServiceTest {
         //when
         commentService.deleteComment(reCommentId1);
         commentService.deleteComment(reCommentId2);
-        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
         assertThat(commentList.size()).isEqualTo(1);
@@ -572,7 +609,7 @@ public class CommentServiceTest {
         //when
         commentService.deleteComment(commentId);
         commentService.deleteComment(reCommentId1);
-        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
         assertThat(commentList.size()).isEqualTo(1);
@@ -598,7 +635,7 @@ public class CommentServiceTest {
         commentService.deleteComment(commentId);
         commentService.deleteComment(reCommentId1);
         commentService.deleteComment(reCommentId2);
-        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+        List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
         assertThat(commentList.size()).isEqualTo(0);
