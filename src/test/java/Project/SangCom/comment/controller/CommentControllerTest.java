@@ -113,22 +113,27 @@ public class CommentControllerTest {
         //given
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String accessToken = getAccessToken();
-        Long postId = getPost().getId();
+        Post post = getPost();
         CommentRequest request1 = getCommentRequest("comment1");
         CommentRequest request2 = getCommentRequest("comment2");
         CommentRequest request3 = getCommentRequest("comment3");
 
-        commentService.saveComment(user.getId(), postId, request1);
-        commentService.saveComment(user.getId(), postId, request2);
-        commentService.saveComment(user.getId(), postId, request3);
+        commentService.saveComment(user.getId(), post.getId(), request1);
+        commentService.saveComment(user.getId(), post.getId(), request2);
+        commentService.saveComment(user.getId(), post.getId(), request3);
 
         //when&then
-        mockMvc.perform(get("/api/board/free/" + postId + "/comment")
+        mockMvc.perform(get("/api/board/free/" + post.getId() + "/comment")
                 .header(AUTHORIZATION_HEADER, accessToken))
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.numberOfElements").value(3));
+                .andExpect(jsonPath("$.count").value(3));
 
+        // post 객체에 제대로 들어있는지 확인
+        assertThat(post.getComments().size()).isEqualTo(3);
+        assertThat(post.getComments().get(0).getContent()).isEqualTo("comment1");
+        assertThat(post.getComments().get(1).getContent()).isEqualTo("comment2");
+        assertThat(post.getComments().get(2).getContent()).isEqualTo("comment3");
     }
 
     @Test
@@ -153,6 +158,9 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.data.content").value("content"))
                 .andExpect(jsonPath("$.data.isOwner").value(TRUE))
                 .andExpect(jsonPath("$.data.isAnonymous").value("0"));
+
+        // post 객체 확인
+        assertThat(postService.findPostById(postId).getComments().size()).isEqualTo(1);
     }
 
     @Test

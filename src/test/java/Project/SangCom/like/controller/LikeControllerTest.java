@@ -70,8 +70,9 @@ class LikeControllerTest {
         String accessToken = getAccessToken();
 
         //when & then
-        mockMvc.perform(post("/api/board/like")
-                        .header(AUTHORIZATION_HEADER, accessToken));
+        mockMvc.perform(post("/api/like/board")
+                        .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test

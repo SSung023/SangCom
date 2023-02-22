@@ -25,6 +25,7 @@ public class ListResponse<T> extends CommonResponse {
     public ListResponse(HttpStatus status, String message, List<T> data) {
         super(status, message);
         this.dataList = data;
+        this.count = data.size();
     }
 }
 

@@ -242,9 +242,7 @@ public class CommentServiceTest {
     }
 
     /**
-     * 부모 삭제
-     * 대댓글 없음
-     * DB에서 삭제
+     * 부모 댓글 삭제 & 대댓글 없을 때
      */
     @Test
     @DisplayName("부모 삭제 - 대댓글 없음")
@@ -258,9 +256,8 @@ public class CommentServiceTest {
         commentService.deleteComment(commentId);
 
         //then
-//        assertThat(post.getComments().size()).isEqualTo(0);
-        assertThat(commentService.findAll().size()).isSameAs(0);
-        assertThat(assertThrows(BusinessException.class, () -> commentService.findCommentById(commentId)).getMessage()).isEqualTo("해당 데이터를 찾을 수 없습니다.");
+        assertThat(post.getComments().size()).isEqualTo(1);
+        assertThat(post.getComments().get(0).getIsDeleted()).isEqualTo(1);
     }
 
     /**
@@ -297,9 +294,11 @@ public class CommentServiceTest {
         commentService.deleteComment(commentId);
 
         //then
-        LongStream.rangeClosed(commentId, reCommend4).forEach(id ->
-                assertThat(assertThrows(Exception.class, () -> commentService.findCommentById(id)).getMessage()).isEqualTo("해당 데이터를 찾을 수 없습니다.")
-        );
+        LongStream.rangeClosed(commentId, reCommend4).forEach(
+                id -> assertThat(commentService.findCommentById(id).getIsDeleted()).isEqualTo(1));
+//        LongStream.rangeClosed(commentId, reCommend4).forEach(id ->
+//                assertThat(assertThrows(Exception.class, () -> commentService.findCommentById(id)).getMessage()).isEqualTo("해당 데이터를 찾을 수 없습니다.")
+//        );
 
     }
 
@@ -354,9 +353,11 @@ public class CommentServiceTest {
         commentService.deleteComment(reCommend1);
 
         //then
-        LongStream.rangeClosed(commentId, reCommend3).forEach(id ->
-                assertThat(assertThrows(Exception.class, () -> commentService.findCommentById(id)).getMessage()).isEqualTo("해당 데이터를 찾을 수 없습니다.")
-        );
+        LongStream.rangeClosed(commentId, reCommend3).forEach(
+                id -> assertThat(commentService.findCommentById(id).getIsDeleted()).isEqualTo(1));
+//        LongStream.rangeClosed(commentId, reCommend3).forEach(id ->
+//                assertThat(assertThrows(Exception.class, () -> commentService.findCommentById(id)).getMessage()).isEqualTo("해당 데이터를 찾을 수 없습니다.")
+//        );
     }
 
     @Test
@@ -445,6 +446,174 @@ public class CommentServiceTest {
         Assertions.assertThat(commentService.findCommentById(commentId).getIsDeleted()).isEqualTo(1);
         Assertions.assertThat(commentService.findCommentById(commentId).getChildList().size()).isEqualTo(3);
     }
+
+    /**
+     * 부모 댓글 삭제 & 대댓글 없을 때
+     * 삭제 이후 해당 게시글의 댓글 조회 시, 조회 대상에 포함되지 않는다.
+     */
+    @Test
+    @DisplayName("부모 삭제 - 대댓글 없음 : 댓글 조회 대상 아님")
+    public void checkingComment_1(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+
+        //when
+        commentService.deleteComment(commentId);
+        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+
+        //then
+        assertThat(commentList.size()).isEqualTo(0);
+    }
+
+    /**
+     * 부모 댓글 존재
+     * 해당 게시글의 댓글 조회 시, 조회 대상에 포함
+     */
+    @Test
+    @DisplayName("부모 존재 - 대댓글 없음 : 댓글 조회 대상 포함")
+    public void checkingComment_2(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        saveComment(user.getId(), post);
+
+        //when
+        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+
+        //then
+        assertThat(commentList.size()).isEqualTo(1);
+    }
+
+    /**
+     * 부모 댓글, 대댓글 존재
+     * 해당 게시글의 댓글 조회 시, 조회 대상에 포함
+     */
+    @Test
+    @DisplayName("부모 존재 - 대댓글 존재 : 댓글 조회 대상 포함")
+    public void checkingComment_3(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        saveReComment(user.getId(), post.getId(), commentId);
+        saveReComment(user.getId(), post.getId(), commentId);
+
+        //when
+        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+
+        //then
+        assertThat(commentList.size()).isEqualTo(1);
+        assertThat(commentList.get(0).getChildComment().size()).isEqualTo(2);
+    }
+
+    /**
+     * 부모 댓글, 대댓글 여러 개 존재 중 하나 삭제
+     * 해당 게시글의 댓글 조회 시, 조회 대상에 포함
+     */
+    @Test
+    @DisplayName("부모 존재 - 대댓글 여러 개 중 하나 삭제 : 댓글 조회 대상 포함")
+    public void checkingComment_4(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        saveReComment(user.getId(), post.getId(), commentId);
+        Long reCommentId = saveReComment(user.getId(), post.getId(), commentId);
+
+        //when
+        commentService.deleteComment(reCommentId);
+        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+
+        //then
+        assertThat(commentList.size()).isEqualTo(1);
+        assertThat(commentList.get(0).getChildComment().size()).isEqualTo(2);
+    }
+
+    /**
+     * 부모 댓글, 대댓글 여러 개 존재하나 모두 삭제
+     * 해당 게시글의 댓글 조회 시, 조회 대상에 포함
+     */
+    @Test
+    @DisplayName("부모 존재 - 대댓글 여러 개 모두 삭제: 댓글 조회 대상 포함")
+    public void checkingComment_5(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        Long reCommentId1 = saveReComment(user.getId(), post.getId(), commentId);
+        Long reCommentId2 = saveReComment(user.getId(), post.getId(), commentId);
+
+        //when
+        commentService.deleteComment(reCommentId1);
+        commentService.deleteComment(reCommentId2);
+        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+
+        //then
+        assertThat(commentList.size()).isEqualTo(1);
+        assertThat(commentList.get(0).getChildComment().size()).isEqualTo(2);
+    }
+
+    /**
+     * 부모 댓글 삭제, 대댓글 여러 개 존재
+     * 해당 게시글의 댓글 조회 시, 조회 대상에 포함 안됨
+     */
+    @Test
+    @DisplayName("부모 삭제 - 대댓글 여러 개: 댓글 조회 대상 포함")
+    public void checkingComment_6(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        Long reCommentId1 = saveReComment(user.getId(), post.getId(), commentId);
+        Long reCommentId2 = saveReComment(user.getId(), post.getId(), commentId);
+
+        //when
+        commentService.deleteComment(commentId);
+        commentService.deleteComment(reCommentId1);
+        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+
+        //then
+        assertThat(commentList.size()).isEqualTo(1);
+        assertThat(commentList.get(0).getContent()).isEqualTo("댓글이 삭제되었습니다.");
+        assertThat(commentList.get(0).getChildComment().size()).isEqualTo(2);
+    }
+
+    /**
+     * 부모 댓글 삭제, 대댓글 여러 개 존재하나 모두 삭제
+     * 해당 게시글의 댓글 조회 시, 조회 대상에 포함 안됨
+     */
+    @Test
+    @DisplayName("부모 삭제 - 대댓글 여러 개 모두 삭제: 댓글 조회 대상 안됨")
+    public void checkingComment_7(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        Long reCommentId1 = saveReComment(user.getId(), post.getId(), commentId);
+        Long reCommentId2 = saveReComment(user.getId(), post.getId(), commentId);
+
+        //when
+        commentService.deleteComment(commentId);
+        commentService.deleteComment(reCommentId1);
+        commentService.deleteComment(reCommentId2);
+        List<CommentResponse> commentList = commentService.findPostCommentList(post.getId());
+
+        //then
+        assertThat(commentList.size()).isEqualTo(0);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -6,6 +6,7 @@ import Project.SangCom.comment.service.CommentService;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
+import Project.SangCom.util.response.dto.ListResponse;
 import Project.SangCom.util.response.dto.PagingResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/board/{category}")
@@ -29,16 +32,15 @@ public class CommentController {
 
     /**
      * 댓글 조회
-     * 댓글은 특정 게시글의 모든 댓글 조회 (페이징 처리 필수)
+     * 댓글은 특정 게시글의 모든 댓글 조회
      */
     @GetMapping("{postId}/comment")
-    public ResponseEntity<PagingResponse<CommentResponse>> getCommentList
-    (@PathVariable Long postId, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<ListResponse<CommentResponse>> getCommentList (@PathVariable Long postId){
 
-        Slice<CommentResponse> commentList = commentService.getNotDeletedCommentList(postId, pageable);
+        List<CommentResponse> commentList = commentService.findPostCommentList(postId);
 
         return ResponseEntity.ok().body
-                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), commentList));
+                (new ListResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), commentList));
     }
 
     /**
@@ -53,7 +55,7 @@ public class CommentController {
         Long saveCommentId = commentService.saveComment(writer.getId(), postId, commentRequest);
 
         CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
-        commentService.checkAndSetIsCommentOwner(saveCommentId, commentResponse);
+        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage(), commentResponse));
@@ -71,7 +73,7 @@ public class CommentController {
         Long saveCommentId = commentService.saveReComment(writer.getId(), postId, commentId, commentRequest);
 
         CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
-        commentService.checkAndSetIsCommentOwner(saveCommentId, commentResponse);
+        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage(), commentResponse));
