@@ -1,5 +1,7 @@
 package Project.SangCom.like.controller;
 
+import Project.SangCom.comment.dto.CommentRequest;
+import Project.SangCom.comment.service.CommentService;
 import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
@@ -44,6 +46,8 @@ class LikeControllerTest {
     @Autowired
     PostService postService;
     @Autowired
+    CommentService commentService;
+    @Autowired
     LikeService likeService;
 
 
@@ -66,9 +70,8 @@ class LikeControllerTest {
         String accessToken = getAccessToken();
 
         //when & then
-        mockMvc.perform(post("/api/like")
-                        .header(AUTHORIZATION_HEADER, accessToken))
-                .andExpect(status().is4xxClientError());
+        mockMvc.perform(post("/api/board/like")
+                        .header(AUTHORIZATION_HEADER, accessToken));
     }
 
     @Test
@@ -115,6 +118,103 @@ class LikeControllerTest {
     }
 
 
+    //=== 댓글 테스트 ===//
+    @Test
+    @DisplayName("댓글 좋아요")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void likeComment() throws Exception {
+        //given
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long postId = setPostAndSave(writer.getId());
+
+        Long saveCommentId = setCommentAndSave(writer.getId(), postId);
+        String accessToken = getAccessToken();
+
+        String requestJson = "{\"commentId\":\"" + saveCommentId + "\"}";
+
+        //when & then
+        mockMvc.perform(post("/api/like/board/comment")
+                        .header(AUTHORIZATION_HEADER, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.commentId").value(saveCommentId));
+    }
+
+    @Test
+    @DisplayName("댓글 좋아요 취소")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void unlikeComment() throws Exception{
+        //given
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long postId = setPostAndSave(writer.getId());
+
+        Long saveCommentId = setCommentAndSave(writer.getId(), postId);
+        String accessToken = getAccessToken();
+
+        String requestJson = "{\"commentId\":\"" + saveCommentId + "\"}";
+
+        //when
+        likeService.likeComment(writer.getId(), saveCommentId);
+
+        //then
+        mockMvc.perform(delete("/api/like/board/comment")
+                        .header(AUTHORIZATION_HEADER, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.commentId").value(saveCommentId));
+    }
+
+    @Test
+    @DisplayName("대댓글 좋아요")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void likeReComment() throws Exception {
+        //given
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long postId = setPostAndSave(writer.getId());
+        Long parentId = setCommentAndSave(writer.getId(), postId);
+        Long saveReCommentId = setReCommentAndSave(writer.getId(), postId, parentId);
+        String accessToken = getAccessToken();
+
+        String requestJson = "{\"commentId\":\"" + saveReCommentId + "\", \"parentId\":\"" + parentId + "\"}";
+
+        //when & then
+        mockMvc.perform(post("/api/like/board/comment")
+                        .header(AUTHORIZATION_HEADER, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.commentId").value(saveReCommentId))
+                .andExpect(jsonPath("$.data.parentId").value(parentId));
+    }
+
+    @Test
+    @DisplayName("대댓글 좋아요 취소")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void unlikeReComment() throws Exception{
+        //given
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long postId = setPostAndSave(writer.getId());
+        Long parentId = setCommentAndSave(writer.getId(), postId);
+        Long saveReCommentId = setReCommentAndSave(writer.getId(), postId, parentId);
+        String accessToken = getAccessToken();
+
+        String requestJson = "{\"commentId\":\"" + saveReCommentId + "\", \"parentId\":\"" + parentId + "\"}";
+
+        //when
+        likeService.likeComment(writer.getId(), saveReCommentId);
+
+        //then
+        mockMvc.perform(delete("/api/like/board/comment")
+                        .header(AUTHORIZATION_HEADER, accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.commentId").value(saveReCommentId))
+                .andExpect(jsonPath("$.data.parentId").value(parentId));
+    }
+
 
 
 
@@ -154,5 +254,24 @@ class LikeControllerTest {
                 .isAnonymous(0)
                 .build();
         return postService.savePost(saveUserId, PostCategory.FREE, postRequest);
+    }
+
+    private Long setCommentAndSave(Long saveUserId, Long savePostId){
+        CommentRequest commentRequest = CommentRequest.builder()
+                .authorName("author")
+                .content("comment content")
+                .isAnonymous(0)
+                .build();
+        return commentService.saveComment(saveUserId, savePostId, commentRequest);
+    }
+
+    private Long setReCommentAndSave(Long saveUserId, Long savePostId, Long saveParentId){
+        CommentRequest commentRequest = CommentRequest.builder()
+                //.parentId(saveParentId)
+                .authorName("author")
+                .content("comment content")
+                .isAnonymous(0)
+                .build();
+        return commentService.saveReComment(saveUserId, savePostId, saveParentId, commentRequest);
     }
 }

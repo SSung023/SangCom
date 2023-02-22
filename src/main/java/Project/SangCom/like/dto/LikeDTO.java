@@ -7,4 +7,6 @@ import lombok.ToString;
 @ToString
 public class LikeDTO {
     private Long postId;
+    private Long commentId;
+    private Long parentId; //대댓글 좋아요 테스트
 }

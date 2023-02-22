@@ -1,5 +1,9 @@
 package Project.SangCom.like.repository;
 
+import Project.SangCom.comment.domain.Comment;
+import Project.SangCom.comment.dto.CommentRequest;
+import Project.SangCom.comment.repository.CommentRepository;
+import Project.SangCom.comment.service.CommentService;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
@@ -30,9 +34,13 @@ import java.util.Optional;
 @Slf4j
 class LikeRepositoryTest {
     @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private PostRepository postRepository;
+    //Autowired
+    //private CommentService commentService;
     @Autowired
     private LikeRepository likeRepository;
 
@@ -126,8 +134,45 @@ class LikeRepositoryTest {
         Assertions.assertThat(post.getLikeCount()).isEqualTo(3);
     }
 
+    //=== 댓글 테스트 ===//
 
+    @Test
+    @DisplayName("userId와 commentId를 통해 Likes 객체를 찾을 수 있다.")
+    public void findCommentLike(){
+        //given
+        Long userId = setUserAndSave("test@naver.com", "nickname");
+        Long postId = setPostAndSave(userId);
+        Long commentId = setCommentAndSave(userId, postId);
 
+        //when
+        Likes likes = setCommentLikes(userId, postId, commentRepository.findById(commentId));
+
+        likeRepository.save(likes);
+        Likes foundLike = likeRepository.findCommentLikes(userId, commentId).get();
+
+        //then
+        Assertions.assertThat(foundLike.getUser().getId()).isEqualTo(userId);
+        Assertions.assertThat(foundLike.getPost().getId()).isEqualTo(postId);
+        Assertions.assertThat(foundLike.getComment().getId()).isEqualTo(commentId);
+    }
+
+    @Test
+    @DisplayName("저장된 댓글 좋아요 삭제")
+    public void deleteCommentLike(){
+        //given
+        Long userId = setUserAndSave("test@naver.com", "nickname");
+        Long postId = setPostAndSave(userId);
+        Long commentId = setCommentAndSave(userId, postId);
+
+        //when
+        Likes likes = setCommentLikes(userId, postId, commentRepository.findById(commentId));
+
+        Likes savedLike = likeRepository.save(likes);
+        likeRepository.delete(savedLike);
+
+        //then
+        Assertions.assertThat(likeRepository.findById(savedLike.getId())).isEqualTo(Optional.empty());
+    }
 
 
 
@@ -140,6 +185,16 @@ class LikeRepositoryTest {
 
         return likes;
     }
+
+    private Likes setCommentLikes(Long userId, Long postId, Optional<Comment> optionalComment) {
+        Likes likes = new Likes();
+        likes.setUser(userRepository.findById(userId).get());
+        likes.setPost(postRepository.findById(postId).get());
+        likes.setComment(optionalComment.get());
+
+        return likes;
+    }
+
     private Long setUserAndSave(String email, String nickname){
         User user = User.builder()
                 .role(Role.STUDENT)
@@ -160,5 +215,18 @@ class LikeRepositoryTest {
         post.addUser(userRepository.findById(saveUserId).get());
         Post savedPost = postRepository.save(post);
         return savedPost.getId();
+    }
+
+    private Long setCommentAndSave(Long saveUserId, Long savePostId){
+        Comment comment = Comment.builder()
+                .author("author")
+                .content("comment content")
+                .isAnonymous(0)
+                .build();
+        comment.setUser(userRepository.findById(saveUserId).get());
+        comment.setPost(postRepository.findById(savePostId).get());
+        Comment saveComment = commentRepository.save(comment);
+
+        return saveComment.getId();
     }
 }

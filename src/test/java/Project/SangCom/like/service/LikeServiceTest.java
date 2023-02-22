@@ -1,5 +1,8 @@
 package Project.SangCom.like.service;
 
+import Project.SangCom.comment.dto.CommentRequest;
+import Project.SangCom.comment.dto.CommentResponse;
+import Project.SangCom.comment.service.CommentService;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.like.repository.LikeRepository;
 import Project.SangCom.post.domain.Post;
@@ -13,6 +16,7 @@ import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import Project.SangCom.utils.WithMockCustomUser;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +28,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -34,6 +40,8 @@ public class LikeServiceTest {
     private UserService userService;
     @Autowired
     private PostService postService;
+    @Autowired
+    private CommentService commentService;
     @Autowired
     private LikeService likeService;
     @Autowired
@@ -158,13 +166,13 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(user.getId());
 
         //when
-        PostResponse postDetailResponse = postService.convertToDetailResponse(user, savePostId);
+        PostResponse postResponse = postService.convertToPreviewResponse(user, savePostId);
 
         likeService.likePost(user.getId(), savePostId);
-        likeService.checkAndSetIsLikePressed(savePostId, postDetailResponse);
+        likeService.checkAndSetIsLikePressed(savePostId, postResponse);
 
         //then
-        Assertions.assertThat(postDetailResponse.getIsLikePressed()).isEqualTo(1);
+        Assertions.assertThat(postResponse.getIsLikePressed()).isEqualTo(1);
     }
 
     @Test
@@ -176,11 +184,11 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(user.getId());
 
         //when
-        PostResponse postDetailResponse = postService.convertToDetailResponse(user, savePostId);
-        likeService.checkAndSetIsLikePressed(savePostId, postDetailResponse);
+        PostResponse postResponse = postService.convertToPreviewResponse(user, savePostId);
+        likeService.checkAndSetIsLikePressed(savePostId, postResponse);
 
         //then
-        Assertions.assertThat(postDetailResponse.getIsLikePressed()).isEqualTo(0);
+        Assertions.assertThat(postResponse.getIsLikePressed()).isEqualTo(0);
     }
     
     @Test
@@ -211,11 +219,145 @@ public class LikeServiceTest {
     }
 
 
+    //=== 댓글 테스트 코드 ===//
+    @Test
+    @DisplayName("사용자는 댓글(Comment)에 좋아요를 누를 수 있다.")
+    public void UserCanLikeComment(){
+        //given
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
+        Long savePostId = setPostAndSave(saveUserId);
+        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
+
+        //when
+        Long saveLikeId = likeService.likeComment(saveUserId, saveCommentId);
+        Likes likesById = likeService.findLikesById(saveLikeId);
+
+        //then
+        Assertions.assertThat(likesById.getUser().getId()).isEqualTo(saveUserId);
+        Assertions.assertThat(likesById.getComment().getLikes()).contains(likesById);
+    }
+
+    @Test
+    @DisplayName("좋아요를 누른 댓글에 대해 좋아요를 한 번 더 눌렀을 때 예외가 발생한다.")
+    public void ThrowException_WhenAlreadyLikedComment(){
+        //given
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
+        Long savePostId = setPostAndSave(saveUserId);
+        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
+
+        //when
+        likeService.likeComment(saveUserId, saveCommentId);
+
+        //then
+        Assertions.assertThatThrownBy(() -> likeService.likeComment(saveUserId, saveCommentId))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(ErrorCode.ALREADY_LIKED.getMessage());
+
+    }
+
+    @Test
+    @DisplayName("사용자는 댓글(Comment)에 좋아요를 다시 한 번 눌러서 취소할 수 있다.")
+    public void UserCanUnlikeComment(){
+        //given
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
+        Long savePostId = setPostAndSave(saveUserId);
+        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
+
+        //when
+        Long saveLikeId = likeService.likeComment(saveUserId, saveCommentId);
+        likeService.unlikeComment(saveUserId, saveCommentId);
+
+        //then
+        Assertions.assertThatThrownBy(() -> likeService.findLikesById(saveLikeId))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("좋아요하지 않은 댓글에 대해 좋아요 취소를 하면 예외가 발생한다.")
+    public void ThrowException_WhenNonExistLikeComment(){
+        //given
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
+        Long savePostId = setPostAndSave(saveUserId);
+        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
+
+        //when & then
+        Assertions.assertThatThrownBy(() -> likeService.unlikeComment(saveUserId, saveCommentId))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("사용자가 좋아요를 누르면 댓글(Comment)의 likeCount 값이 1 증가한다.")
+    public void updateCommentLikeCount(){
+        //given
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
+        Long savePostId = setPostAndSave(saveUserId);
+        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
+
+        //when
+        Long saveLikeId = likeService.likeComment(saveUserId, saveCommentId);
+
+        //then
+        Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("사용자가 좋아요 취소를 하면 댓글(Comment)의 likeCount 값이 1 감소한다.")
+    public void updateCommentUnlikeCount(){
+        //given
+        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
+        Long savePostId = setPostAndSave(saveUserId);
+        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
+
+        // like comment
+        likeService.likeComment(saveUserId, saveCommentId);
+        Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(1);
+
+        // unlike comment
+        likeService.unlikeComment(saveUserId, saveCommentId);
+        Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("사용자가 댓글에 좋아요를 눌렀다면, 응답 객체의 isLikePressed의 값이 1(true)여야 한다.")
+    @WithMockCustomUser
+    public void isCommentLikePressedIs1_WhenUserPressedLike(){
+        //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long savePostId = setPostAndSave(user.getId());
+        Long saveCommentId = setCommentAndSave(user.getId(), savePostId);
+
+        //when
+        CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
+
+        likeService.likeComment(user.getId(), saveCommentId);
+        likeService.checkAndSetIsCommentLikePressed(saveCommentId, commentResponse);
+
+        //then
+        Assertions.assertThat(commentResponse.getIsLikePressed()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("사용자가 댓글에 좋아요를 누르지 않았다면, 응답 객체의 isLikePressed의 값이 0(false)여야 한다.")
+    @WithMockCustomUser
+    public void isCommentLikePressedIs0(){
+        //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long savePostId = setPostAndSave(user.getId());
+        Long saveCommentId = setCommentAndSave(user.getId(), savePostId);
+
+        //when
+        CommentResponse commentResponse = commentService.convertToResponse(saveCommentId);
+        likeService.checkAndSetIsCommentLikePressed(saveCommentId, commentResponse);
+
+        //then
+        Assertions.assertThat(commentResponse.getIsLikePressed()).isEqualTo(0);
+    }
 
     
     
     
-
 
 
 
@@ -237,5 +379,14 @@ public class LikeServiceTest {
                 .isAnonymous(0)
                 .build();
         return postService.savePost(saveUserId, PostCategory.FREE, postRequest);
+    }
+
+    private Long setCommentAndSave(Long saveUserId, Long savePostId){
+        CommentRequest commentRequest = CommentRequest.builder()
+                .authorName("author")
+                .content("comment content")
+                .isAnonymous(0)
+                .build();
+        return commentService.saveComment(saveUserId, savePostId, commentRequest);
     }
 }

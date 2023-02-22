@@ -5,14 +5,12 @@ import Project.SangCom.comment.dto.CommentRequest;
 import Project.SangCom.comment.dto.CommentResponse;
 import Project.SangCom.comment.repository.CommentRepository;
 import Project.SangCom.post.domain.Post;
-import Project.SangCom.post.repository.PostRepository;
+import Project.SangCom.post.service.PostService;
 import Project.SangCom.user.domain.User;
-import Project.SangCom.user.repository.UserRepository;
+import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.security.SecurityUtil;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,8 +27,10 @@ import static Project.SangCom.post.dto.PostResponse.TRUE;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
-    private final PostRepository postRepository;
+
+    private final UserService userService;
+    private final PostService postService;
+    //private final CommentService commentService;
 
     /**
      * 댓글 저장
@@ -38,29 +38,36 @@ public class CommentService {
      * @param commentRequest 사용자에게 받은 댓글 정보
      */
     @Transactional
-    public Long saveComment(User writer, Post post, CommentRequest commentRequest){
+    public Long saveComment(Long writerId, Long postId, CommentRequest commentRequest){
+        User user = userService.findUserById(writerId);
+        Post post = postService.findPostById(postId);
         Comment comment = commentRequest.toEntity();
-        comment.addUser(writer);
-        comment.setPost(post);
 
-        Comment saveComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
 
-        return saveComment.getId();
+        savedComment.setUser(user);
+        savedComment.setPost(post);
+
+        return savedComment.getId();
     }
 
     /**
      * 대댓글 저장
      */
     @Transactional
-    public Long saveReComment(User writer, Post post, Comment pComment, CommentRequest commentRequest){
+    public Long saveReComment(Long writerId, Long postId, Long pCommentId, CommentRequest commentRequest){
+        User user = userService.findUserById(writerId);
+        Post post = postService.findPostById(postId);
+        Comment pComment = findCommentById(pCommentId);
         Comment comment = commentRequest.toEntity();
-        comment.addUser(writer);
-        comment.setPost(post);
-        comment.setParent(pComment);
 
-        Comment saveComment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
 
-        return saveComment.getId();
+        savedComment.setUser(user);
+//        savedComment.setPost(post); // 대댓글은 Post 밑에 바로 달리는 것이 아니기 때문에 주석처리
+        savedComment.setParent(pComment);
+
+        return savedComment.getId();
     }
 
     /**
@@ -73,6 +80,13 @@ public class CommentService {
     }
 
     /**
+     * 모든 댓글 리스트로 반환
+     */
+    public List<Comment> findAll(){
+        return commentRepository.findAll();
+    }
+
+    /**
      * commentId에 해당하는 댓글 삭제 (isDeleted = 1(true)로 변경)
      * @param commentId 삭제할 댓글 id (PK)
      */
@@ -82,9 +96,9 @@ public class CommentService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
         comment.delComment();
 
-        // DB에는 남아있지만 (isDeleted에 의해) 논리적으로 삭제된 댓글 리스트 (한 댓글의 부모-자식에 대해서)
-        List<Comment> removeableCommentList = comment.findRemoveableList();
-        commentRepository.deleteAll(removeableCommentList);
+        // 조건에 맞지 않으면 빈 리스트 반환 -> DB에 있는 것 삭제X
+        List<Comment> removableCommentList = comment.findRemovableList();
+        commentRepository.deleteAll(removableCommentList);
 
         return comment.getId();
     }
@@ -110,14 +124,15 @@ public class CommentService {
 
     /**
      * 댓글 조회
-     * 아무리 봐도 postId에 따라 다른 댓글들을 get하게 해줘야할거 같은데.. 흠..
+     * 아무리 봐도 postId에 따라 다른 댓글들을 get하게 해줘야할거 같은데..
+     * -> 인자로 postId 받고 넘기자
      * @param pageable
      */
     public Slice<CommentResponse> getNotDeletedCommentList(Long postId, Pageable pageable){
         Slice<Comment> comments = commentRepository.findAllByIsDeletedAndPostId(0, postId, pageable);
         Slice<CommentResponse> commentResponses
                 = comments.map(c -> new CommentResponse(c.getId(), c.getAuthor(),
-                c.getDate(), c.getContent(),0, c.getIsAnonymous()));
+                c.getContent(), c.getLikeCount(), 0, 0, c.getIsAnonymous()));
 
         return commentResponses;
     }
@@ -134,11 +149,36 @@ public class CommentService {
 
         return CommentResponse.builder()
                 .id(comment.getId())
-                .authorName(comment.getAuthor())
-                .date(comment.getDate())
-                .content(comment.getContent())
+                .authorName(checkIsAnonymous(comment))
+                .content(checkIsDeleted(comment))
+                .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
                 .build();
+    }
+
+    public CommentResponse convertToResponse(Comment comment){
+        return CommentResponse.builder()
+                .id(comment.getId())
+                .authorName(checkIsAnonymous(comment))
+                .content(checkIsDeleted(comment))
+                .likeCount(comment.getLikeCount())
+                .isAnonymous(comment.getIsAnonymous())
+                .build();
+    }
+    private String checkIsAnonymous(Comment comment){
+        if (comment.getIsAnonymous() == 0){
+            return comment.getAuthor();
+        }
+        else {
+            return "익명";
+        }
+    }
+
+    private String checkIsDeleted(Comment comment){
+        if(comment.getIsDeleted() == 0)
+            return comment.getContent();
+        else
+            return "댓글이 삭제되었습니다.";
     }
 
 }

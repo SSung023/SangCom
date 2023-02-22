@@ -1,27 +1,25 @@
 package Project.SangCom.comment.dto;
 
 import Project.SangCom.comment.domain.Comment;
+import Project.SangCom.comment.service.CommentService;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.security.Timestamp;
 
 @Data
 @NoArgsConstructor
 public class CommentRequest {
-
-    private Long Id;
+    private Long parentId;
     private String authorName;
-    private Timestamp date;
     private String content;
     private int isAnonymous;
 
     @Builder
-    public CommentRequest(Long Id, String authorName, Timestamp date, String content, int isAnonymous){
-        this.Id = Id;
+    public CommentRequest(Long parentId, String authorName, String content, int isAnonymous){
+        this.parentId = parentId;
         this.authorName = authorName;
-        this.date = date;
         this.content = content;
 
         this.isAnonymous = isAnonymous;
@@ -29,11 +27,16 @@ public class CommentRequest {
 
     public Comment toEntity(){
         return Comment.builder()
+                //.parent(commentService.findCommentById(parentId))
                 .author(this.authorName)
-                .date(this.date)
                 .content(this.content)
                 .isAnonymous(this.isAnonymous)
                 .build();
     }
 
+    public void updateAuthor(String nickname) {
+        this.authorName = nickname;
+    }
 }
+
+// 스프링은 DTO를 이용해 사용자에게 Request를 받고, Response를 보냄

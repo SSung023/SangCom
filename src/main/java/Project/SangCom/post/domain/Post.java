@@ -29,7 +29,7 @@ public class Post extends BaseTimeEntity {
     /**
      * 대안: user의 id를 저장 - private Long author_id;
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

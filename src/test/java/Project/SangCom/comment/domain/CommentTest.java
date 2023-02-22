@@ -1,9 +1,7 @@
 package Project.SangCom.comment.domain;
 
-import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
-import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +26,7 @@ public class CommentTest {
         Comment comment = new Comment();
 
         //when - 실행
-        comment.addUser(user1);
+        comment.setUser(user1);
 
         //then - 검증
         Assertions.assertThat(user1).isEqualTo(comment.getUser());
@@ -55,6 +53,54 @@ public class CommentTest {
         //then - 검증
         Assertions.assertThat(post1).isEqualTo(comment.getPost());
         Assertions.assertThat(comment).isEqualTo(post1.getComments().get(0));
+    }
+
+    @Test
+    @DisplayName("Comment 객체에 Parent Comment 객체를 연관관계로 설정할 수 있다.")
+    public void canParentEntityToCommentEntity(){
+        //given
+        Comment pComment = Comment.builder()
+                .author("test1")
+                .content("test connnnnnnnntent")
+                .isAnonymous(0)
+                .build();
+
+        Comment comment = new Comment();
+
+        //when
+        comment.setParent(pComment);
+
+        //then
+        Assertions.assertThat(pComment).isEqualTo(comment.getParent());
+        Assertions.assertThat(comment).isEqualTo(pComment.getChildList().get(0));
+    }
+
+    @Test
+    @DisplayName("Comment 객체에 Child Comment를 넣을 수 있다.")
+    public void canAddChildComment(){
+        //given
+        Comment pComment = Comment.builder()
+                .author("test1")
+                .content("test connnnnnnnntent")
+                .isAnonymous(0)
+                .build();
+
+        Comment comment1 = new Comment();
+        Comment comment2 = new Comment();
+        Comment comment3 = new Comment();
+        Comment comment4 = new Comment();
+
+        //when
+        pComment.addChild(comment1);
+        pComment.addChild(comment2);
+        pComment.addChild(comment3);
+        pComment.addChild(comment4);
+
+        //then
+        Assertions.assertThat(comment1).isEqualTo(pComment.getChildList().get(0));
+        Assertions.assertThat(comment2).isEqualTo(pComment.getChildList().get(1));
+        Assertions.assertThat(comment3).isEqualTo(pComment.getChildList().get(2));
+        Assertions.assertThat(comment4).isEqualTo(pComment.getChildList().get(3));
     }
 
     /*@Test

@@ -36,4 +36,24 @@ public class LikeController {
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), likeDTO));
     }
+
+
+    //=== 댓글 구현 ===//
+    @PostMapping("/board/comment")
+    public ResponseEntity<SingleResponse<LikeDTO>> likeComment(@RequestBody LikeDTO likeDTO){
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        likeService.likeComment(writer.getId(), likeDTO.getCommentId());
+
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), likeDTO));
+    }
+
+    @DeleteMapping("/board/comment")
+    public ResponseEntity<SingleResponse<LikeDTO>> unlikeComment(@RequestBody LikeDTO likeDTO){
+        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        likeService.unlikeComment(writer.getId(), likeDTO.getCommentId());
+
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), likeDTO));
+    }
 }

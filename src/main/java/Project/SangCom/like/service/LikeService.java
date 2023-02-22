@@ -1,5 +1,8 @@
 package Project.SangCom.like.service;
 
+import Project.SangCom.comment.domain.Comment;
+import Project.SangCom.comment.dto.CommentResponse;
+import Project.SangCom.comment.service.CommentService;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.like.repository.LikeRepository;
 import Project.SangCom.post.domain.Post;
@@ -24,6 +27,7 @@ import java.util.Optional;
 public class LikeService {
     private final UserService userService;
     private final PostService postService;
+    private final CommentService commentService;
     private final LikeRepository likeRepository;
 
 
@@ -90,17 +94,96 @@ public class LikeService {
     /**
      * 사용자가 좋아요를 누른 게시글인지 여부를 확인한 후, 응답 객체 필드값 설정
      * @param postId 좋아요가 눌렸는지 확인 대상인 게시글의 PK
-     * @param postDetailResponse isLikedPressed 필드 값을 수정할 응답 객체
+     * @param postResponse isLikedPressed 필드 값을 수정할 응답 객체
      */
-    public void checkAndSetIsLikePressed(Long postId, PostResponse postDetailResponse){
+    public void checkAndSetIsLikePressed(Long postId, PostResponse postResponse){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Optional<Likes> likes = likeRepository.findLikes(user.getId(), postId);
         if (likes.isPresent()) {
-            postDetailResponse.setIsLikePressed(1);
+            postResponse.setIsLikePressed(1);
         }
         else {
-            postDetailResponse.setIsLikePressed(0);
+            postResponse.setIsLikePressed(0);
+        }
+    }
+
+
+    //=== 댓글 좋아요 구현 ===//
+
+    /**
+     * 사용자가 댓글/대댓글에 좋아요를 눌렀을 때 - 좋아요 처리
+     * @param saveUserId 좋아요를 누른 사용자
+     * @param saveCommentId 좋아요가 눌린 댓글/대댓글
+     * post와 comment의 연관관계는 comment 객체에서 처리 (like에서 따로 지정x)
+     */
+    @Transactional
+    public Long likeComment(Long saveUserId, Long saveCommentId) {
+        // 이미 좋아요 되어있다면 예외 처리
+        if (likeRepository.findCommentLikes(saveUserId, saveCommentId).isPresent()) {
+            throw new BusinessException(ErrorCode.ALREADY_LIKED);
+        }
+
+        User user = userService.findUserById(saveUserId);
+        Comment comment = commentService.findCommentById(saveCommentId);
+        comment.updateLikes(1);
+
+        Likes likes = new Likes();
+        likes.setUser(user);
+        likes.setComment(comment);
+
+        Likes saveLike = likeRepository.save(likes);
+        return saveLike.getId();
+    }
+
+    /**
+     * 사용자가 좋아요한 댓글/대댓글에 좋아요 버튼을 눌렀을 때 - 좋아요 취소 처리
+     * 중간 과정에서 유효하지 않은 과정이 있다면 BusinessException 발생
+     * @param saveUserId 좋아요를 누른 사용자
+     * @param saveCommentId 좋아요가 눌린 댓글/대댓글
+     */
+    @Transactional
+    public void unlikeComment(Long saveUserId, Long saveCommentId) {
+        Comment comment = commentService.findCommentById(saveCommentId);
+        comment.updateLikes(-1);
+
+        Likes savedLike = findSavedCommentLike(saveUserId, saveCommentId);
+        likeRepository.delete(savedLike);
+    }
+
+    /**
+     * like_id(PK)를 통해 Like 객체를 찾아서 반환
+     * @param likeId 찾고자 하는 좋아요(Like) 객체의 Id
+     */
+    public Likes findCommentLikesById(Long likeId){
+        return likeRepository.findById(likeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+    }
+
+    /**
+     * 이미 저장되어 있는 Like 객체를 userId와 commentId를 통해 찾은 후 반환
+     * @param userId 좋아요 한 사용자의 id
+     * @param commentId 좋아요 눌린 댓글의 id
+     */
+    public Likes findSavedCommentLike(Long userId, Long commentId){
+        return likeRepository.findCommentLikes(userId, commentId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+    }
+
+    /**
+     * 사용자가 좋아요를 누른 댓글인지 여부를 확인한 후, 응답 객체 필드값 설정
+     * @param commentId 좋아요가 눌렸는지 확인 대상인 댓글의 PK
+     * @param commentResponse isLikedPressed 필드 값을 수정할 응답 객체
+     */
+    public void checkAndSetIsCommentLikePressed(Long commentId, CommentResponse commentResponse){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Optional<Likes> likes = likeRepository.findCommentLikes(user.getId(), commentId);
+        if (likes.isPresent()) {
+            commentResponse.setIsLikePressed(1);
+        }
+        else {
+            commentResponse.setIsLikePressed(0);
         }
     }
 }
