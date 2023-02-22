@@ -6,6 +6,7 @@ import BoardTitle from '../board/BoardTitle';
 import Comments from './Comments';
 import { boardTitle } from '../../utility/setBoardTitle.js';
 import CreateComments from './CreateComments';
+import ArticleDetail from './ArticleDetail';
 
 export default function BoardDetail() {
     const params = useParams();
@@ -17,6 +18,7 @@ export default function BoardDetail() {
         <div className={styles.wrapper}>
             <BoardTitle title={title} />
             {/* <ArticleDetail /> */}
+            <ArticleDetail category={category} articleId={id}/>
             {/* <Comments /> */}
             <Comments category={category} articleId={id}/>
             {/* For parentComments */}
