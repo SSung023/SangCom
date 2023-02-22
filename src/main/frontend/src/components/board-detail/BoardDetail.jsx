@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import styles from './BoardDetail.module.css';
-import BoardTitle from './BoardTitle';
+import BoardTitle from '../board/BoardTitle';
 import { boardTitle } from '../../utility/setBoardTitle.js';
 
 export default function BoardDetail() {

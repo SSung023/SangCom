@@ -5,7 +5,7 @@ import BoardBody from '../components/board/BoardBody';
 import { authInstance } from '../utility/api';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import BoardDetail from '../components/board/BoardDetail';
+import BoardDetail from '../components/board-detail/BoardDetail';
 import SearchBody from '../components/board/SearchBody';
 
 export default function Board() {
