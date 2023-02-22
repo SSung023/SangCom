@@ -420,7 +420,6 @@ public class PostServiceTest {
                 .isAnonymous(1) // true
                 .title("title")
                 .content(content)
-                .boardCategory("")
                 .build();
     }
 }

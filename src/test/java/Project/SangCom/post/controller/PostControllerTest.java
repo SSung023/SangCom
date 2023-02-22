@@ -110,7 +110,7 @@ class PostControllerTest {
     public void registerFreePost() throws Exception {
         //given
         String accessToken = getAccessToken();
-        String requestJson = "{\"id\":\"\", \"boardCategory\":\"FREE\"," +
+        String requestJson = "{\"id\":\"\"," +
                 "\"authorNickname\":\"\", \"title\":\"title\", \"content\":\"content\"," +
                 "\"isAnonymous\":\"0\"}";
 
@@ -136,7 +136,7 @@ class PostControllerTest {
     public void registerFreePostAsAnonymous() throws Exception {
         //given
         String accessToken = getAccessToken();
-        String requestJson = "{\"id\":\"\", \"boardCategory\":\"FREE\"," +
+        String requestJson = "{\"id\":\"\"," +
                 "\"authorNickname\":\"\", \"title\":\"title\", \"content\":\"content\"," +
                 "\"isAnonymous\":\"1\"}";
 
@@ -162,7 +162,7 @@ class PostControllerTest {
     public void registerGrade1PostAsAnonymous() throws Exception {
         //given
         String accessToken = getAccessToken();
-        String requestJson = "{\"id\":\"\", \"boardCategory\":\"\"," +
+        String requestJson = "{\"id\":\"\"," +
                 "\"authorNickname\":\"\", \"title\":\"title\", \"content\":\"content\"," +
                 "\"isAnonymous\":\"1\"}";
 
@@ -416,7 +416,6 @@ class PostControllerTest {
     }
     private PostRequest getPostRequest(String content) {
         return PostRequest.builder()
-                .boardCategory("FREE")
                 .authorNickname("nickname")
                 .title("title")
                 .content(content)
