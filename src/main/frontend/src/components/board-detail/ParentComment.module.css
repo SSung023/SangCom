@@ -1,0 +1,80 @@
+p {
+    margin: 0;
+}
+
+.parent {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1em;
+    font-size: 14px;
+    color: var(--txt-color);
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+    border-color: var(--line-color);
+}
+
+/* profile */
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.photo {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--line-color);
+}
+
+.name {
+    margin-left: 8px;
+}
+
+/* content */
+.content {
+    margin-top: 8px;
+}
+
+/* basic informations */
+.basicInfo {
+    display: flex;
+    align-items: center;
+    color: var(--blue-color);
+    margin-top: 4px;
+}
+
+.basicInfo > svg {
+    margin-left: 0.5em;
+    margin-right: 2px;
+}
+
+.time {
+    font-size: 12px;
+    color: var(--light-txt-color);
+}
+
+/* buttons */
+.buttons {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+
+.buttons > button {
+    border: none;
+    border-radius: 5px;
+    background-color: var(--btn-bg-color);
+    padding: 6px;
+    color: var(--txt-color);
+    font-size: 11px;
+
+    margin-left: 1em;
+}
+
+@media screen and (max-width: 786px) {
+    .parent{
+        font-size: 14px;
+    }
+}

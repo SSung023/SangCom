@@ -19,8 +19,6 @@ export default function BoardDetail() {
             {/* <ArticleDetail /> */}
             {/* <Comments /> */}
             <Comments category={category} articleId={id}/>
-            {/* Test childComments */}
-            <CreateComments category={category} parentId={1} articleId={id}/>
             {/* For parentComments */}
             <CreateComments category={category} articleId={id}/>
         </div>

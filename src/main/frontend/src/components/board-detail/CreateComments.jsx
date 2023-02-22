@@ -33,11 +33,12 @@ export default function CreateComments({ category, parentId, articleId }) {
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         if(form.content !== ""){
             postComment(api);
             return;
         }
+        setForm();
     };
 
     return (
