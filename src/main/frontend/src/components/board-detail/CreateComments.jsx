@@ -5,7 +5,7 @@ import { MdSend } from 'react-icons/md';
 
 // parentId는 일반적인 경우 ""로 초기화
 export default function CreateComments({ category, parentId, articleId }) {
-    const api = parentId ? `api/board/${category}/${articleId}/comment` : `api/board/${category}/${articleId}/comment/${parentId}`;
+    const api = parentId ? `api/board/${category}/${articleId}/comment/${parentId}` : `api/board/${category}/${articleId}/comment`;
     
     const customStyle = {
         border: `none`,
@@ -22,7 +22,7 @@ export default function CreateComments({ category, parentId, articleId }) {
 
     const postComment = (url) => {
         console.log(form);
-        authInstance.post(url, { ...form })
+        authInstance.post(`${url}`, { ...form })
         .then(function (res) {
             console.log(res.data);
         })
