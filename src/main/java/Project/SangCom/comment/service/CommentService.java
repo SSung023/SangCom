@@ -10,14 +10,18 @@ import Project.SangCom.user.domain.User;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
+import Project.SangCom.util.response.dto.CommonResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static Project.SangCom.post.dto.PostResponse.FALSE;
 import static Project.SangCom.post.dto.PostResponse.TRUE;
@@ -27,10 +31,9 @@ import static Project.SangCom.post.dto.PostResponse.TRUE;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-
     private final UserService userService;
     private final PostService postService;
-    //private final CommentService commentService;
+
 
     /**
      * 댓글 저장
@@ -97,8 +100,9 @@ public class CommentService {
         comment.delComment();
 
         // 조건에 맞지 않으면 빈 리스트 반환 -> DB에 있는 것 삭제X
-        List<Comment> removableCommentList = comment.findRemovableList();
-        commentRepository.deleteAll(removableCommentList);
+        // soft-delete 사용으로 인해 주석 처리
+//        List<Comment> removableCommentList = comment.findRemovableList();
+//        commentRepository.deleteAll(removableCommentList);
 
         return comment.getId();
     }
@@ -108,13 +112,19 @@ public class CommentService {
      * 작성자가 맞으므로 commentResponse 객체의 isOwner를 TRUE(1)로 설정,
      * 작성자가 아니라면 commentRepsonse 객체의 isOwner를 FALSE(0)으로 설정
      */
-    public void checkAndSetIsCommentOwner(Long commentId, CommentResponse commentResponse){
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+    public void checkAndSetIsCommentOwner(User user, Long commentId, CommentResponse commentResponse){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
-        if (comment.getAuthor().equals(principal.getNickname())){
+        if (Objects.equals(comment.getUser().getId(), user.getId())){
+            commentResponse.setIsOwner(TRUE);
+        }
+        else {
+            commentResponse.setIsOwner(FALSE);
+        }
+    }
+    public void checkAndSetIsCommentOwner(User user, Comment comment, CommentResponse commentResponse){
+        if (Objects.equals(comment.getUser().getId(), user.getId())){
             commentResponse.setIsOwner(TRUE);
         }
         else {
@@ -123,19 +133,43 @@ public class CommentService {
     }
 
     /**
-     * 댓글 조회
-     * 아무리 봐도 postId에 따라 다른 댓글들을 get하게 해줘야할거 같은데..
-     * -> 인자로 postId 받고 넘기자
-     * @param pageable
+     * 특정 게시글에서 조건에 맞는 댓글들을 반환
+     * @param postId 댓글 리스트를 받아오고 싶은 게시글의 Id
      */
-    public Slice<CommentResponse> getNotDeletedCommentList(Long postId, Pageable pageable){
-        Slice<Comment> comments = commentRepository.findAllByIsDeletedAndPostId(0, postId, pageable);
-        Slice<CommentResponse> commentResponses
-                = comments.map(c -> new CommentResponse(c.getId(), c.getAuthor(),
-                c.getContent(), c.getLikeCount(), 0, 0, c.getIsAnonymous()));
+    public List<CommentResponse> findPostCommentList(Long postId){
+        List<CommentResponse> result = new ArrayList<>();
 
-        return commentResponses;
+        List<Comment> commentList = commentRepository.findPostComment(postId);
+        for (Comment target : commentList) {
+            if (isProperComment(target)){ // 조건에 맞는다면 리스트에 포함
+                result.add(convertToResponse(target));
+            }
+        }
+        return result;
     }
+
+    /**
+     * 특정 댓글(부모 댓글 대상)이 반환 대상인지 확인하는 메서드
+     * @param comment 반환 대상 포함 대상인지 확인하는 Comment 객체
+     */
+    private boolean isProperComment(Comment comment){
+        if (comment.getIsDeleted() == 1){ // 해당 댓글이 삭제 처리되어 있다면
+            List<Comment> childList = comment.getChildList();
+
+            for (Comment child : childList) { // 대댓글 중 삭제되지 않은 것이 하나라도 있으면 true
+                if (child.getIsDeleted() == 0)  return true;
+            }
+            // 대댓글이 없거나, 모두 삭제 처리되어있다면 false
+            return false;
+        }
+
+        // 해당 댓글이 삭제 처리되어 있지 않다면 true
+        return true;
+    }
+
+
+
+
 
     /**
      * 특정 게시글에 대한 댓글에 전달할 CommentResponse(Comment)객체로 반환
@@ -153,9 +187,9 @@ public class CommentService {
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
+                .childComment(checkChildList(comment))
                 .build();
     }
-
     public CommentResponse convertToResponse(Comment comment){
         return CommentResponse.builder()
                 .id(comment.getId())
@@ -163,8 +197,20 @@ public class CommentService {
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
+                .childComment(checkChildList(comment))
                 .build();
     }
+    public CommentResponse convertToSingleResponse(Comment comment){
+        return CommentResponse.builder()
+                .id(comment.getId())
+                .authorName(checkIsAnonymous(comment))
+                .content(checkIsDeleted(comment))
+                .likeCount(comment.getLikeCount())
+                .isAnonymous(comment.getIsAnonymous())
+                .build();
+//        checkAndSetIsCommentOwner();
+    }
+
     private String checkIsAnonymous(Comment comment){
         if (comment.getIsAnonymous() == 0){
             return comment.getAuthor();
@@ -181,4 +227,12 @@ public class CommentService {
             return "댓글이 삭제되었습니다.";
     }
 
+    /**
+     * 특정 댓글의 대댓글이 있는 경우 대댓글들을 CommentResponse 리스트로 변환
+     */
+    private List<CommentResponse> checkChildList(Comment comment){
+        return comment.getChildList().stream()
+                .map(c -> convertToSingleResponse(c))
+                .toList();
+    }
 }

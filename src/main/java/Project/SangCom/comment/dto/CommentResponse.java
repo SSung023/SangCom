@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class CommentResponse {
@@ -17,11 +20,15 @@ public class CommentResponse {
     private int isOwner; // 댓글 작성자 여부
     private int isAnonymous; // 익명 여부
 
+    private List<CommentResponse> childComment = new ArrayList<>();
+
+
     public static int TRUE = 1, FALSE = 0;
 
     /* Entity -> Dto*/
     @Builder
-    public CommentResponse(Long id, String authorName, String content, int likeCount, int isLikePressed, int isOwner, int isAnonymous) {
+    public CommentResponse(Long id, String authorName, String content, int likeCount,
+                           int isLikePressed, int isOwner, int isAnonymous, List<CommentResponse> childComment) {
         this.id = id;
         this.authorName = authorName;
         this.content = content;
@@ -30,6 +37,8 @@ public class CommentResponse {
         this.isLikePressed = isLikePressed;
         this.isOwner = isOwner;
         this.isAnonymous = isAnonymous;
+
+        this.childComment = childComment;
     }
 
     /**
