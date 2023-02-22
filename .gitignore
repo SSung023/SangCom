@@ -18,6 +18,7 @@ application.properties
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/**/compiler.xml
 
 # AWS User-specific
 .idea/**/aws.xml
@@ -62,6 +63,9 @@ cmake-build-*/
 
 # IntelliJ
 out/
+
+# Visual Studio Code
+.vscode/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
