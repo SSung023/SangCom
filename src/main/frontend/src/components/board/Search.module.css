@@ -46,6 +46,7 @@
     width: 100%;
     border: none;
     font-size: 14px;
+    color: var(--txt-color);
 }
 
 .input::placeholder {
@@ -55,6 +56,10 @@
 
 .input:focus {
     outline: none;
+}
+
+.input:required:valid {
+    background-color: var(--white-color);
 }
 
 .submitBtn {

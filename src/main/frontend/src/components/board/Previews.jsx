@@ -5,17 +5,17 @@ import { authInstance } from '../../utility/api';
 import ArticlePreview from './ArticlePreview';
 import styles from './Previews.module.css';
 
-export default function Previews() {
+export default function Previews({ category }) {
     const [page, setPage] = useState(0);
     const [articles, setArticles] = useState({});
     const [isNewArticleExist, setIsNewArticleExist] = useState(true);
 
     const params = useParams();
-    
+
     const api = () => {
         return params.search ? 
-        `/api/board/${params.category}/search?query=${params.selection}&keyword=${params.search}&page=`
-        : `/api/board/${params.category}/list/?page=`;
+        `/api/board/${category}/search?query=${params.selection}&keyword=${params.search}&page=`
+        : `/api/board/${category}/list/?page=`;
     };
 
     const handleClickBtn = async () => {
@@ -29,14 +29,14 @@ export default function Previews() {
     };
 
     useEffect(() => {
-        console.log(api());
+        setPage(0);
         authInstance.get(api())
         .then(function (res) { return res.data.data })
         .then(function (data) { 
             setArticles(data.content);
-            data.last && setIsNewArticleExist(false);
+            data.last ? setIsNewArticleExist(false) : setIsNewArticleExist(true);
         })
-    }, []);
+    }, [category]);
 
     const memoizedArticles = useMemo(() => {
         if(articles.length == 0){

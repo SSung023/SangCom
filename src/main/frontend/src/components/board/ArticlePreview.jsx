@@ -10,8 +10,6 @@ export default function ArticlePreview({ articleInfo, customStyle }) {
     const params = useParams();
 
     const handleClick = async (e) => {
-        // TODO: 백엔드에 boardCategory를 보내달라고 요청. 변경되면 아래 코드로 교체하기.
-        // navigate(`board/${article.boardCategory}/${article.id}`);
         window.location.href = `/board/${params.category}/${article.id}`;
     };
 

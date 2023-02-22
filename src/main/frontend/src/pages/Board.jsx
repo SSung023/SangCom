@@ -19,7 +19,7 @@ export default function Board() {
     useEffect(() => {
         authInstance.get('api/board/test');
     }, []);
-
+    
     return (
         <div>
             <div className='container'>

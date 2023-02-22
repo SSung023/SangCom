@@ -17,7 +17,7 @@ export default function BoardBody({ category }) {
             <BoardTitle title={title} />
             <BestArticle api={`api/board/${category}/best`}/>
             <Search category={category} boardTitle={title}/>
-            <Previews />
+            <Previews category={category}/>
         </div>
     );
 }
