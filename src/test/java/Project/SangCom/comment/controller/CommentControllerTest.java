@@ -40,6 +40,7 @@ import javax.persistence.EntityManager;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static Project.SangCom.post.dto.PostResponse.TRUE;
@@ -130,6 +131,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.count").value(3));
 
         // post 객체에 제대로 들어있는지 확인
+        List<Comment> comments = post.getComments();
         assertThat(post.getComments().size()).isEqualTo(3);
         assertThat(post.getComments().get(0).getContent()).isEqualTo("comment1");
         assertThat(post.getComments().get(1).getContent()).isEqualTo("comment2");
@@ -172,12 +174,13 @@ public class CommentControllerTest {
         String requestJson = "{\"id\":\"\", \"authorName\":\"nickname\"," +
                 "\"content\":\"content\", \"isAnonymous\":\"0\"}";
 
-        Comment parent = getComment();
-        Long postId = getPost().getId();
-        Long parentId = commentRepository.save(parent).getId();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Post post = getPost();
+        CommentRequest request = getCommentRequest("comment");
+        Long parentId = commentService.saveComment(user.getId(), post.getId(), request);
 
         //when&then
-        mockMvc.perform(post("/api/board/free/" + postId + "/comment/" + parentId)
+        mockMvc.perform(post("/api/board/free/" + post.getId() + "/comment/" + parentId)
                         .header(AUTHORIZATION_HEADER, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -188,6 +191,9 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.data.content").value("content"))
                 .andExpect(jsonPath("$.data.isOwner").value(TRUE))
                 .andExpect(jsonPath("$.data.isAnonymous").value("0"));
+
+        assertThat(post.getComments().size()).isEqualTo(1);
+        assertThat(post.getComments().get(0).getChildList().size()).isEqualTo(1);
     }
 
     @Test
