@@ -40,15 +40,22 @@ export default function Previews({ category }) {
 
     const memoizedArticles = useMemo(() => {
         if(articles.length == 0){
-            return <div 
-                        style={{ 
-                            fontSize: `14px`, 
-                            width: `fit-content`,
-                            margin: `30px auto auto auto`,
-                            fontWeight: `var(--bold)`,
-                            color: `var(--light-txt-color)`
-                        }}
-                    >💧 일치하는 결과가 없어요</div>
+            if(params.search){
+                return <div style={{ 
+                    fontSize: `14px`, 
+                    width: `fit-content`,
+                    margin: `30px auto auto auto`,
+                    fontWeight: `var(--bold)`,
+                    color: `var(--light-txt-color)`}}
+                >일치하는 결과가 없어요 💧</div>
+            }
+            return <div style={{ 
+                        fontSize: `14px`, 
+                        width: `fit-content`,
+                        margin: `30px auto auto auto`,
+                        fontWeight: `var(--bold)`,
+                        color: `var(--light-txt-color)`}}
+                    >아직 게시글이 존재하지 않아요. 글을 작성해보세요! 🌟</div>
         }
         else {
             return Object.values(articles).map((article)=> {
