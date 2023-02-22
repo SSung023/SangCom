@@ -17,13 +17,21 @@ export default function BestArticle({ api }) {
         .then(function(res) {
             setArticle(res.data.data);
         })
-    }, []);
+    }, [api]);
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.title}>실시간 인기글</div>
 
-            { article && <ArticlePreview articleInfo={article} customStyle={customStyle}/>}
+            { article ? <ArticlePreview articleInfo={article} customStyle={customStyle}/> : <None />}
+        </div>
+    );
+}
+
+function None() {
+    return (
+        <div className={styles.none}>
+            아직 실시간 인기글이 없어요 🫠
         </div>
     );
 }

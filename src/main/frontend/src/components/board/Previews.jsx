@@ -50,12 +50,15 @@ export default function Previews({ category }) {
                 >일치하는 결과가 없어요 💧</div>
             }
             return <div style={{ 
+                        display: `flex`,
+                        flexDirection: `column`,
+                        alignItems: `center`,
                         fontSize: `14px`, 
                         width: `fit-content`,
                         margin: `30px auto auto auto`,
                         fontWeight: `var(--bold)`,
                         color: `var(--light-txt-color)`}}
-                    >아직 게시글이 존재하지 않아요. 글을 작성해보세요! 🌟</div>
+                    ><p>아직 게시글이 존재하지 않아요</p><p>글을 작성해보세요 🌟</p></div>
         }
         else {
             return Object.values(articles).map((article)=> {
