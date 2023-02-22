@@ -28,7 +28,7 @@ export default function Board() {
                 {/* BoardRightSide */}
             </div>
             
-            { !id &&  <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category="FREE" /></Modal>}
+            { !id &&  <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>}
         </div>
     );
 }

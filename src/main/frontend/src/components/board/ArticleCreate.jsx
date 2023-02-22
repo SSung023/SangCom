@@ -2,13 +2,9 @@ import React from 'react';
 import { useState } from 'react';
 import { authInstance } from '../../utility/api';
 import styles from './ArticleCreate.module.css';
-import { useNavigate } from 'react-router-dom';
 
 export default function ArticleCreate({ category }) {
-    const navigate = useNavigate();
     const [ form, setForm ] = useState({
-        id: 0,
-        boardCategory: category,
         authorNickname: "",
         title: "",
         content: "",
@@ -21,7 +17,7 @@ export default function ArticleCreate({ category }) {
             return res.data.id;
         })
         .then(function (id) {
-            navigate(`${id}`);
+            window.location.href = (`/board/${category}/${id}`);
         })
         .catch(function (err) {
             console.log(err);
@@ -31,8 +27,7 @@ export default function ArticleCreate({ category }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        postArticle("api/board/free");
+        postArticle(`api/board/${category}`);
     };
 
     return (

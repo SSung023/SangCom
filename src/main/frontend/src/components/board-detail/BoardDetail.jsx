@@ -1,8 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import styles from './BoardDetail.module.css';
+
 import BoardTitle from '../board/BoardTitle';
+import Comments from './Comments';
 import { boardTitle } from '../../utility/setBoardTitle.js';
+import CreateComments from './CreateComments';
 
 export default function BoardDetail() {
     const params = useParams();
@@ -15,6 +18,11 @@ export default function BoardDetail() {
             <BoardTitle title={title} />
             {/* <ArticleDetail /> */}
             {/* <Comments /> */}
+            <Comments category={category} articleId={id}/>
+            {/* Test childComments */}
+            <CreateComments category={category} parentId={1} articleId={id}/>
+            {/* For parentComments */}
+            <CreateComments category={category} articleId={id}/>
         </div>
     );
 }
