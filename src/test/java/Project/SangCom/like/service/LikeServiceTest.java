@@ -373,7 +373,6 @@ public class LikeServiceTest {
     private Long setPostAndSave(Long saveUserId){
         PostRequest postRequest = PostRequest.builder()
                 .authorNickname("authorNickname")
-                .boardCategory(PostCategory.FREE.toString())
                 .title("title1")
                 .content("content1")
                 .isAnonymous(0)

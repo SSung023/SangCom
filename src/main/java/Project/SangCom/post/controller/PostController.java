@@ -206,7 +206,6 @@ public class PostController {
                     .authorNickname("")
                     .title("title" + i)
                     .content("content" + i)
-                    .boardCategory(PostCategory.FREE.toString())
                     .isAnonymous(i % 2)
                     .build();
             postRequest.updateAuthor(savedUser.getNickname());
@@ -216,7 +215,6 @@ public class PostController {
                 .authorNickname("")
                 .title("title13")
                 .content("content13")
-                .boardCategory(PostCategory.FREE.toString())
                 .isAnonymous(1)
                 .build();
         postRequest.updateAuthor(mine.getNickname());

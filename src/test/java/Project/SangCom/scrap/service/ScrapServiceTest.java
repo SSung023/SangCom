@@ -171,7 +171,6 @@ class ScrapServiceTest {
     }
     private PostRequest getPostRequest() {
         return PostRequest.builder()
-                .boardCategory(PostCategory.FREE.toString())
                 .authorNickname("")
                 .title("title")
                 .content("content")

@@ -12,7 +12,6 @@ import lombok.ToString;
 @ToString
 public class PostRequest {
 
-    private String boardCategory;
     private String authorNickname; // 닉네임
     private String title;
     private String content;
@@ -20,8 +19,7 @@ public class PostRequest {
 
 
     @Builder
-    public PostRequest(String boardCategory, String authorNickname, String title, String content, int isAnonymous) {
-        this.boardCategory = boardCategory;
+    public PostRequest(String authorNickname, String title, String content, int isAnonymous) {
         this.authorNickname = authorNickname;
         this.title = title;
         this.content = content;
@@ -29,15 +27,7 @@ public class PostRequest {
         this.isAnonymous = isAnonymous;
     }
 
-    public Post toEntity(){
-        return Post.builder()
-                .category(PostCategory.valueOf(boardCategory))
-                .author(this.authorNickname)
-                .title(this.title)
-                .content(this.content)
-                .isAnonymous(this.isAnonymous)
-                .build();
-    }
+
     public Post toEntity(PostCategory postCategory){
         return Post.builder()
                 .category(postCategory)
