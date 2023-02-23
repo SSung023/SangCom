@@ -77,4 +77,7 @@ p {
     .parent{
         font-size: 14px;
     }
+    .buttons > button {
+        font-size: 8px;
+    }
 }

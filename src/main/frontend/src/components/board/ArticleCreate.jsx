@@ -2,8 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import { authInstance } from '../../utility/api';
 import styles from './ArticleCreate.module.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function ArticleCreate({ category }) {
+    const navigate = useNavigate();
     const [ form, setForm ] = useState({
         authorNickname: "",
         title: "",
@@ -14,10 +16,8 @@ export default function ArticleCreate({ category }) {
     const postArticle = (url) => {
         authInstance.post(url, { ...form })
         .then(function (res) {
-            return res.data.id;
-        })
-        .then(function (id) {
-            window.location.href = (`/board/${category}/${id}`);
+            console.log(res.data.data.id);
+            navigate(`./${res.data.data.id}`);
         })
         .catch(function (err) {
             console.log(err);
