@@ -18,6 +18,7 @@ export default function Search({ category, boardTitle }) {
     useEffect(() => {
         if(params.search) {
             inputRef.current.defaultValue = `${params.search}`;
+            setSelect(params.selection);
             setSearch(params.search);
         }
         else{
@@ -34,7 +35,8 @@ export default function Search({ category, boardTitle }) {
                 >
                     <select
                         className={styles.select}
-                        defaultValue="all" 
+                        defaultValue={`all`}
+                        value={`${selection}`}
                         onChange={(e) => { setSelect(e.target.value) }}>
                         <option value="all">제목+내용</option>
                         <option value="title">제목</option>
