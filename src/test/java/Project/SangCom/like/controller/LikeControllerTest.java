@@ -272,6 +272,6 @@ class LikeControllerTest {
                 .content("comment content")
                 .isAnonymous(0)
                 .build();
-        return commentService.saveReComment(saveUserId, savePostId, saveParentId, commentRequest);
+        return commentService.saveReComment(saveUserId, saveParentId, commentRequest);
     }
 }

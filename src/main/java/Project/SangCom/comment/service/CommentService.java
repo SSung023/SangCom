@@ -63,9 +63,8 @@ public class CommentService {
      * 대댓글 저장
      */
     @Transactional
-    public Long saveReComment(Long writerId, Long postId, Long pCommentId, CommentRequest commentRequest){
+    public Long saveReComment(Long writerId, Long pCommentId, CommentRequest commentRequest){
         User user = userService.findUserById(writerId);
-        Post post = postService.findPostById(postId);
         Comment pComment = findCommentById(pCommentId);
         Comment comment = commentRequest.toEntity();
 

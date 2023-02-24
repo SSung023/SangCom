@@ -156,7 +156,7 @@ public class CommentServiceTest {
         //when
         User saveUser = userRepository.save(user);
 
-        Long registeredId = commentService.saveReComment(saveUser.getId(), post.getId(), savedCommentId, request);
+        Long registeredId = commentService.saveReComment(saveUser.getId(), savedCommentId, request);
         Comment savedReComment = commentRepository.findById(registeredId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
@@ -219,7 +219,7 @@ public class CommentServiceTest {
         Long savedCommentId = commentService.saveComment(userId, postId, request1);
 
         //then
-        assertThatThrownBy(() -> commentService.saveReComment(userId, 0L, savedCommentId, request2))
+        assertThatThrownBy(() -> commentService.saveReComment(userId, savedCommentId, request2))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
     }
@@ -240,7 +240,7 @@ public class CommentServiceTest {
         CommentRequest request = getCommentRequest("Re-comment");
 
         //when&then
-        assertThatThrownBy(() -> commentService.saveReComment(userId, postId, 0L, request))
+        assertThatThrownBy(() -> commentService.saveReComment(userId, 0L, request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
 
@@ -650,11 +650,6 @@ public class CommentServiceTest {
 
 
 
-
-
-
-
-
     private User getUser() {
         User user = User.builder()
                 .username("username")
@@ -725,7 +720,7 @@ public class CommentServiceTest {
         Comment parent = commentService.findCommentById(parentId);
         CommentRequest request = getCommentRequest("자식 댓글");
 
-        Long savedReCommentId = commentService.saveReComment(userId, postId, parentId, request);
+        Long savedReCommentId = commentService.saveReComment(userId, parentId, request);
         return savedReCommentId;
     }
 

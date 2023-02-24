@@ -70,7 +70,7 @@ public class CommentController {
         User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentRequest.updateAuthor(writer.getNickname());
 
-        Long saveCommentId = commentService.saveReComment(writer.getId(), postId, commentId, commentRequest);
+        Long saveCommentId = commentService.saveReComment(writer.getId(), commentId, commentRequest);
 
         CommentResponse commentResponse = commentService.convertToResponse(writer, saveCommentId);
 //        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
