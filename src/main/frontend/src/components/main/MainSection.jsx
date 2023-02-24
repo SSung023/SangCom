@@ -19,19 +19,10 @@ export default function MainSection() {
                 <BoardPreview boardKey={0}/>
                 <BoardPreview boardKey={1}/>
             </div>
-            {/** 급식표 **/}
-            <div className={styles.section}>
-                <p className={styles.title}>급식표</p>
-                <Cafeteria />
-            </div>
             {/** 반 공간 **/}
             <div className={styles.section}>
                 <p className={styles.title}>우리 반</p>
                 <Class />
-            </div>
-            <div className={styles.section}>
-                <p className={styles.title}>급식표 ver2</p>
-                <Meal />
             </div>
         </div>
     );

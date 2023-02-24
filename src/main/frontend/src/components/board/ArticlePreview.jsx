@@ -2,11 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import styles from './ArticlePreview.module.css';
 import { MdChatBubbleOutline, MdFavoriteBorder, MdOutlineFavorite } from 'react-icons/md';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 export default function ArticlePreview({ articleInfo, customStyle }) {
     const [article, ] = useState(() => articleInfo);
-    const navigate = useNavigate();
     const params = useParams();
 
     const handleClick = async (e) => {

@@ -6,11 +6,12 @@
 }
 
 .search {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
-    width: 95%;
+    width: 100%;
     height: 3em;
-    margin-bottom: 16px;
+    margin-top: 1em;
     padding-right: 0.5em;
     padding-left: 0.5em;
 

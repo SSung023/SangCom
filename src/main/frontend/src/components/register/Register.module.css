@@ -46,7 +46,7 @@
     padding: 2rem;
 
     color: #FFFFFF;
-    font-size: 24px;
+    font-size: 23px;
     font-weight: 600;
     border: none;
 
@@ -59,7 +59,7 @@
     background-color: #EEF2FF;
     color: #2D81FF;
     transition: 300ms ease-in-out;
-    border: solid;
+    border: solid 1px;
 }
 
 .teacherRegister{
@@ -70,7 +70,7 @@
 
     color: #FFFFFF;
     border: none;
-    font-size: 24px;
+    font-size: 23px;
     font-weight: 600;
 
     align-items: center;
@@ -84,7 +84,7 @@
     background-color: #EEF2FF;
     color: #2D81FF;
     transition: 300ms ease-in-out;
-    border: solid;
+    border: solid 1px;
 }
 
 .icon{
@@ -215,7 +215,7 @@ select:required:valid{
     background-color: #EEF2FF;
     color: #2D81FF;
     transition: 300ms ease-in-out;
-    border: solid;
+    border: solid 1px;
 }
 
 
@@ -257,7 +257,7 @@ select:required:valid{
     background-color: #EEF2FF;
     color: #2D81FF;
     transition: 300ms ease-in-out;
-    border: solid;
+    border: solid 1px;
 }
 
 

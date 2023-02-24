@@ -15,9 +15,9 @@ export default function SearchBody({ category }) {
     return (
         <div className={styles.wrapper}>
             <BoardTitle title={title} />
-            <BestArticle api={`api/board/${category}/best`}/>
             <Search category={category} boardTitle={title}/>
-            <Previews />
+            <BestArticle api={`api/board/${category}/best`}/>
+            <Previews category={category}/>
         </div>
     );
 }

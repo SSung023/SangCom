@@ -7,8 +7,6 @@ import { useNavigate } from 'react-router-dom';
 export default function ArticleCreate({ category }) {
     const navigate = useNavigate();
     const [ form, setForm ] = useState({
-        id: 0,
-        boardCategory: category,
         authorNickname: "",
         title: "",
         content: "",
@@ -18,10 +16,8 @@ export default function ArticleCreate({ category }) {
     const postArticle = (url) => {
         authInstance.post(url, { ...form })
         .then(function (res) {
-            return res.data.id;
-        })
-        .then(function (id) {
-            navigate(`${id}`);
+            console.log(res.data.data.id);
+            navigate(`./${res.data.data.id}`);
         })
         .catch(function (err) {
             console.log(err);
@@ -31,8 +27,7 @@ export default function ArticleCreate({ category }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        postArticle("api/board/free");
+        postArticle(`api/board/${category}`);
     };
 
     return (
