@@ -12,22 +12,14 @@ import Project.SangCom.user.domain.User;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
-import Project.SangCom.util.response.dto.CommonResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static Project.SangCom.post.dto.PostResponse.FALSE;
-import static Project.SangCom.post.dto.PostResponse.TRUE;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +45,8 @@ public class CommentService {
 
         Comment savedComment = commentRepository.save(comment);
 
+        post.updateCommentCnt(1);
+
         savedComment.setUser(user);
         savedComment.setPost(post);
 
@@ -63,15 +57,17 @@ public class CommentService {
      * 대댓글 저장
      */
     @Transactional
-    public Long saveReComment(Long writerId, Long pCommentId, CommentRequest commentRequest){
+    public Long saveReComment(Long writerId, Long postId, Long pCommentId, CommentRequest commentRequest){
         User user = userService.findUserById(writerId);
+        Post post = postService.findPostById(postId);
         Comment pComment = findCommentById(pCommentId);
         Comment comment = commentRequest.toEntity();
 
         Comment savedComment = commentRepository.save(comment);
 
+        post.updateCommentCnt(1);
+
         savedComment.setUser(user);
-//        savedComment.setPost(post); // 대댓글은 Post 밑에 바로 달리는 것이 아니기 때문에 주석처리
         savedComment.setParent(pComment);
 
         return savedComment.getId();
@@ -98,9 +94,12 @@ public class CommentService {
      * @param commentId 삭제할 댓글 id (PK)
      */
     @Transactional
-    public Long deleteComment(Long commentId){
+    public Long deleteComment(Long commentId, Long postId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
+        Post post = postService.findPostById(postId);
+
+        post.updateCommentCnt(-1);
         comment.delComment();
 
         // 조건에 맞지 않으면 빈 리스트 반환 -> DB에 있는 것 삭제X

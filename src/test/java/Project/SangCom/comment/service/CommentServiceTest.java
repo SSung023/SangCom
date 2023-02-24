@@ -143,6 +143,68 @@ public class CommentServiceTest {
     }
 
     @Test
+    @DisplayName("댓글을 저장하면 Post의 commentCount가 증가한다.")
+    public void increaseCommentCnt_whenSaveComment(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+
+        //when
+        saveComment(user.getId(), post);
+        saveComment(user.getId(), post);
+
+        //then
+        assertThat(post.getCommentCount()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("대댓글을 저장하면 Post의 commentCount가 증가한다.")
+    public void increaseCommentCnt_whenSaveReComment(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+
+        //when
+        Long commentId = saveComment(user.getId(), post);
+        saveReComment(user.getId(), post.getId(), commentId);
+
+        //then
+        assertThat(post.getCommentCount()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("댓글을 삭제하면 Post의 commentCount가 감소한다.")
+    public void decreaseCommentCnt_whenDeleteComment(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        saveComment(user.getId(), post);
+
+        //when
+        commentService.deleteComment(commentId, post.getId());
+
+        //then
+        assertThat(post.getCommentCount()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("대댓글을 삭제하면 Post의 commentCount가 감소한다.")
+    public void decreaseCommentCnt_whenDeleteReComment(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+        Long reCommentId = saveReComment(user.getId(), post.getId(), commentId);
+
+        //when
+        commentService.deleteComment(reCommentId, post.getId());
+
+        //then
+        assertThat(post.getCommentCount()).isEqualTo(1);
+    }
+
+    @Test
     @DisplayName("CommentRequest 객체를 전달받아 service를 통해 대댓글을 DB에 저장할 수 있다.")
     public void canSaveReComment() {
         //given
@@ -156,7 +218,7 @@ public class CommentServiceTest {
         //when
         User saveUser = userRepository.save(user);
 
-        Long registeredId = commentService.saveReComment(saveUser.getId(), savedCommentId, request);
+        Long registeredId = commentService.saveReComment(saveUser.getId(), post.getId(), savedCommentId, request);
         Comment savedReComment = commentRepository.findById(registeredId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
 
@@ -219,7 +281,7 @@ public class CommentServiceTest {
         Long savedCommentId = commentService.saveComment(userId, postId, request1);
 
         //then
-        assertThatThrownBy(() -> commentService.saveReComment(userId, savedCommentId, request2))
+        assertThatThrownBy(() -> commentService.saveReComment(userId, 0L, savedCommentId, request2))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
     }
@@ -240,7 +302,7 @@ public class CommentServiceTest {
         CommentRequest request = getCommentRequest("Re-comment");
 
         //when&then
-        assertThatThrownBy(() -> commentService.saveReComment(userId, 0L, request))
+        assertThatThrownBy(() -> commentService.saveReComment(userId, postId,0L, request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
 
@@ -265,7 +327,7 @@ public class CommentServiceTest {
         assertThat(commentService.findCommentById(commentId).getChildList().size()).isEqualTo(4);
 
         //when
-        commentService.deleteComment(commentId); // 부모 댓글 삭제
+        commentService.deleteComment(commentId, post.getId()); // 부모 댓글 삭제
 
         //then
         Comment findComment = commentService.findCommentById(commentId);
@@ -290,7 +352,7 @@ public class CommentServiceTest {
         Long commentId = saveComment(user.getId(), post);
 
         //when
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId, post.getId());
 
         //then
         assertThat(post.getComments().size()).isEqualTo(1);
@@ -317,10 +379,10 @@ public class CommentServiceTest {
         Assertions.assertThat(commentService.findCommentById(commentId).getChildList().size()).isEqualTo(4);
 
         //대댓글 삭제 -  삭제 검증
-        commentService.deleteComment(reCommend1);
-        commentService.deleteComment(reCommend2);
-        commentService.deleteComment(reCommend3);
-        commentService.deleteComment(reCommend4);
+        commentService.deleteComment(reCommend1, post.getId());
+        commentService.deleteComment(reCommend2, post.getId());
+        commentService.deleteComment(reCommend3, post.getId());
+        commentService.deleteComment(reCommend4, post.getId());
 
         Assertions.assertThat(commentService.findCommentById(reCommend1).getIsDeleted()).isEqualTo(1);
         Assertions.assertThat(commentService.findCommentById(reCommend2).getIsDeleted()).isEqualTo(1);
@@ -328,7 +390,7 @@ public class CommentServiceTest {
         Assertions.assertThat(commentService.findCommentById(reCommend4).getIsDeleted()).isEqualTo(1);
 
         //when
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId, post.getId());
 
         //then
         LongStream.rangeClosed(commentId, reCommend4).forEach(
@@ -353,7 +415,7 @@ public class CommentServiceTest {
         Long reCommend1Id = saveReComment(commentId);
 
         //when
-        commentService.deleteComment(reCommend1Id);
+        commentService.deleteComment(reCommend1Id, post.getId());
 
         //then
         Assertions.assertThat(commentService.findCommentById(commentId)).isNotNull();
@@ -377,9 +439,9 @@ public class CommentServiceTest {
         Long reCommend2 = saveReComment(commentId);
         Long reCommend3 = saveReComment(commentId);
 
-        commentService.deleteComment(commentId);
-        commentService.deleteComment(reCommend2);
-        commentService.deleteComment(reCommend3);
+        commentService.deleteComment(commentId, post.getId());
+        commentService.deleteComment(reCommend2, post.getId());
+        commentService.deleteComment(reCommend3, post.getId());
 
         Comment commentById = commentService.findCommentById(commentId);
 
@@ -387,7 +449,7 @@ public class CommentServiceTest {
         Assertions.assertThat(commentService.findCommentById(commentId).getChildList().size()).isEqualTo(3);
 
         //when
-        commentService.deleteComment(reCommend1);
+        commentService.deleteComment(reCommend1, post.getId());
 
         //then
         LongStream.rangeClosed(commentId, reCommend3).forEach(
@@ -408,7 +470,7 @@ public class CommentServiceTest {
         Long reCommend3 = saveReComment(commentId);
 
         //when
-        commentService.deleteComment(reCommend3);
+        commentService.deleteComment(reCommend3, post.getId());
         Comment pComment = commentService.findCommentById(commentId);
 
         //then
@@ -427,7 +489,7 @@ public class CommentServiceTest {
         Long reCommend3 = saveReComment(commentId);
 
         //when
-        commentService.deleteComment(reCommend1); // 대댓글 하나 삭제
+        commentService.deleteComment(reCommend1, post.getId()); // 대댓글 하나 삭제
 
         Comment pComment = commentService.findCommentById(commentId); // 부모 댓글
         assertThat(pComment.getChildList().size()).isEqualTo(3);
@@ -455,8 +517,8 @@ public class CommentServiceTest {
 
         //질문! 왜 reCommend1부터 지우면 안되지..?
         Comment commentById = commentService.findCommentById(commentId);
-        commentService.deleteComment(reCommend1);
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(reCommend1, post.getId());
+        commentService.deleteComment(commentId, post.getId());
 
         //reCommend1부터 지우면 여기서 comment 못찾아옴
         // -> isAllChildDel에서 제일 첫번째 대댓글이 지워져서 다 지워졌다고 판단한건가..?
@@ -465,7 +527,7 @@ public class CommentServiceTest {
         Assertions.assertThat(commentService.findCommentById(commentId).getChildList().size()).isEqualTo(3);
 
         //when
-        commentService.deleteComment(reCommend2); // 부모댓, 대댓1, 대댓2 삭제 상태
+        commentService.deleteComment(reCommend2, post.getId()); // 부모댓, 대댓1, 대댓2 삭제 상태
         Assertions.assertThat(commentService.findCommentById(commentId)).isNotNull();
         Assertions.assertThat(commentService.findCommentById(commentId).getChildList().size()).isEqualTo(3);
 
@@ -497,7 +559,7 @@ public class CommentServiceTest {
         Long commentId = saveComment(user.getId(), post);
 
         //when
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId, post.getId());
         List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
@@ -560,7 +622,7 @@ public class CommentServiceTest {
         Long reCommentId = saveReComment(user.getId(), post.getId(), commentId);
 
         //when
-        commentService.deleteComment(reCommentId);
+        commentService.deleteComment(reCommentId, post.getId());
         List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
@@ -583,8 +645,8 @@ public class CommentServiceTest {
         Long reCommentId2 = saveReComment(user.getId(), post.getId(), commentId);
 
         //when
-        commentService.deleteComment(reCommentId1);
-        commentService.deleteComment(reCommentId2);
+        commentService.deleteComment(reCommentId1, post.getId());
+        commentService.deleteComment(reCommentId2, post.getId());
         List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
@@ -607,8 +669,8 @@ public class CommentServiceTest {
         Long reCommentId2 = saveReComment(user.getId(), post.getId(), commentId);
 
         //when
-        commentService.deleteComment(commentId);
-        commentService.deleteComment(reCommentId1);
+        commentService.deleteComment(commentId, post.getId());
+        commentService.deleteComment(reCommentId1, post.getId());
         List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
@@ -632,9 +694,9 @@ public class CommentServiceTest {
         Long reCommentId2 = saveReComment(user.getId(), post.getId(), commentId);
 
         //when
-        commentService.deleteComment(commentId);
-        commentService.deleteComment(reCommentId1);
-        commentService.deleteComment(reCommentId2);
+        commentService.deleteComment(commentId, post.getId());
+        commentService.deleteComment(reCommentId1, post.getId());
+        commentService.deleteComment(reCommentId2, post.getId());
         List<CommentResponse> commentList = commentService.findPostCommentList(user, post.getId());
 
         //then
@@ -720,7 +782,7 @@ public class CommentServiceTest {
         Comment parent = commentService.findCommentById(parentId);
         CommentRequest request = getCommentRequest("자식 댓글");
 
-        Long savedReCommentId = commentService.saveReComment(userId, parentId, request);
+        Long savedReCommentId = commentService.saveReComment(userId, postId, parentId, request);
         return savedReCommentId;
     }
 

@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .antMatchers("/api/like/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "TEACHER", "ADMIN")
                 .antMatchers("/api/scrap/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "TEACHER", "ADMIN")
                 .antMatchers("/api/board/free/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "ADMIN")
+                .antMatchers("/api/board/council/**").hasAnyRole("TEACHER")
                 .anyRequest().authenticated()
 
                 // JWT 검증 필터 추가

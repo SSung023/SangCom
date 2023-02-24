@@ -55,7 +55,6 @@ public class CommentController {
         Long saveCommentId = commentService.saveComment(writer.getId(), postId, commentRequest);
 
         CommentResponse commentResponse = commentService.convertToResponse(writer, saveCommentId);
-//        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage(), commentResponse));
@@ -70,10 +69,9 @@ public class CommentController {
         User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentRequest.updateAuthor(writer.getNickname());
 
-        Long saveCommentId = commentService.saveReComment(writer.getId(), commentId, commentRequest);
+        Long saveCommentId = commentService.saveReComment(writer.getId(), postId, commentId, commentRequest);
 
         CommentResponse commentResponse = commentService.convertToResponse(writer, saveCommentId);
-//        commentService.checkAndSetIsCommentOwner(writer, saveCommentId, commentResponse);
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage(), commentResponse));
@@ -85,7 +83,7 @@ public class CommentController {
      */
     @DeleteMapping("{postId}/comment/{commentId}")
     public ResponseEntity<CommonResponse> deleteComment(@PathVariable Long postId, @PathVariable Long commentId){
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId, postId);
 
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));

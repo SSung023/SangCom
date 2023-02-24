@@ -56,6 +56,7 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    private int commentCount; // 댓글 수
     private int likeCount; // 좋아요 수
 
     /**
@@ -101,6 +102,14 @@ public class Post extends BaseTimeEntity {
     // 게시글 삭제 처리
     public void deletePost(){
         this.isDeleted = 1; // true
+    }
+
+    /**
+     * 댓글 수 갱신
+     * @param changeAmt 댓글 수의 변화량
+     */
+    public void updateCommentCnt(int changeAmt){
+        this.commentCount += changeAmt;
     }
 
     /**
