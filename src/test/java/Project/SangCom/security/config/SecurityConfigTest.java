@@ -1,7 +1,12 @@
 package Project.SangCom.security.config;
 
+import Project.SangCom.security.dto.AccessTokenUserRequest;
+import Project.SangCom.security.service.JwtTokenProvider;
+import Project.SangCom.user.domain.Role;
+import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.SuccessCode;
+import Project.SangCom.utils.WithMockCustomUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,11 +15,13 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static Project.SangCom.security.service.JwtTokenProvider.AUTHORIZATION_HEADER;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,6 +34,8 @@ class SecurityConfigTest {
     MockMvc mockMvc;
     @Autowired
     WebApplicationContext context;
+    @Autowired
+    JwtTokenProvider provider;
 
     @BeforeEach
     public void setup(){
@@ -58,15 +67,31 @@ class SecurityConfigTest {
     }
 
     @Test
-    @DisplayName("permitAll에 등록하지 않은 uri는 인증 없이 접근할 수 없다.")
+    @DisplayName("설정한 api 외에는 NOT_VERIFIED는 접근하지 못한다.")
+    @WithMockCustomUser(role = Role.NOT_VERIFIED)
     public void NotRegisteredUriCannnotIn() throws Exception {
+        //given
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String accessToken = getAccessToken(user);
 
-//        mockMvc.perform(get("/api/test"))
-//                .andExpect(status().isOk());
+        //when&then
+        mockMvc.perform(get("/api/temp")
+                .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(status().is4xxClientError());
 
-        // 테스트 코드 작성 방법을 모르겠다..
-//        org.junit.jupiter.api.Assertions.assertThrows(BusinessException.class,
-//                (Executable) mockMvc.perform(get("/api/test")));
+    }
 
+
+
+
+
+
+    private String getAccessToken(User user) {
+        AccessTokenUserRequest tokenUserRequest = AccessTokenUserRequest.builder()
+                .email(user.getEmail())
+                .role(user.getRole().getKey())
+                .build();
+
+        return provider.createAccessToken(tokenUserRequest);
     }
 }
