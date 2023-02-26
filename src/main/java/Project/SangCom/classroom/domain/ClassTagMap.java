@@ -15,7 +15,7 @@ public class ClassTagMap {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classroom_id")
+    @JoinColumn(name = "classPost_id")
     private ClassPost classPost;
 
     @ManyToOne(fetch = FetchType.LAZY)

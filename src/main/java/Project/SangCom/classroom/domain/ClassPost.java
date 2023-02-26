@@ -1,5 +1,6 @@
 package Project.SangCom.classroom.domain;
 
+import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.util.formatter.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,20 +19,25 @@ import java.util.List;
 public class ClassPost extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "classroom_id")
+    @Column(name = "classPost_id")
     private Long id;
 
-    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "classPost", cascade = CascadeType.ALL)
     private List<ClassTagMap> classTagMap = new ArrayList<>();
 
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
+
     /**
-     * 반 공간 관련
+     * 반 공간 관련 정봅
      * grade: 학년, classes: 반
      */
     @NotNull
     private int grade;
     @NotNull
     private int classes;
+
+    private Long userId; // User 엔티티 대신 PK 저장
 
     @NotNull
     private String title;
