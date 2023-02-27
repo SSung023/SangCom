@@ -209,7 +209,7 @@ public class CommentService {
                 .childComment(checkChildList(user, comment))
                 .build();
     }
-    public CommentResponse convertToSingleResponse(User user, Comment comment){
+    private CommentResponse convertToSingleResponse(User user, Comment comment){
         return CommentResponse.builder()
                 .id(comment.getId())
                 .authorName(checkIsAnonymous(comment))

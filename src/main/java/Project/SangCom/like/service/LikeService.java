@@ -119,11 +119,14 @@ public class LikeService {
      */
     @Transactional
     public Long likeComment(Long saveUserId, Long saveCommentId) {
-        // 이미 좋아요 되어있다면 예외 처리
-        if (likeRepository.findCommentLikes(saveUserId, saveCommentId).isPresent()) {
-            throw new BusinessException(ErrorCode.ALREADY_LIKED);
+        // 이미 좋아요 되어있다면 좋아요 취소 처리
+        Optional<Likes> foundCommentLike = likeRepository.findCommentLikes(saveUserId, saveCommentId);
+        if (foundCommentLike.isPresent()) {
+            likeRepository.delete(foundCommentLike.get());
+            return saveCommentId;
         }
 
+        // 좋아요가 안된 댓글이라면 좋아요 처리
         User user = userService.findUserById(saveUserId);
         Comment comment = commentService.findCommentById(saveCommentId);
         comment.updateLikes(1);
@@ -133,7 +136,7 @@ public class LikeService {
         likes.setComment(comment);
 
         Likes saveLike = likeRepository.save(likes);
-        return saveLike.getId();
+        return comment.getId();
     }
 
     /**

@@ -1,5 +1,6 @@
 package Project.SangCom.like.controller;
 
+import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.comment.dto.CommentRequest;
 import Project.SangCom.comment.service.CommentService;
 import Project.SangCom.like.service.LikeService;
@@ -134,12 +135,17 @@ class LikeControllerTest {
         String requestJson = "{\"commentId\":\"" + saveCommentId + "\"}";
 
         //when & then
+        Comment comment = commentService.findCommentById(saveCommentId);
+
         mockMvc.perform(post("/api/like/board/comment")
                         .header(AUTHORIZATION_HEADER, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.commentId").value(saveCommentId));
+                .andExpect(jsonPath("$.data.id").value(saveCommentId))
+                .andExpect(jsonPath("$.data.authorName").value(comment.getAuthor()))
+                .andExpect(jsonPath("$.data.content").value(comment.getContent()))
+                .andExpect(jsonPath("$.data.likeCount").value(comment.getLikeCount()));
     }
 
     @Test
@@ -159,12 +165,17 @@ class LikeControllerTest {
         likeService.likeComment(writer.getId(), saveCommentId);
 
         //then
-        mockMvc.perform(delete("/api/like/board/comment")
+        Comment comment = commentService.findCommentById(saveCommentId);
+
+        mockMvc.perform(post("/api/like/board/comment")
                         .header(AUTHORIZATION_HEADER, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.commentId").value(saveCommentId));
+                .andExpect(jsonPath("$.data.id").value(saveCommentId))
+                .andExpect(jsonPath("$.data.authorName").value(comment.getAuthor()))
+                .andExpect(jsonPath("$.data.content").value(comment.getContent()))
+                .andExpect(jsonPath("$.data.likeCount").value(comment.getLikeCount()));
     }
 
     @Test
@@ -181,13 +192,17 @@ class LikeControllerTest {
         String requestJson = "{\"commentId\":\"" + saveReCommentId + "\", \"parentId\":\"" + parentId + "\"}";
 
         //when & then
+        Comment reComment = commentService.findCommentById(saveReCommentId);
+
         mockMvc.perform(post("/api/like/board/comment")
                         .header(AUTHORIZATION_HEADER, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.commentId").value(saveReCommentId))
-                .andExpect(jsonPath("$.data.parentId").value(parentId));
+                .andExpect(jsonPath("$.data.id").value(reComment.getId()))
+                .andExpect(jsonPath("$.data.authorName").value(reComment.getAuthor()))
+                .andExpect(jsonPath("$.data.content").value(reComment.getContent()))
+                .andExpect(jsonPath("$.data.likeCount").value(reComment.getLikeCount()));
     }
 
     @Test
@@ -207,13 +222,17 @@ class LikeControllerTest {
         likeService.likeComment(writer.getId(), saveReCommentId);
 
         //then
-        mockMvc.perform(delete("/api/like/board/comment")
+        Comment reComment = commentService.findCommentById(saveReCommentId);
+
+        mockMvc.perform(post("/api/like/board/comment")
                         .header(AUTHORIZATION_HEADER, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.commentId").value(saveReCommentId))
-                .andExpect(jsonPath("$.data.parentId").value(parentId));
+                .andExpect(jsonPath("$.data.id").value(reComment.getId()))
+                .andExpect(jsonPath("$.data.authorName").value(reComment.getAuthor()))
+                .andExpect(jsonPath("$.data.content").value(reComment.getContent()))
+                .andExpect(jsonPath("$.data.likeCount").value(reComment.getLikeCount()));
     }
 
 

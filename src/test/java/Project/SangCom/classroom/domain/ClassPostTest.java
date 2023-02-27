@@ -11,10 +11,6 @@ class ClassPostTest {
         //given
         ClassPost classPost = new ClassPost();
         
-        //when
-        
-        //then
-        
     }
 
 }
