@@ -9,15 +9,15 @@ export default function ClassTime(props){
     const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.loginReducer.user.info);
 
-    useEffect(() => {
-        authInstance.get("/api/auth/user")
-            .then(function(res) {
-                dispatch(loginAction(res.data.data));
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-    }, []);
+    // useEffect(() => {
+    //     authInstance.get("/api/auth/user")
+    //         .then(function(res) {
+    //             dispatch(loginAction(res.data.data));
+    //         })
+    //         .catch(function (error) {
+    //             console.log(error);
+    //         })
+    // }, []);
 
     useEffect(() => {
     }, [userInfo]);

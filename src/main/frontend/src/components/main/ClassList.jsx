@@ -33,7 +33,7 @@ export default function ClassList(props){
 
     useEffect(() => {
         getAllData();
-    }, [getAllData]);
+    }, []);
 
 
     let lists = [];

@@ -37,8 +37,6 @@ function MakePost( props ){
     return (
         <div className={styles.board}>
             {db[props.boardKey].map((item) => (
-                // TODO: PostPreview 컴포넌트 만들어보기. css 파일을 별도 생성해 title 클래스 사용 가능하도록.
-                // TODO: 게시글 ID가 정해지면 해당 ID로 이동하도록 링크 수정
                 <div key={item.id} className={styles.list}>
                     <a href="/board" className={styles.post}>
                         <p className={styles.postTitle}>{item.title}</p>
