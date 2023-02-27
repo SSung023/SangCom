@@ -111,7 +111,7 @@ class LikeControllerTest {
         likeService.likePost(writer.getId(), savePostId);
 
         //then
-        mockMvc.perform(delete("/api/like/board")
+        mockMvc.perform(post("/api/like/board")
                 .header(AUTHORIZATION_HEADER, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))

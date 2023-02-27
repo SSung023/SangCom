@@ -20,6 +20,7 @@ public class CommentResponse {
     private int isLikePressed; // 좋아요 누른 여부
     private int isOwner; // 댓글 작성자 여부
     private int isAnonymous; // 익명 여부
+    private int isDeleted; // 삭제 여부
     private LocalDateTime createdDate; // 작성 일자
 
     private List<CommentResponse> childComment = new ArrayList<>();
@@ -30,7 +31,7 @@ public class CommentResponse {
     /* Entity -> Dto*/
     @Builder
     public CommentResponse(Long id, String authorName, String content, int likeCount,
-                           int isLikePressed, int isOwner, int isAnonymous,
+                           int isLikePressed, int isOwner, int isAnonymous, int isDeleted,
                            LocalDateTime createdDate, List<CommentResponse> childComment) {
         this.id = id;
         this.authorName = authorName;
@@ -40,6 +41,7 @@ public class CommentResponse {
         this.isLikePressed = isLikePressed;
         this.isOwner = isOwner;
         this.isAnonymous = isAnonymous;
+        this.isDeleted = isDeleted;
 
         this.createdDate = createdDate;
 

@@ -81,23 +81,6 @@ public class LikeServiceTest {
     }
 
     @Test
-    @DisplayName("좋아요를 누른 게시글에 대해 좋아요를 한 번 더 눌렀을 때 예외가 발생한다.")
-    public void ThrowException_WhenAlreadyLiked(){
-        //given
-        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
-        Long savePostId = setPostAndSave(saveUserId);
-
-        //when
-        likeService.likePost(saveUserId, savePostId);
-
-        //then
-        Assertions.assertThatThrownBy(() -> likeService.likePost(saveUserId, savePostId))
-                .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(ErrorCode.ALREADY_LIKED.getMessage());
-
-    }
-
-    @Test
     @DisplayName("사용자는 게시글(Post)에 좋아요를 다시 한 번 눌러서 취소할 수 있다.")
     public void UserCanUnlikePost(){
         //given
@@ -106,23 +89,10 @@ public class LikeServiceTest {
 
         //when
         Long saveLikeId = likeService.likePost(saveUserId, savePostId);
-        likeService.unlikePost(saveUserId, savePostId);
+        likeService.likePost(saveUserId, savePostId);
 
         //then
         Assertions.assertThatThrownBy(() -> likeService.findLikesById(saveLikeId))
-                .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
-    }
-    
-    @Test
-    @DisplayName("좋아요하지 않은 게시글에 대해 좋아요 취소를 하면 예외가 발생한다.")
-    public void ThrowException_WhenNonExistLike(){
-        //given
-        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
-        Long savePostId = setPostAndSave(saveUserId);
-        
-        //when & then
-        Assertions.assertThatThrownBy(() -> likeService.unlikePost(saveUserId, savePostId))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
     }
@@ -153,7 +123,7 @@ public class LikeServiceTest {
         Assertions.assertThat(postService.findPostById(savePostId).getLikeCount()).isEqualTo(1);
         
         // unlike post
-        likeService.unlikePost(saveUserId, savePostId);
+        likeService.likePost(saveUserId, savePostId);
         Assertions.assertThat(postService.findPostById(savePostId).getLikeCount()).isEqualTo(0);
     }
 
@@ -233,38 +203,6 @@ public class LikeServiceTest {
     }
 
     @Test
-    @DisplayName("사용자는 댓글(Comment)에 좋아요를 다시 한 번 눌러서 취소할 수 있다.")
-    public void UserCanUnlikeComment(){
-        //given
-        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
-        Long savePostId = setPostAndSave(saveUserId);
-        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
-
-        //when
-        Long saveLikeId = likeService.likeComment(saveUserId, saveCommentId);
-        likeService.unlikeComment(saveUserId, saveCommentId);
-
-        //then
-        Assertions.assertThatThrownBy(() -> likeService.findLikesById(saveLikeId))
-                .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
-    }
-
-    @Test
-    @DisplayName("좋아요하지 않은 댓글에 대해 좋아요 취소를 하면 예외가 발생한다.")
-    public void ThrowException_WhenNonExistLikeComment(){
-        //given
-        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
-        Long savePostId = setPostAndSave(saveUserId);
-        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
-
-        //when & then
-        Assertions.assertThatThrownBy(() -> likeService.unlikeComment(saveUserId, saveCommentId))
-                .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(ErrorCode.DATA_ERROR_NOT_FOUND.getMessage());
-    }
-
-    @Test
     @DisplayName("사용자가 좋아요를 누르면 댓글(Comment)의 likeCount 값이 1 증가한다.")
     public void updateCommentLikeCount(){
         //given
@@ -292,7 +230,7 @@ public class LikeServiceTest {
         Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(1);
 
         // unlike comment
-        likeService.unlikeComment(saveUserId, saveCommentId);
+        likeService.likeComment(saveUserId, saveCommentId);
         Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(0);
     }
 

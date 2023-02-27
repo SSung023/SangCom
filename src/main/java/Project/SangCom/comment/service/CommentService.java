@@ -110,22 +110,6 @@ public class CommentService {
         return comment.getId();
     }
 
-    /**
-     * comment에 저장되어 있는 user의 id와 일치하는지 확인
-     * 작성자가 맞으므로 commentResponse 객체의 isOwner를 TRUE(1)로 설정,
-     * 작성자가 아니라면 commentRepsonse 객체의 isOwner를 FALSE(0)으로 설정
-     */
-//    public void checkAndSetIsCommentOwner(User user, Long commentId, CommentResponse commentResponse){
-//        Comment comment = commentRepository.findById(commentId)
-//                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
-//
-//        if (Objects.equals(comment.getUser().getId(), user.getId())){
-//            commentResponse.setIsOwner(TRUE);
-//        }
-//        else {
-//            commentResponse.setIsOwner(FALSE);
-//        }
-//    }
     public int checkIsCommentOwner(User user, Comment comment){
         if (Objects.equals(comment.getUser().getId(), user.getId())){
             return 1;
@@ -190,6 +174,7 @@ public class CommentService {
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
+                .isDeleted(comment.getIsDeleted())
                 .isOwner(checkIsCommentOwner(user, comment))
                 .isLikePressed(checkIsLikePressed(user, comment))
                 .createdDate(comment.getCreatedDate())
@@ -203,6 +188,7 @@ public class CommentService {
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
+                .isDeleted(comment.getIsDeleted())
                 .isOwner(checkIsCommentOwner(user, comment))
                 .isLikePressed(checkIsLikePressed(user, comment))
                 .createdDate(comment.getCreatedDate())
@@ -216,6 +202,7 @@ public class CommentService {
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
+                .isDeleted(comment.getIsDeleted())
                 .isOwner(checkIsCommentOwner(user, comment))
                 .isLikePressed(checkIsLikePressed(user, comment))
                 .createdDate(comment.getCreatedDate())

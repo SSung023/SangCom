@@ -38,14 +38,19 @@ public class LikeService {
      */
     @Transactional
     public Long likePost(Long saveUserId, Long savePostId) {
+        Post post = postService.findPostById(savePostId);
+
         // 이미 좋아요 되어있다면 좋아요 취소 처리
-        if (likeRepository.findLikes(saveUserId, savePostId).isPresent()) {
-            throw new BusinessException(ErrorCode.ALREADY_LIKED);
+        Optional<Likes> foundPostLike = likeRepository.findLikes(saveUserId, savePostId);
+        if (foundPostLike.isPresent()) {
+            likeRepository.delete(foundPostLike.get());
+            post.updateLikes(-1);
+            return savePostId;
         }
 
         // 좋아요를 하지 않았다면 좋아요 처리
         User user = userService.findUserById(saveUserId);
-        Post post = postService.findPostById(savePostId);
+
         post.updateLikes(1);
 
         Likes likes = new Likes();
@@ -53,24 +58,10 @@ public class LikeService {
         likes.setPost(post);
 
         Likes saveLike = likeRepository.save(likes);
+
+        // 중간 회의 이후 PostId 보내줄 지 결정
         return saveLike.getId();
     }
-
-    /**
-     * 사용자가 좋아요한 게시글에 좋아요 버튼을 눌렀을 때 - 좋아요 취소 처리
-     * 중간 과정에서 유효하지 않은 과정이 있다면 BusinessException 발생
-     * @param saveUserId 좋아요를 누른 사용자
-     * @param savePostId 좋아요가 눌린 게시글
-     */
-    @Transactional
-    public void unlikePost(Long saveUserId, Long savePostId) {
-        Post post = postService.findPostById(savePostId);
-        post.updateLikes(-1);
-
-        Likes savedLike = findSavedLike(saveUserId, savePostId);
-        likeRepository.delete(savedLike);
-    }
-
 
     /**
      * like_id(PK)를 통해 Like 객체를 찾아서 반환
@@ -138,32 +129,8 @@ public class LikeService {
         likes.setUser(user);
         likes.setComment(comment);
 
-        Likes saveLike = likeRepository.save(likes);
+        likeRepository.save(likes);
         return comment.getId();
-    }
-
-    /**
-     * 사용자가 좋아요한 댓글/대댓글에 좋아요 버튼을 눌렀을 때 - 좋아요 취소 처리
-     * 중간 과정에서 유효하지 않은 과정이 있다면 BusinessException 발생
-     * @param saveUserId 좋아요를 누른 사용자
-     * @param saveCommentId 좋아요가 눌린 댓글/대댓글
-     */
-    @Transactional
-    public void unlikeComment(Long saveUserId, Long saveCommentId) {
-        Comment comment = commentService.findCommentById(saveCommentId);
-        comment.updateLikes(-1);
-
-        Likes savedLike = findSavedCommentLike(saveUserId, saveCommentId);
-        likeRepository.delete(savedLike);
-    }
-
-    /**
-     * like_id(PK)를 통해 Like 객체를 찾아서 반환
-     * @param likeId 찾고자 하는 좋아요(Like) 객체의 Id
-     */
-    public Likes findCommentLikesById(Long likeId){
-        return likeRepository.findById(likeId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 
     /**
