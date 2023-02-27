@@ -72,7 +72,14 @@ export default function Previews({ category }) {
             <div className={styles.previews}>
                 {memoizedArticles}
             </div>
-            {isNewArticleExist && <button className={styles.addBtn} onClick={handleClickBtn}>더보기<MdKeyboardArrowDown/></button>}
+            {isNewArticleExist &&
+            <div className={styles.addBtnBox}>
+                <div className={styles.previewBox}></div>
+                <button className={styles.addBtn} onClick={handleClickBtn}>
+                    더보기<MdKeyboardArrowDown/>
+                </button>
+            </div>
+            }
         </>
     );
 }

@@ -35,7 +35,6 @@ export default function Search({ category, boardTitle }) {
                 >
                     <select
                         className={styles.select}
-                        defaultValue={`all`}
                         value={`${selection}`}
                         onChange={(e) => { setSelect(e.target.value) }}>
                         <option value="all">제목+내용</option>
