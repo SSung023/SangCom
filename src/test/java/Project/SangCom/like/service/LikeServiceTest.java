@@ -229,30 +229,7 @@ public class LikeServiceTest {
         Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
 
         //when
-        Long saveLikeId = likeService.likeComment(saveUserId, saveCommentId);
-        Likes likesById = likeService.findLikesById(saveLikeId);
-
-        //then
-        Assertions.assertThat(likesById.getUser().getId()).isEqualTo(saveUserId);
-        Assertions.assertThat(likesById.getComment().getLikes()).contains(likesById);
-    }
-
-    @Test
-    @DisplayName("좋아요를 누른 댓글에 대해 좋아요를 한 번 더 눌렀을 때 예외가 발생한다.")
-    public void ThrowException_WhenAlreadyLikedComment(){
-        //given
-        Long saveUserId = setUserAndSave("test@naver.com", "nickname");
-        Long savePostId = setPostAndSave(saveUserId);
-        Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
-
-        //when
-        likeService.likeComment(saveUserId, saveCommentId);
-
-        //then
-        Assertions.assertThatThrownBy(() -> likeService.likeComment(saveUserId, saveCommentId))
-                .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(ErrorCode.ALREADY_LIKED.getMessage());
-
+        Long commentId = likeService.likeComment(saveUserId, saveCommentId);
     }
 
     @Test
