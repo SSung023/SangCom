@@ -10,7 +10,6 @@ export default function ArticleDetail({ category, articleId }){
         authInstance.get(`/api/board/${category}/${articleId}`)
             .then(function(res) {
                 setArticle(res.data.data);
-                console.log(res.data.data);
             })
     }, []);
     return(

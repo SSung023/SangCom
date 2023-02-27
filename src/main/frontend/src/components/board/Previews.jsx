@@ -12,14 +12,14 @@ export default function Previews({ category }) {
 
     const params = useParams();
 
-    const api = () => {
+    const api = ( page ) => {
         return params.search ? 
-        `/api/board/${category}/search?query=${params.selection}&keyword=${params.search}&page=`
-        : `/api/board/${category}/list/?page=`;
+        `/api/board/${category}/search?query=${params.selection}&keyword=${params.search}&page=${page}`
+        : `/api/board/${category}/list/?page=${page}`;
     };
 
     const handleClickBtn = async () => {
-        const getArticles = await (await authInstance.get(`${api()}${page + 1}`)).data.data;
+        const getArticles = await (await authInstance.get(`${api(page + 1)}`)).data.data;
 
         if(!getArticles.empty) {
             setArticles((prev) => [...prev, ...getArticles.content]);

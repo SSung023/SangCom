@@ -1,7 +1,7 @@
 import { authInstance } from "../../utility/api";
 
 // comment like
-export const likeAction = async ( isLike, commentId, parentId, articleId ) => {
+export const likeAction = async ( isLike, articleId, commentId, parentId ) => {
     const url = "/api/like/board/comment";
     const requestBody = {
         postId: `${articleId}`,
@@ -9,10 +9,12 @@ export const likeAction = async ( isLike, commentId, parentId, articleId ) => {
         parentId: `${parentId}`,
     };
 
-    const postRequest = await authInstance.post(url, requestBody);
-    const deleteRequest = await authInstance.delete(url, requestBody);
+    const postRequest = await (await authInstance.post(url, {...requestBody})).data;
+    const deleteRequest = await (await authInstance.delete(url, {...requestBody})).data;
 
-    return isLike ? postRequest : deleteRequest;
+    console.log(requestBody);
+    // Promise를 반환
+    return isLike ? deleteRequest : postRequest;
 };
 
 // comment delete
