@@ -16,13 +16,13 @@ export default function BoardDetail() {
     
     return (
         <div className={styles.wrapper}>
-            <BoardTitle title={title} />
+            <BoardTitle title={title}/>
             {/* <ArticleDetail /> */}
             <ArticleDetail category={category} articleId={id}/>
             {/* <Comments /> */}
-            <Comments category={category} articleId={id}/>
+            {category!=="suggestion" && <Comments category={category} articleId={id}/>}
             {/* For parentComments */}
-            <CreateComments category={category} articleId={id}/>
+            {category!=="suggestion" && <CreateComments category={category} articleId={id}/>}
         </div>
     );
 }

@@ -7,7 +7,7 @@ export default function Comments({ category, articleId }) {
     const [comments, setComments] = useState();
 
     const showComments = () => {
-        return Object.values(comments).map(comment => (<ParentComment parentCommentInfo={comment} key={comment.id}/>));
+        return Object.values(comments).map(comment => ( <ParentComment parentCommentInfo={comment} key={comment.id}/>));
     };
 
     useEffect(() => {

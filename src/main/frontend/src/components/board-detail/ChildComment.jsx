@@ -1,15 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './ChildComment.module.css';
 import defaultProfile from '../../images/defualtProfile.svg';
 import { MdFavoriteBorder, MdOutlineFavorite } from 'react-icons/md';
+import { commentDelete, commentLike } from '../../utility/CommentApi';
+import { useParams } from 'react-router-dom';
 
 
-export default function ChildComment({ childCommentInfo }) {
+export default function ChildComment({ childCommentInfo, parentId }) {
     const [commentInfo, setComment] = useState(childCommentInfo);
     
+    const params = useParams();
+    const category = params.category;
+    const id = params.id;
+
     const timestamp = (createdDate) => {
         const dformatter = new Intl.DateTimeFormat('ko', {dateStyle: 'short', timeStyle: 'short'});
         return dformatter.format(createdDate);
+    }
+
+    const handlePressLike = async () => {
+        // TODO: 부모 댓글까지 같이 보내지면 id로 찾아서 commentInfo 갱신하는 로직 필요
+        commentLike(id, commentInfo.id, parentId)
+        .then(function(data) {
+            setComment(data.data);
+        })
+    };
+
+    const handlePressDelete = async () => {
+        if(window.confirm("댓글을 삭제하시겠습니까?")){
+            commentDelete(category, id, commentInfo.id)
+            .then(function(data) {
+                window.location.replace(window.location.href);
+            })
+        }
     }
 
     return (
@@ -28,9 +51,9 @@ export default function ChildComment({ childCommentInfo }) {
             </div>
 
             <div className={styles.buttons}>
-                <button>좋아요</button>
+                <button onClick={handlePressLike}>좋아요</button>
                 <button>신고</button>
-                {commentInfo.isOwner && <button>삭제</button>}
+                {commentInfo.isOwner && <button onClick={handlePressDelete}>삭제</button>}
             </div>
         </div>
     );
