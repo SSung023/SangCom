@@ -32,15 +32,6 @@ public class LikeController {
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), likeDTO));
     }
 
-    @DeleteMapping("/board")
-    public ResponseEntity<SingleResponse<LikeDTO>> unlikePost(@RequestBody LikeDTO likeDTO){
-        User writer = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        likeService.unlikePost(writer.getId(), likeDTO.getPostId());
-
-        return ResponseEntity.ok().body
-                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), likeDTO));
-    }
-
 
     //=== 댓글 구현 ===//
     @PostMapping("/board/comment")
