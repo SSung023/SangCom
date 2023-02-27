@@ -21,7 +21,7 @@ public class Hashtag extends BaseTimeEntity {
     @Column(name = "tag_id")
     private Long id;
 
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "hashtag", cascade = CascadeType.ALL)
     private List<ClassTagMap> classTagMaps = new ArrayList<>();
 
     @NotNull
