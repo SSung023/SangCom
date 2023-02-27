@@ -36,6 +36,7 @@ import java.util.Optional;
 public class PostController {
     private final PostService postService;
     private final LikeService likeService;
+    private final int PAGE_SIZE = 20;
 
     //for test
     private final UserService userService;
@@ -48,7 +49,7 @@ public class PostController {
      */
     @GetMapping("/board/{category}/best")
     public ResponseEntity<SingleResponse<PostResponse>> getFreeBoardInfo
-        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+        (@PageableDefault(size = PAGE_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
         , @PathVariable String category){
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -70,7 +71,7 @@ public class PostController {
      */
     @GetMapping("/board/{category}/list")
     public ResponseEntity<PagingResponse<PostResponse>> getFreePostList
-        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+        (@PageableDefault(size = PAGE_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
         , @PathVariable String category){
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -88,7 +89,7 @@ public class PostController {
      */
     @GetMapping("/board/{category}/search")
     public ResponseEntity<PagingResponse<PostResponse>> searchPosts
-        (@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+        (@PageableDefault(size = PAGE_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
          @PathVariable String category, @RequestParam String query, @RequestParam String keyword){
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
