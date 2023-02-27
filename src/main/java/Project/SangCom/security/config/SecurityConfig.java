@@ -24,6 +24,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler successHandler;
     public static final String permitURI[] = {"/api/auth/**", "/swagger-ui.html", "/swagger-ui/**"
             ,"/v3/api-docs/**", "/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"};
+    public static final String permittedRoles[] = {"STUDENT", "TEACHER", "STUDENT_COUNCIL", "ADMIN"};
 
     @Bean
     public SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
@@ -39,7 +40,8 @@ public class SecurityConfig {
                 .antMatchers("/api/like/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "TEACHER", "ADMIN")
                 .antMatchers("/api/scrap/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "TEACHER", "ADMIN")
                 .antMatchers("/api/board/free/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "ADMIN")
-                .anyRequest().authenticated()
+                .antMatchers("/api/board/council/**").hasAnyRole("TEACHER", "STUDENT", "STUDENT_COUNCIL", "ADMIN")
+                .anyRequest().hasAnyRole(permittedRoles) // .authenticated()로 설정하면 인증만 받으면 접근 가능
 
                 // JWT 검증 필터 추가
                 .and()
@@ -61,9 +63,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource(){
-//        CorsConfiguration configuration = new CorsConfiguration();
-//    }
 }

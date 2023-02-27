@@ -1,5 +1,6 @@
 package Project.SangCom.comment.domain;
 
+import Project.SangCom.classroom.domain.ClassPost;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.user.domain.User;
@@ -33,6 +34,11 @@ public class Comment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    // 반 공간 게시글
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "classPost_id")
+    private ClassPost classPost;
 
     // 부모 댓글 id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -148,10 +154,6 @@ public class Comment extends BaseTimeEntity {
     public void setParent(Comment parent){
         this.parent = parent;
         parent.getChildList().add(this);
-    } //부모에게 child add 해주니까 아래 addChild는 중복된 코드 아닌가? -> addChild 다 테스트에서만 사용중 setParent로 바꿔보기
-
-    public void addChild(Comment child){
-        childList.add(child);
     }
 
 }
