@@ -703,6 +703,23 @@ public class CommentServiceTest {
         assertThat(commentList.size()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("댓글 삭제 시, authorName에 알 수 없음 으로 변환되어야 한다.")
+    public void passAsUnknown(){
+        //given
+        User user = getUser();
+        Post post = getPost();
+        Long commentId = saveComment(user.getId(), post);
+
+        //when
+        commentService.deleteComment(commentId, post.getId());
+        CommentResponse commentResponse = commentService.convertToResponse(user, commentId);
+
+        //then
+        assertThat(commentResponse.getAuthorName()).isEqualTo("알 수 없음");
+
+    }
+
 
 
 

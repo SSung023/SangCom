@@ -102,11 +102,6 @@ public class CommentService {
         post.updateCommentCnt(-1);
         comment.delComment();
 
-        // 조건에 맞지 않으면 빈 리스트 반환 -> DB에 있는 것 삭제X
-        // soft-delete 사용으로 인해 주석 처리
-//        List<Comment> removableCommentList = comment.findRemovableList();
-//        commentRepository.deleteAll(removableCommentList);
-
         return comment.getId();
     }
 
@@ -170,7 +165,7 @@ public class CommentService {
 
         return CommentResponse.builder()
                 .id(comment.getId())
-                .authorName(checkIsAnonymous(comment))
+                .authorName(checkAuthorName(comment))
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
@@ -184,7 +179,7 @@ public class CommentService {
     public CommentResponse convertToResponse(User user, Comment comment){
         return CommentResponse.builder()
                 .id(comment.getId())
-                .authorName(checkIsAnonymous(comment))
+                .authorName(checkAuthorName(comment))
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
@@ -198,7 +193,7 @@ public class CommentService {
     private CommentResponse convertToSingleResponse(User user, Comment comment){
         return CommentResponse.builder()
                 .id(comment.getId())
-                .authorName(checkIsAnonymous(comment))
+                .authorName(checkAuthorName(comment))
                 .content(checkIsDeleted(comment))
                 .likeCount(comment.getLikeCount())
                 .isAnonymous(comment.getIsAnonymous())
@@ -218,7 +213,10 @@ public class CommentService {
             return 0;
         }
     }
-    private String checkIsAnonymous(Comment comment){
+    private String checkAuthorName(Comment comment){
+        if (comment.getIsDeleted() == 1){
+            return "알 수 없음";
+        }
         if (comment.getIsAnonymous() == 0){
             return comment.getAuthor();
         }
