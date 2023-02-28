@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Leftside.module.css';
-import Avartar from './Avartar';
+import Avatar from './Avatar';
 import {MdOutlineFormatListBulleted, MdOutlineModeComment, MdOutlineBookmarks} from "react-icons/md";
 
 export default function Leftside() {
@@ -8,7 +8,7 @@ export default function Leftside() {
         <div className={styles.leftSide}>
             <div className={styles.wrapper}>
                 {/* 나중에 네트워크 통신으로 user data 받아와서 초기화하는 작업 필요 */}
-                <Avartar />
+                <Avatar />
                 <Menus />
             </div>
         </div>

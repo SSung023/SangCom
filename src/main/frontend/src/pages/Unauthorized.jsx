@@ -23,10 +23,10 @@ export default function NotFound() {
     return (
         <div style={bodyStyle}>
             <p style={{...infoStyle, color: 'var(--blue-color)'}}>
-                404 
+                401 
                 <AiFillThunderbolt style={{marginLeft: '0.2em'}}/>
             </p>
-            <span style={infoStyle}>Not Found</span>
+            <span style={infoStyle}>Unauthorized</span>
         </div>
     );
 }

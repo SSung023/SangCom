@@ -16,6 +16,9 @@ import TeacherRegister from "./components/register/TeacherRegister";
 import PrivateRoute from './utility/PrivateRoute';
 import PublicRoute from './utility/PublicRoute';
 
+export const ROLE = {
+  
+}
 
 const router = createBrowserRouter([
   {

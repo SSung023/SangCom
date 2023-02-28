@@ -9,6 +9,6 @@ export default function PrivateRoute({ component }) {
     const isLogin = useLogin();
     //const isLogin = false;
     return (
-        isLogin ? component : <Navigate replace to='/login'/>
+        isLogin ? (component) : <Navigate replace to='/login'/>
     );
 }

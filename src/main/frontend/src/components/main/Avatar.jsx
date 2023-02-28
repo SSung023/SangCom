@@ -1,22 +1,10 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
-import { authInstance, defaultInstance } from "../../utility/api";
-import { loginAction } from "../../reducers/loginReducer";
-import { useState } from "react";
+import { defaultInstance } from "../../utility/api";
 
-export default function Avartar(props){
-    const dispatch = useDispatch();
-    const [setUser, ] = useState(() => {
-        authInstance.get("/api/auth/user")
-        .then(function(res) {
-            dispatch(loginAction(res.data.data));
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-    });
+export default function Avatar(){
     const userInfo = useSelector((state) => state.loginReducer.user.info);
 
     const handleLogout = () => {
@@ -24,19 +12,8 @@ export default function Avartar(props){
         localStorage.setItem("token", "");
     };
 
-    // userInfo 받아 오기
-    // useEffect(() => {
-    //     authInstance.get("/api/auth/user")
-    //     .then(function(res) {
-    //         dispatch(loginAction(res.data.data));
-    //     })
-    //     .catch(function (error) {
-    //         console.log(error);
-    //     })
-    // }, []);
-
     return (
-        <div className={styles.avartar}>
+        <div className={styles.avatar}>
             <img 
             className={styles.photo} 
             src={defaultProfile} 
