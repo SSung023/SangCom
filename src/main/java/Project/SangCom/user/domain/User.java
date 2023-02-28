@@ -1,5 +1,6 @@
 package Project.SangCom.user.domain;
 
+import Project.SangCom.chat.domain.ChatUserMap;
 import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
@@ -50,6 +51,10 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ChatUserMap> chatUserMaps = new ArrayList<>();
+
 
 
     @Column(unique = true, length = 10)
