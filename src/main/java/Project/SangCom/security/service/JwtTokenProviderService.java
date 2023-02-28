@@ -11,8 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Optional;
 
 import static Project.SangCom.security.service.JwtTokenProvider.AUTHORIZATION_HEADER;
@@ -79,7 +81,6 @@ public class JwtTokenProviderService {
 
                 // refresh-token의 남은 유효기간을 확인하고, 유효기간이 1/2 이하라면 refresh-token 재발급
                 if (tokenProvider.checkRefreshExpirationTime(refreshToken)){
-                    log.info("refresh-token의 유효기간이 1/2이 지났으므로 재발급합니다.");
                     String newRefreshToken = tokenProvider.createRefreshToken(userDTO);
                     tokenProvider.setHttpOnlyCookie(response, newRefreshToken);
                 }
@@ -88,13 +89,19 @@ public class JwtTokenProviderService {
             // refresh-token도 유효하지 않을 때
             log.info("refresh-token도 유효하지 않습니다.");
             response.setHeader(GRANT_HEADER, "expired");
+            logout(response);
             return false;
-//            throw new BusinessException(ErrorCode.TOKEN_INVALID);
-            //
         }
         // access-token이 유효할 때
         response.setHeader(GRANT_HEADER, "auth-grant");
         return true;
+    }
+
+    public void logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
     /**
