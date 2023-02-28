@@ -13,7 +13,6 @@ import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.utils.WithMockCustomUser;
-import jdk.dynalink.NamedOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -93,7 +92,7 @@ class LikeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.postId").value(savePostId));
+                .andExpect(jsonPath("$.data.id").value(savePostId));
     }
 
     @Test
@@ -108,7 +107,7 @@ class LikeControllerTest {
         String requestJson = "{\"postId\":\"" + savePostId + "\"}";
 
         //when
-        likeService.likePost(writer.getId(), savePostId);
+        likeService.toggleLikePost(writer.getId(), savePostId);
 
         //then
         mockMvc.perform(post("/api/like/board")
@@ -116,7 +115,8 @@ class LikeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.postId").value(savePostId));
+                .andExpect(jsonPath("$.data.id").value(savePostId))
+                .andExpect(jsonPath("$.data.likeCount").value(0));
     }
 
 
@@ -162,7 +162,7 @@ class LikeControllerTest {
         String requestJson = "{\"commentId\":\"" + saveCommentId + "\"}";
 
         //when
-        likeService.likeComment(writer.getId(), saveCommentId);
+        likeService.toggleLikeComment(writer.getId(), saveCommentId);
 
         //then
         Comment comment = commentService.findCommentById(saveCommentId);
@@ -219,7 +219,7 @@ class LikeControllerTest {
         String requestJson = "{\"commentId\":\"" + saveReCommentId + "\", \"parentId\":\"" + parentId + "\"}";
 
         //when
-        likeService.likeComment(writer.getId(), saveReCommentId);
+        likeService.toggleLikeComment(writer.getId(), saveReCommentId);
 
         //then
         Comment reComment = commentService.findCommentById(saveReCommentId);

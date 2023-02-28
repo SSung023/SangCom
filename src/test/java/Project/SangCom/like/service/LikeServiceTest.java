@@ -16,7 +16,6 @@ import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import Project.SangCom.utils.WithMockCustomUser;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -28,9 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -69,7 +66,7 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(saveUserId);
 
         //when
-        Long saveLikeId = likeService.likePost(saveUserId, savePostId);
+        Long saveLikeId = likeService.toggleLikePost(saveUserId, savePostId);
         Likes likesById = likeService.findLikesById(saveLikeId);
 
         //then
@@ -88,8 +85,8 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(saveUserId);
 
         //when
-        Long saveLikeId = likeService.likePost(saveUserId, savePostId);
-        likeService.likePost(saveUserId, savePostId);
+        Long saveLikeId = likeService.toggleLikePost(saveUserId, savePostId);
+        likeService.toggleLikePost(saveUserId, savePostId);
 
         //then
         Assertions.assertThatThrownBy(() -> likeService.findLikesById(saveLikeId))
@@ -105,7 +102,7 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(saveUserId);
         
         //when
-        Long saveLikeId = likeService.likePost(saveUserId, savePostId);
+        Long saveLikeId = likeService.toggleLikePost(saveUserId, savePostId);
         
         //then
         Assertions.assertThat(postService.findPostById(savePostId).getLikeCount()).isEqualTo(1);
@@ -119,11 +116,11 @@ public class LikeServiceTest {
         Long savePostId = setPostAndSave(saveUserId);
         
         // like post
-        likeService.likePost(saveUserId, savePostId);
+        likeService.toggleLikePost(saveUserId, savePostId);
         Assertions.assertThat(postService.findPostById(savePostId).getLikeCount()).isEqualTo(1);
         
         // unlike post
-        likeService.likePost(saveUserId, savePostId);
+        likeService.toggleLikePost(saveUserId, savePostId);
         Assertions.assertThat(postService.findPostById(savePostId).getLikeCount()).isEqualTo(0);
     }
 
@@ -138,7 +135,7 @@ public class LikeServiceTest {
         //when
         PostResponse postResponse = postService.convertToPreviewResponse(user, savePostId);
 
-        likeService.likePost(user.getId(), savePostId);
+        likeService.toggleLikePost(user.getId(), savePostId);
         likeService.checkAndSetIsLikePressed(savePostId, postResponse);
 
         //then
@@ -173,10 +170,10 @@ public class LikeServiceTest {
         Long postId3 = setPostAndSave(userId1);
 
         //when
-        likeService.likePost(userId1, postId1);
-        likeService.likePost(userId2, postId1);
-        likeService.likePost(userId1, postId2);
-        likeService.likePost(userId1, postId3);
+        likeService.toggleLikePost(userId1, postId1);
+        likeService.toggleLikePost(userId2, postId1);
+        likeService.toggleLikePost(userId1, postId2);
+        likeService.toggleLikePost(userId1, postId3);
 
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"));
         postService.getMostLikedPost(PostCategory.FREE, pageRequest);
@@ -199,7 +196,7 @@ public class LikeServiceTest {
         Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
 
         //when
-        Long commentId = likeService.likeComment(saveUserId, saveCommentId);
+        Long commentId = likeService.toggleLikeComment(saveUserId, saveCommentId);
     }
 
     @Test
@@ -211,7 +208,7 @@ public class LikeServiceTest {
         Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
 
         //when
-        Long saveLikeId = likeService.likeComment(saveUserId, saveCommentId);
+        Long saveLikeId = likeService.toggleLikeComment(saveUserId, saveCommentId);
 
         //then
         Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(1);
@@ -226,11 +223,11 @@ public class LikeServiceTest {
         Long saveCommentId = setCommentAndSave(saveUserId, savePostId);
 
         // like comment
-        likeService.likeComment(saveUserId, saveCommentId);
+        likeService.toggleLikeComment(saveUserId, saveCommentId);
         Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(1);
 
         // unlike comment
-        likeService.likeComment(saveUserId, saveCommentId);
+        likeService.toggleLikeComment(saveUserId, saveCommentId);
         Assertions.assertThat(commentService.findCommentById(saveCommentId).getLikeCount()).isEqualTo(0);
     }
 
@@ -246,7 +243,7 @@ public class LikeServiceTest {
         //when
         CommentResponse commentResponse = commentService.convertToResponse(user, saveCommentId);
 
-        likeService.likeComment(user.getId(), saveCommentId);
+        likeService.toggleLikeComment(user.getId(), saveCommentId);
         likeService.checkAndSetIsCommentLikePressed(saveCommentId, commentResponse);
 
         //then

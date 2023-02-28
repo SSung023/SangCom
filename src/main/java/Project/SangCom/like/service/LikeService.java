@@ -37,7 +37,7 @@ public class LikeService {
      * @param savePostId 좋아요가 눌린 게시글(Post)
      */
     @Transactional
-    public Long likePost(Long saveUserId, Long savePostId) {
+    public Long toggleLikePost(Long saveUserId, Long savePostId) {
         Post post = postService.findPostById(savePostId);
 
         // 이미 좋아요 되어있다면 좋아요 취소 처리
@@ -50,7 +50,6 @@ public class LikeService {
 
         // 좋아요를 하지 않았다면 좋아요 처리
         User user = userService.findUserById(saveUserId);
-
         post.updateLikes(1);
 
         Likes likes = new Likes();
@@ -110,7 +109,7 @@ public class LikeService {
      * post와 comment의 연관관계는 comment 객체에서 처리 (like에서 따로 지정x)
      */
     @Transactional
-    public Long likeComment(Long saveUserId, Long saveCommentId) {
+    public Long toggleLikeComment(Long saveUserId, Long saveCommentId) {
         Comment comment = commentService.findCommentById(saveCommentId);
 
         // 이미 좋아요 되어있다면 좋아요 취소 처리

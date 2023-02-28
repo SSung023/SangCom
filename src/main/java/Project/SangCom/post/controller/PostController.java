@@ -222,8 +222,8 @@ public class PostController {
         Long savedPostId = postService.savePost(mine.getId(), PostCategory.FREE, postRequest);
 
         // Like 설정
-        likeService.likePost(mine.getId(), savedPostId);
-        likeService.likePost(savedUser.getId(), savedPostId);
+        likeService.toggleLikePost(mine.getId(), savedPostId);
+        likeService.toggleLikePost(savedUser.getId(), savedPostId);
 
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
