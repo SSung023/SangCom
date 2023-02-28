@@ -39,7 +39,7 @@ public class OAuthController {
      * FE에서 사용자에게서 받은 정보를 바탕으로 UserService에서 회원가입 진행
      */
     @PostMapping("/api/auth/register")
-    public ResponseEntity<CommonResponse> register(@RequestBody OAuthRegisterRequest registerRequest) throws IOException {
+    public ResponseEntity<CommonResponse> register(@RequestBody OAuthRegisterRequest registerRequest) {
 
         // DTO -> Entity 변환
         User receivedUser = registerRequest.toEntity();
@@ -73,7 +73,7 @@ public class OAuthController {
      * 4. 정보 요청 대상자의 정보들을 담아서 response body에 담아서 전달
      */
     @GetMapping("/api/auth/user")
-    public ResponseEntity<SingleResponse<UserLoginResponse>> sendUserInfo(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<SingleResponse<UserLoginResponse>> sendUserInfo(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = tokenService.resolveAccessToken(request);
 
         if (!tokenService.validateAndReissueToken(request, response, accessToken)) {
@@ -95,10 +95,11 @@ public class OAuthController {
     public ResponseEntity<CommonResponse> userLogout(HttpServletResponse response) {
 
         // Cookie에 있는 refresh-token 제거
-        Cookie cookie = new Cookie("refreshToken", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        tokenService.logout(response);
+//        Cookie cookie = new Cookie("refreshToken", null);
+//        cookie.setMaxAge(0);
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
 
 
         return ResponseEntity.ok().body
