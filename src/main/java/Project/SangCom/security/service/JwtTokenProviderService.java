@@ -85,7 +85,10 @@ public class JwtTokenProviderService {
                 return true;
             }
             // refresh-token도 유효하지 않을 때
-            throw new BusinessException(ErrorCode.TOKEN_INVALID);
+            log.info("refresh-token도 유효하지 않습니다.");
+            response.setHeader(GRANT_HEADER, "expired");
+            return false;
+//            throw new BusinessException(ErrorCode.TOKEN_INVALID);
             //return false;
         }
         // access-token이 유효할 때
