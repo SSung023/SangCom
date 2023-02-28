@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@ToString(callSuper = true, includeFieldNames = true)
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoom extends BaseTimeEntity {
 
@@ -28,4 +28,28 @@ public class ChatRoom extends BaseTimeEntity {
 
     private int isDirect; // 1:1 메세지인지 여부
 
+
+
+    //=== 생성 메서드 ===//
+    public static ChatRoom createChatRoom(ChatMessage chatMessage, List<ChatUserMap> chatUserMap, int isDirect){
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.addChatMessage(chatMessage);
+        for (ChatUserMap userMap : chatUserMap) {
+            chatRoom.addChatUserMap(userMap);
+        }
+        chatRoom.isDirect = isDirect;
+
+
+        return chatRoom;
+    }
+
+    //=== 연관관계 편의 메서드 ===//
+    public void addChatMessage(ChatMessage chatMessage){
+        this.chatMessages.add(chatMessage);
+        chatMessage.addChatRoom(this);
+    }
+    public void addChatUserMap(ChatUserMap chatUserMap){
+        this.chatUserMaps.add(chatUserMap);
+        chatUserMap.setChatRoom(this);
+    }
 }

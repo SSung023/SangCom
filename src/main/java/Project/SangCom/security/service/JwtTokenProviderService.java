@@ -79,14 +79,18 @@ public class JwtTokenProviderService {
 
                 // refresh-token의 남은 유효기간을 확인하고, 유효기간이 1/2 이하라면 refresh-token 재발급
                 if (tokenProvider.checkRefreshExpirationTime(refreshToken)){
+                    log.info("refresh-token의 유효기간이 1/2이 지났으므로 재발급합니다.");
                     String newRefreshToken = tokenProvider.createRefreshToken(userDTO);
                     tokenProvider.setHttpOnlyCookie(response, newRefreshToken);
                 }
                 return true;
             }
             // refresh-token도 유효하지 않을 때
-            throw new BusinessException(ErrorCode.TOKEN_INVALID);
-            //return false;
+            log.info("refresh-token도 유효하지 않습니다.");
+            response.setHeader(GRANT_HEADER, "expired");
+            return false;
+//            throw new BusinessException(ErrorCode.TOKEN_INVALID);
+            //
         }
         // access-token이 유효할 때
         response.setHeader(GRANT_HEADER, "auth-grant");
