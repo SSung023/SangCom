@@ -2,8 +2,12 @@ package Project.SangCom.util.config;
 
 import Project.SangCom.util.formatter.LocalDateFormatter;
 import Project.SangCom.util.formatter.LocalDateTimeFormatter;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.persistence.EntityManager;
 
 /**
  * @Author : Jeeseob
@@ -12,7 +16,9 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
+@RequiredArgsConstructor
 public class AppConfig {
+    private final EntityManager em;
 
     @Bean
     public LocalDateFormatter localDateFormatter() {
@@ -23,4 +29,10 @@ public class AppConfig {
     public LocalDateTimeFormatter localDateTimeFormatter() {
         return new LocalDateTimeFormatter();
     }
+
+    @Bean
+    public JPAQueryFactory queryFactory() {
+        return new JPAQueryFactory(em);
+    }
+
 }

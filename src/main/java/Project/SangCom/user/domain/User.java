@@ -1,5 +1,6 @@
 package Project.SangCom.user.domain;
 
+import Project.SangCom.chat.domain.ChatUserMap;
 import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
@@ -8,7 +9,6 @@ import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.domain.embedded.TeacherInfo;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -50,6 +50,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
 
 
     @Column(unique = true, length = 10)
