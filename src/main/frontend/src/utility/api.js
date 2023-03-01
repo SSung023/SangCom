@@ -30,10 +30,16 @@ authInstance.interceptors.request.use(function (config) {
 
 // 요청 후 access token 만료 여부에 따라 토큰 업데이트
 authInstance.interceptors.response.use(async (res) => {
-    const grantType = res.headers.get("Grant-Type");
-    if(grantType === "reissued-grant"){
-        localStorage.setItem("token", res.headers.get("Authorization"));
-        return authInstance.request(res.config);
+    console.log('fine!');
+}, (err) => {
+    console.error(err);
+    const grantType = err.headers.get("Grant-Type");
+    if(grantType === "expired"){
+        localStorage.setItem("token", "");
     }
-    return res;
+    if(grantType === "reissued-grant"){
+        localStorage.setItem("token", err.headers.get("Authorization"));
+        return authInstance.request(err.config);
+    }
+    return err;
 })

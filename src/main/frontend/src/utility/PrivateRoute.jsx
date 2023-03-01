@@ -25,9 +25,12 @@ export default function PrivateRoute({ component, allowedRole }) {
         }
     }, [location]);
 
+    console.log("logout please " + !isLogin);
+
     return (
         isLogin ? 
-        (isAllowed ? component : <Unauthorized />) 
+        component
         : <Navigate replace to='/login'/>
+        // (isAllowed ? component : <Unauthorized />) 
     );
 }

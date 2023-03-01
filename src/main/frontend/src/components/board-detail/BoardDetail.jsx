@@ -20,9 +20,9 @@ export default function BoardDetail() {
             {/* <ArticleDetail /> */}
             <ArticleDetail category={category} articleId={id}/>
             {/* <Comments /> */}
-            {category!=="suggestion" && <Comments category={category} articleId={id}/>}
+            {category!=="council" && <Comments category={category} articleId={id}/>}
             {/* For parentComments */}
-            {category!=="suggestion" && <CreateComments category={category} articleId={id}/>}
+            {category!=="council" && <CreateComments category={category} articleId={id}/>}
         </div>
     );
 }

@@ -15,7 +15,7 @@ export default function BoardBody({ category }) {
     return (
         <div className={styles.wrapper}>
             <BoardTitle title={title} />
-            <Search category={category} boardTitle={title}/>
+            {category!=="council" && category!=="suggestion" && <Search category={category} boardTitle={title}/>}
             <BestArticle api={`api/board/${category}/best`}/>
             <Previews category={category}/>
         </div>
