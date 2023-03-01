@@ -30,7 +30,8 @@ authInstance.interceptors.request.use(function (config) {
 
 // 요청 후 access token 만료 여부에 따라 토큰 업데이트
 authInstance.interceptors.response.use(async (res) => {
-    console.log('fine!');
+    // console.log('fine!');
+    return res;
 }, (err) => {
     console.error(err);
     const grantType = err.headers.get("Grant-Type");

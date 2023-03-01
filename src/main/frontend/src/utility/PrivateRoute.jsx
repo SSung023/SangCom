@@ -25,7 +25,7 @@ export default function PrivateRoute({ component, allowedRole }) {
         }
     }, [location]);
 
-    console.log("logout please " + !isLogin);
+    // console.log("logout please " + !isLogin);
 
     return (
         isLogin ? 
