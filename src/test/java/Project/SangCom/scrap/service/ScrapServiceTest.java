@@ -163,7 +163,7 @@ class ScrapServiceTest {
 
     private User getUser(String email, String nickname){
         return User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email(email)
                 .nickname(nickname)
                 .username("username")

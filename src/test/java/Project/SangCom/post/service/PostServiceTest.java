@@ -403,7 +403,7 @@ public class PostServiceTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
     }
     private Post getPost(PostCategory category, String title, String content, int isDeleted) {

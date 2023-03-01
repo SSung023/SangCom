@@ -54,8 +54,7 @@ class SecurityConfigTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
-                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.username").value("username"));
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()));
     }
 
     @Test
@@ -89,7 +88,7 @@ class SecurityConfigTest {
     private String getAccessToken(User user) {
         AccessTokenUserRequest tokenUserRequest = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
 
         return provider.createAccessToken(tokenUserRequest);

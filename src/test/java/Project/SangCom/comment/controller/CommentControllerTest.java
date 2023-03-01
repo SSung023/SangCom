@@ -248,7 +248,7 @@ public class CommentControllerTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
     }
 
@@ -256,7 +256,7 @@ public class CommentControllerTest {
         User user = getUser();
         AccessTokenUserRequest tokenUserRequest = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
 
         return provider.createAccessToken(tokenUserRequest);

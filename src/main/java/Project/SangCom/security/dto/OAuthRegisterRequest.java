@@ -46,16 +46,15 @@ public class OAuthRegisterRequest {
 
     public User toEntity(){
         log.info("register request: " + this.toString());
-        Role targetRole = null;
         if (role.equals("student")) {
-            targetRole = Role.STUDENT;
+            role = Role.STUDENT.getKey();
         }
         else if (role.equals("teacher")) {
-            targetRole = Role.TEACHER;
+            role = Role.TEACHER.getKey();
         }
 
         User user = User.builder()
-                .role(targetRole)
+                .role(role)
                 .email(email)
                 .nickname(nickname)
                 .username(username)

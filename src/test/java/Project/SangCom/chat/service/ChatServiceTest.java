@@ -95,7 +95,7 @@ class ChatServiceTest {
                 .username(username)
                 .nickname(nickname)
                 .email(email)
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
         return userRepository.save(user);
     }

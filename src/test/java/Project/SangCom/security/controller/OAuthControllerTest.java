@@ -91,13 +91,13 @@ class OAuthControllerTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .studentInfo(new StudentInfo("1", "3", "12"))
                 .build();
         userService.saveUser(user);
         AccessTokenUserRequest userDTO = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
         String accessToken = provider.createAccessToken(userDTO);
 
@@ -122,7 +122,7 @@ class OAuthControllerTest {
     private User getAndSaveUser() {
         User user = User.builder()
                 .email("test@naver.com")
-                .role(Role.NOT_VERIFIED)
+                .role(Role.NOT_VERIFIED.getKey())
                 .build();
         userService.saveUser(user);
 

@@ -244,21 +244,21 @@ class LikeControllerTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.NOT_VERIFIED)
+                .role(Role.NOT_VERIFIED.getKey())
                 .build();
     }
     private String getAccessToken() {
         User user = getUser();
         AccessTokenUserRequest tokenUserRequest = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
 
         return provider.createAccessToken(tokenUserRequest);
     }
     private Long setUserAndSave(){
         User user = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email("test@naver.com")
                 .nickname("nickname")
                 .username("username")

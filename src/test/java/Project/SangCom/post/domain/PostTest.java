@@ -23,7 +23,7 @@ class PostTest {
                 .email("test@naver.com")
                 .nickname("nickname")
                 .username("username")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
 
         Post post = new Post();

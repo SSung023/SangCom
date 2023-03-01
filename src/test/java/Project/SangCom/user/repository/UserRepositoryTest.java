@@ -28,7 +28,7 @@ class UserRepositoryTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
 
         // when
@@ -45,7 +45,7 @@ class UserRepositoryTest {
         User user = User.builder()
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
 
         //when
@@ -67,7 +67,7 @@ class UserRepositoryTest {
                 .nickname("nickname")
                 .username("username")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
 
         //when

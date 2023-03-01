@@ -25,13 +25,13 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
     public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
         User tmp = User.builder()
                 .email(customUser.email())
-                .role(customUser.role())
+                .role(customUser.role().getKey())
                 .build();
         User user = User.builder()
                 .email(customUser.email())
                 .username(customUser.username())
                 .nickname(customUser.nickname())
-                .role(customUser.role())
+                .role(customUser.role().getKey())
                 .build();
 
         service.saveUser(tmp);
