@@ -1,16 +1,16 @@
 import React, {Component} from "react";
 import styles from './Topnav.module.css';
-import {MdAccountCircle, MdCircleNotifications} from "react-icons/md";
+import {MdPerson, MdNotifications} from "react-icons/md";
 
 class Iconmenu extends Component{
     render() {
         return(
             <div className={styles.iconMenu}>
                 <a href="/my">
-                    <MdAccountCircle />
+                    <MdPerson />
                 </a>
                 <a href="/mynotif">
-                    <MdCircleNotifications />
+                    <MdNotifications />
                 </a>
             </div>
         )

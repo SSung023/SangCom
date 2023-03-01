@@ -1,7 +1,5 @@
 @media screen and (max-width: 786px) {
-    header {
-        font-size: 14px;
-    }
+    
 }
 
 header {
@@ -103,18 +101,32 @@ header {
     white-space: nowrap;
     text-align: center;
     padding: 0;
-    display: inline-block;
-    font-size: 2.5em;
-    margin: 8px 0 0 0;
+    display: flex;
 }
 
 .iconMenu a{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 2em;
+    height: 2em;
     color : lightsteelblue;
+
+    border-radius: 10px;
+    background-color: var(--btn-bg-color);
+    margin-right: 0.5em;
 }
 
 .iconMenu a:hover{
     color: var(--blue-color);
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
     transition: 250ms ease-in-out;
+}
+
+.iconMenu > a > svg {
+    font-size: 1.5em;
+    margin: auto 0;
 }
 
 .expand {
@@ -128,18 +140,23 @@ header {
     .mainMenu, .iconMenu {
         display: none;
     }
+    
     .inner {
         width: fit-content;
     }
+    
     .title {
         display: none;
     }
+
     header {
+        font-size: 14px;
         flex-direction: column;
         align-items: center;
         width: fit-content;
         padding: 0 0.5em 0.5em 0.5em;
     }
+    
     .expand {
         display: block;
     }

@@ -4,8 +4,6 @@ import Mainmenu from "./Mainmenu";
 import Iconmenu from "./Iconmenu";
 import schoolLogo from "../images/sangcom_logo.png";
 import { Link } from "react-router-dom";
-import ToggleNavbar from "./ToggleNavbar";
-import {MdOutlineExpandMore} from "react-icons/md";
 
 class Topnav extends Component {
     render() {
@@ -20,9 +18,6 @@ class Topnav extends Component {
                     <Mainmenu/>
                     <Iconmenu/>
                 </div>
-                <ToggleNavbar>
-                    <MdOutlineExpandMore className={styles.expand}/>
-                </ToggleNavbar>
             </header>
 
         )
