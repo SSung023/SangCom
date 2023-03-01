@@ -169,7 +169,7 @@ public class ScrapControllerTest {
 
     private User getUser(String email, String nickname){
         return User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email(email)
                 .nickname(nickname)
                 .username("username")
@@ -179,7 +179,7 @@ public class ScrapControllerTest {
         User user = getUser(email, nickname);
         AccessTokenUserRequest tokenUserRequest = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
 
         return provider.createAccessToken(tokenUserRequest);

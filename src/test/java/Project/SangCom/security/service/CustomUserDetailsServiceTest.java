@@ -49,7 +49,7 @@ class CustomUserDetailsServiceTest {
                 .username("username")
                 .nickname("nickname1")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
     }
 }

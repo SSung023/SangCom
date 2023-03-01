@@ -275,7 +275,7 @@ public class LikeServiceTest {
 
     private Long setUserAndSave(String email, String nickname){
         User user = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email(email)
                 .nickname(nickname)
                 .username("username")

@@ -140,7 +140,7 @@ public class JwtTokenProviderService {
     private AccessTokenUserRequest convertToUser(User user) {
         return AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
     }
 }

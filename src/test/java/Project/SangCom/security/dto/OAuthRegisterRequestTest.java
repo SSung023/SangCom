@@ -39,7 +39,7 @@ class OAuthRegisterRequestTest {
         log.info(receivedUser.toString());
 
         //then
-        Assertions.assertThat(receivedUser.getRole()).isEqualTo(Role.STUDENT);
+        Assertions.assertThat(receivedUser.getRole()).isEqualTo(Role.STUDENT.getKey());
         Assertions.assertThat(receivedUser.getEmail()).isEqualTo("test@naver.com");
         Assertions.assertThat(receivedUser.getNickname()).isEqualTo("nickname");
         Assertions.assertThat(receivedUser.getUsername()).isEqualTo("username");
@@ -65,7 +65,7 @@ class OAuthRegisterRequestTest {
         log.info(receivedUser.toString());
 
         //then
-        Assertions.assertThat(receivedUser.getRole()).isEqualTo(Role.TEACHER);
+        Assertions.assertThat(receivedUser.getRole()).isEqualTo(Role.TEACHER.getKey());
         Assertions.assertThat(receivedUser.getEmail()).isEqualTo("test@naver.com");
         Assertions.assertThat(receivedUser.getNickname()).isEqualTo("nickname");
         Assertions.assertThat(receivedUser.getUsername()).isEqualTo("username");

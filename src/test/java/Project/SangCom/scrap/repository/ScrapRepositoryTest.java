@@ -124,7 +124,7 @@ class ScrapRepositoryTest {
     private User getUser(){
         return User.builder()
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
     }
 }

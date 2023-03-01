@@ -20,7 +20,7 @@ public class CommentTest {
                 .email("test@naver.com")
                 .nickname("nickname")
                 .username("username")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
 
         Comment comment = new Comment();

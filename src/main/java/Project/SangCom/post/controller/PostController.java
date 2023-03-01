@@ -187,7 +187,7 @@ public class PostController {
         User savedUser;
         if (byEmail.isEmpty()){
             User user = User.builder()
-                    .role(Role.STUDENT)
+                    .role(Role.STUDENT.getKey())
                     .email("test@naver.com")
                     .nickname("닉네임")
                     .username("이름이름")

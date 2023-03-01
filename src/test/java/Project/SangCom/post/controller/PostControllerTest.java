@@ -336,7 +336,7 @@ class PostControllerTest {
         User user = getUser();
         AccessTokenUserRequest userDTO = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
 
         String refreshToken = provider.createRefreshToken(userDTO);
@@ -372,14 +372,14 @@ class PostControllerTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
     }
     private String getAccessToken() {
         User user = getUser();
         AccessTokenUserRequest tokenUserRequest = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
 
         return provider.createAccessToken(tokenUserRequest);
@@ -389,7 +389,7 @@ class PostControllerTest {
         User user = getUser();
         AccessTokenUserRequest userDTO = AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
 
         String accessToken = Jwts.builder()

@@ -78,14 +78,14 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         else {
             user = User.builder()
                     .email(email)
-                    .role(Role.NOT_VERIFIED)
+                    .role(Role.NOT_VERIFIED.getKey())
                     .build();
             repository.save(user);
         }
 
 
         //인증된 사용자를 반환
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey()))
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRole()))
                 ,oAuth2User.getAttributes()
                 ,userNameAttributeName);
     }

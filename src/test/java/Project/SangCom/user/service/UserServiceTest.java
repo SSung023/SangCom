@@ -34,7 +34,7 @@ class UserServiceTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
         
         //when
@@ -53,7 +53,7 @@ class UserServiceTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
 
         //when
@@ -69,7 +69,7 @@ class UserServiceTest {
     public void whenEmailIsSameOverwriteInfo(){
         //given
         User user1 = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email("test@naver.com")
                 .nickname("nickname1")
                 .username("username1")
@@ -77,7 +77,7 @@ class UserServiceTest {
                 .build();
 
         User user2 = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email("test@naver.com")
                 .nickname("nickname2")
                 .username("username2")
@@ -106,14 +106,14 @@ class UserServiceTest {
     public void nicknameNeedToBeUnique (){
         //given
         User user1 = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email("test@naver.com")
                 .nickname("nickname")
                 .username("username")
                 .build();
 
         User user2 = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email("test@naver.com")
                 .nickname("nickname")
                 .username("username")
@@ -136,12 +136,12 @@ class UserServiceTest {
     public void limitLengthOfNickname(){
         //given
         User user = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .email("test@naver.com")
                 .build();
 
         User user2 = User.builder()
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .nickname("nickname")
                 .email("test@naver.com")
                 .studentInfo(StudentInfo.builder().grade("1").classes("2").number("23").build())

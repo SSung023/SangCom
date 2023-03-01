@@ -96,11 +96,6 @@ public class OAuthController {
 
         // Cookie에 있는 refresh-token 제거
         tokenService.logout(response);
-//        Cookie cookie = new Cookie("refreshToken", null);
-//        cookie.setMaxAge(0);
-//        cookie.setPath("/");
-//        response.addCookie(cookie);
-
 
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
@@ -108,38 +103,12 @@ public class OAuthController {
 
 
 
-
-
-
-    // test code
+    //test code
     @GetMapping("/api/auth/test/login")
-    public ResponseEntity<SingleResponse<UserLoginResponse>> loginTest(){
+    public ResponseEntity<CommonResponse> loginTest(){
         log.info("api login test");
-        UserLoginResponse loginResponse = UserLoginResponse.builder()
-                .role(Role.STUDENT)
-                .nickname("nickname")
-                .username("username")
-                .build();
 
         return ResponseEntity.ok().body
-                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), loginResponse));
+                (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }
-
-    @GetMapping("/api/auth/test/user")
-    public ResponseEntity<CommonResponse> test(){
-        log.info("FE 테스트를 위해 DB에 더미 유저 정보를 추가합니다.");
-        User testUser = User.builder()
-                .email("326ekdms@naver.com")
-//                .email("adrians023@naver.com")
-                .username("김댠")
-                .nickname("단두대")
-                .role(Role.STUDENT)
-                .studentInfo(new StudentInfo("1", "2", "23"))
-                .build();
-
-        userService.registerUser(testUser);
-
-        return ResponseEntity.ok(new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
-    }
-
 }

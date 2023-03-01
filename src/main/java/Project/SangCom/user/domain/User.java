@@ -62,9 +62,11 @@ public class User implements UserDetails {
 
     private String username;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private Role role;
+//    @Enumerated(EnumType.STRING)
+//    @NotNull
+//    private Role role;
+
+    private String role; // ROLE_STUDENT,ROLE_GRADE1, 이런식으로 쉼표로 구분
 
     @Embedded
     private StudentInfo studentInfo = new StudentInfo();
@@ -72,7 +74,7 @@ public class User implements UserDetails {
     private TeacherInfo teacherInfo = new TeacherInfo();
 
     @Builder
-    public User(String username, String nickname, String email, Role role, StudentInfo studentInfo, TeacherInfo teacherInfo) {
+    public User(String username, String nickname, String email, String role, StudentInfo studentInfo, TeacherInfo teacherInfo) {
         // studentInfo, teacherInfo 추가 필요
         this.username = username;
         this.nickname = nickname;
@@ -87,14 +89,40 @@ public class User implements UserDetails {
 
 
     //== 비지니스 코드 ==//
-    public void updateUser(Role role, String username, String nickname, @Nullable StudentInfo studentInfo, @Nullable TeacherInfo teacherInfo){
-        this.role = role;
+    public void updateUser(String givenRole, String username, String nickname, @Nullable StudentInfo studentInfo, @Nullable TeacherInfo teacherInfo){
         this.username = username;
         this.nickname = nickname;
-        if (studentInfo != null)
+        if (studentInfo != null){
             this.studentInfo = new StudentInfo(studentInfo.getGrade(), studentInfo.getClasses(), studentInfo.getNumber());
+            this.role = "";
+            this.role += givenRole; // role에 추가
+            checkStudentRole();
+        }
+
         if (teacherInfo != null)
             this.teacherInfo = new TeacherInfo(teacherInfo.getChargeGrade(), teacherInfo.getChargeSubject());
+    }
+    // role 추가
+    public void addRole(Role role){
+        this.role += ",";
+        this.role += role.getKey();
+    }
+    public void resetRole(Role role){
+        this.role = role.getKey();
+    }
+    public void checkStudentRole(){
+        this.role += ",";
+        switch (studentInfo.getGrade()){
+            case "1":
+                this.role += Role.GRADE1.getKey();
+                break;
+            case "2":
+                this.role += Role.GRADE2.getKey();
+                break;
+            case "3":
+                this.role += Role.GRADE3.getKey();
+                break;
+        }
     }
 
 
@@ -112,7 +140,10 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authList = new ArrayList<>();
-        authList.add(new SimpleGrantedAuthority(this.role.getKey()));
+        for (String role : role.split(",")) {
+            authList.add(new SimpleGrantedAuthority(role));
+        }
+//        authList.add(new SimpleGrantedAuthority(this.role.getKey()));
         return authList;
     }
 

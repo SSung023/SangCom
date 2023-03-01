@@ -734,7 +734,7 @@ public class CommentServiceTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
         return userRepository.save(user);
     }

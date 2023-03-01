@@ -178,7 +178,7 @@ public class JwtTokenProviderServiceTest {
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
-                .role(Role.STUDENT)
+                .role(Role.STUDENT.getKey())
                 .build();
         return user;
     }
@@ -215,7 +215,7 @@ public class JwtTokenProviderServiceTest {
     private AccessTokenUserRequest convertToUser(User user) {
         return AccessTokenUserRequest.builder()
                 .email(user.getEmail())
-                .role(user.getRole().getKey())
+                .role(user.getRole())
                 .build();
     }
 }

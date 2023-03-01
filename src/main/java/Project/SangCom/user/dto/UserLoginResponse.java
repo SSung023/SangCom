@@ -7,10 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class UserLoginResponse {
-    private Role role;
+    private List<String> role;
     private String username;
     private String nickname;
 
@@ -23,10 +26,10 @@ public class UserLoginResponse {
 
 
     @Builder
-    public UserLoginResponse(Role role, String username, String nickname,
+    public UserLoginResponse(String role, String username, String nickname,
                              String grade, String classes, String number,
                              String chargeSubject, String chargeGrade) {
-        this.role = role;
+        this.role = setRoleList(role);
         this.username = username;
         this.nickname = nickname;
 
@@ -39,15 +42,23 @@ public class UserLoginResponse {
 
     }
 
-    public void setInfoByRole(Role role, StudentInfo studentInfo, TeacherInfo teacherInfo){
-        if (role == Role.STUDENT){
+    private List<String> setRoleList(String role){
+        List<String> roles = new ArrayList<>();
+        for (String r : role.split(",")) {
+            roles.add(r.substring(5));
+        }
+        return roles;
+    }
+
+    public void setInfoByRole(String role, StudentInfo studentInfo, TeacherInfo teacherInfo){
+        if (role.contains("STUDENT")){
             this.grade = studentInfo.getGrade();
             this.classes = studentInfo.getClasses();
             this.number = studentInfo.getNumber();
             this.chargeSubject = "";
             this.chargeGrade = "";
         }
-        else if (role == Role.TEACHER){
+        else if (role.contains("TEACHER")){
             this.grade = "";
             this.classes = "";
             this.number = "";
