@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import static Project.SangCom.security.config.SecurityConfig.permitURI;
 import static Project.SangCom.security.service.JwtTokenProvider.AUTHORIZATION_HEADER;
+import static Project.SangCom.security.service.JwtTokenProvider.GRANT_HEADER;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -62,7 +63,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.getName(), requestURI);
         }
         else {
-
             log.debug("유효한 JWT 토큰이 없습니다. uri: " + requestURI);
             throw new BusinessException(ErrorCode.TOKEN_INVALID);
         }
