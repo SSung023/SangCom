@@ -13,7 +13,7 @@ export default function Root() {
         authInstance.get("/api/auth/user")
         .then(function(res) {
             dispatch(loginAction(res.data.data));
-            console.log(res);
+            // console.log(res);
         })
         .catch(function (error) {
             console.log(error);
