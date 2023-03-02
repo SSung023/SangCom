@@ -37,14 +37,14 @@ authInstance.interceptors.response.use(async (res) => {
         // update access token
         const newToken = res.headers.get("Authorization");
         localStorage.setItem("token", newToken);
-
-        return authInstance.request(res.config);
+        // return authInstance.request(res.config);
     }
     return res;
 }, (err) => {
     // console.error(err.config);
     const grantType = err.headers.get("Grant-Type");
     console.log(grantType)
+    
     if(grantType === "expired"){
         // logout
         localStorage.setItem("token", "");
