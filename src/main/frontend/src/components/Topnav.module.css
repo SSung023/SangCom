@@ -54,6 +54,8 @@ header {
     font-weight: var(--bold);
 }
 
+/* GNB menu */
+
 .mainMenu{
     display: inline-block;
 }
@@ -67,6 +69,7 @@ header {
 }
 
 .item{
+    cursor: pointer;
     white-space: nowrap;
     text-decoration: none;
     font-size: 1em;
@@ -96,6 +99,22 @@ header {
     box-sizing: border-box;
     transform: scaleX(1);
 }
+
+.item > a {
+    color: var(--txt-color);
+}
+
+/* LNB menu */
+
+.lnbMenu {
+    color: var(--light-txt-color);
+    background-color: var(--white-color);
+
+
+    z-index: 810;
+}
+
+/* icon menu */
 
 .iconMenu{
     white-space: nowrap;
