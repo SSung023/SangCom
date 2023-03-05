@@ -1,7 +1,3 @@
-@media screen and (max-width: 786px) {
-    
-}
-
 header {
     width: 100%;
     display: flex;
@@ -17,6 +13,13 @@ header {
     border-radius: 0px 0px 30px 0px;
     margin-bottom: 2rem;
     padding: 0 1em 0 1em;
+}
+
+.menuUl {
+    list-style: none;
+    font-weight: var(--bold);
+    padding-left: 0;
+    margin: 0;
 }
 
 .inner {
@@ -57,25 +60,35 @@ header {
 /* GNB menu */
 
 .mainMenu{
-    display: inline-block;
+    display: flex;
+    align-items: center;
+
+    position: relative;
+    height: 100%;
 }
 
 .mainMenu ul{
     display : flex;
-    list-style: none;
-    font-weight: bold;
-    padding-left: 0;
-    margin: 0;
+    align-items: center;
+
+    height: 100%;
 }
 
 .item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
     cursor: pointer;
     white-space: nowrap;
     text-decoration: none;
     font-size: 1em;
-    display: block;
+    
     color: var(--txt-color);
     margin: 0 2em 0 2em;
+
+    height: 100%;
 }
 
 .item:hover{
@@ -106,12 +119,38 @@ header {
 
 /* LNB menu */
 
-.lnbMenu {
+.lnb {
+    box-sizing: border-box;
     color: var(--light-txt-color);
     background-color: var(--white-color);
-
-
+    position: absolute;
+    top: 100%;
+    padding: 1em;
+    border-radius: 5px;
+    border: 1px solid var(--shadow-line-color);
+    
     z-index: 810;
+}
+
+.lnb > ul {
+    display: flex;
+    flex-direction: column;
+}
+
+.lnb > ul > li {
+    margin-bottom: 0.5em;
+    padding: 0 0.3em 0 0.3em;
+}
+
+.lnb > ul > li > a {
+    font-size: 15px;
+    font-weight: var(--regular);
+    color: var(--txt-color);
+}
+
+.lnb > ul > li > a:hover {
+    color: var(--blue-color);
+    transition: transform 250ms ease-in-out;
 }
 
 /* icon menu */
@@ -171,9 +210,14 @@ header {
     header {
         font-size: 14px;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
-        width: fit-content;
+
         padding: 0 0.5em 0.5em 0.5em;
+        border-radius: 0;
+        box-shadow: none;
+        /* border: none; */
+        margin-bottom: 0.5em;
     }
     
     .expand {
