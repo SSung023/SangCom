@@ -102,9 +102,9 @@ function CalenderBody({ today }){
                                   TO_YMD : 금월 마지막 날자(8자리 년월일)
                                   */
 
-                                  FROM_YMD = {year.toString() + monthString(monthStart.getMonth()+1) + dateString(monthStart.getDate())}
-                                  TO_YMD = {year.toString() + monthString(monthEnd.getMonth()+1) + dateString(monthEnd.getDate())}
-                                  dateOfToday = {day.getFullYear().toString() + monthString(day.getMonth()+1) + dateString(day.getDate())}
+                                  FROM_YMD = {year.toString() + monthString(monthStart.getMonth()) + dateString(monthStart.getDate())}
+                                  TO_YMD = {year.toString() + monthString(monthEnd.getMonth()) + dateString(monthEnd.getDate())}
+                                  dateOfToday = {day.getFullYear().toString() + monthString(day.getMonth()) + dateString(day.getDate())}
                                   name = "meal-page"
                         />
                     </div>

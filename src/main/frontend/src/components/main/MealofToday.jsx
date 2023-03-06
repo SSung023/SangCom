@@ -42,9 +42,9 @@ export default function MealofToday(props){
                                   FROM_YMD : 금월 시작 날짜(8자리 년월일)
                                   TO_YMD : 금월 마지막 날자(8자리 년월일)
                                   */
-                                    FROM_YMD = {year.toString() + monthString(monthStart.getMonth()+1) + dateString(monthStart.getDate())}
-                                    TO_YMD = {year.toString() + monthString(monthEnd.getMonth()+1) + dateString(monthEnd.getDate())}
-                                    dateOfToday = {year.toString() + monthString(today.getMonth()+1) + dateString(today.getDate())}
+                                    FROM_YMD = {year.toString() + monthString(monthStart.getMonth()) + dateString(monthStart.getDate())}
+                                    TO_YMD = {year.toString() + monthString(monthEnd.getMonth()) + dateString(monthEnd.getDate())}
+                                    dateOfToday = {year.toString() + monthString(today.getMonth()) + dateString(today.getDate())}
                                     name = "meal-today"
                                 />
                             </div>
