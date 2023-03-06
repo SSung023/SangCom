@@ -153,6 +153,10 @@ header {
     transition: transform 250ms ease-in-out;
 }
 
+.lnb > ul > li:last-child {
+    margin-bottom: 0;
+}
+
 /* icon menu */
 
 .iconMenu{

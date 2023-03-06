@@ -84,21 +84,23 @@ function LNB({ lnbMenus, mainMenu, grade }) {
                     {lnbMenus.map((menu) => {
                         return (
                             // category가 자유 게시판이 아니라면 학년에 맞는 메뉴가 표시되도록 렌더링
+                            
+                            menu.lnbMenu !== "학년별 게시판" ?
                             <li key={menu.category}>
-                                {menu.lnbMenu !== "학년별 게시판" ? 
                                 <NavLink 
                                     to={menu.to}
                                     style={({isActive}) => ({ color: isActive ? 'var(--blue-color)' : ''})}
                                     key={menu.category}
                                 >{menu.lnbMenu}</NavLink>
-                                : 
-                                menu.category === `grade${grade}` && 
+                            </li>
+                            : 
+                            menu.category === `grade${grade}` && 
+                            <li key={menu.category}>
                                 <NavLink 
                                     to={menu.to}
                                     style={({isActive}) => ({ color: isActive ? 'var(--blue-color)' : ''})}
                                     key={menu.category}
                                 >{menu.lnbMenu}</NavLink>
-                                }
                             </li>
                         );
                     })}
