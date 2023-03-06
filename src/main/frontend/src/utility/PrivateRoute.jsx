@@ -35,7 +35,6 @@ export default function PrivateRoute({ component }) {
 
     const unauthorized = () => {
         window.location.href = '/' ;
-        alert("접근 권한이 없습니다");
     }
 
     const render = () => {
