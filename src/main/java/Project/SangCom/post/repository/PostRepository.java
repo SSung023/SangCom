@@ -54,7 +54,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * threshold 이내에 작성된 게시글을 대상으로 좋아요 수가 제일 높은 게시글을 하나 선택
      */
-    @Query("select p from Post p where p.createdDate > :threshold and p.category = :category order by p.likeCount desc")
+    @Query("select p from Post p where p.createdDate > :threshold and p.category = :category and p.isDeleted = 0 order by p.likeCount desc")
     List<Post> findMostLikedPost
                         (@Param("threshold") LocalDateTime threshold, @Param("category") PostCategory category, Pageable pageable);
 }
