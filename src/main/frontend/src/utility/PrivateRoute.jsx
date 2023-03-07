@@ -30,26 +30,30 @@ export default function PrivateRoute({ component }) {
             console.log(error);
         })
         .then(function () {
-            role && setAllowed(Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
+            role && allowedRole && setAllowed(Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
         })
     }, []);
 
     const unauthorized = () => {
-        console.log(isAllowed);
+        // console.log(isAllowed);
         window.location.href = '/' ;
     }
 
     // category가 undefined면 location으로, 
     // category가 있으면 category로 allowedRole을 검사한다.
     useEffect(() => {
-        // role && console.log("isAllowed: " + Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
+        // 게시판의 경우 상세 페이지 때문에 category로 검사해야 함
+        if(params.category) {
+            // setAllowed(allowedRole[params.category].includes(role[0]));
+            role && setAllowed(Object.values(role).every((r) => {return allowedRole[params.category].includes(r)}));
+            return;
+        }
         role && setAllowed(Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
-    }, [location, params.category, role]);
+    }, [location, role]);
 
     return (
         isLogin ?
         (isAllowed ? component : unauthorized())
         : <Navigate replace to='/login'/>
-        
     );
 }
