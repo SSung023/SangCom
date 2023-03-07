@@ -1,10 +1,7 @@
 package Project.SangCom.chat.controller;
 
 import Project.SangCom.chat.domain.ChatRoom;
-import Project.SangCom.chat.dto.ChatMessageRequest;
-import Project.SangCom.chat.dto.ChatMessageResponse;
-import Project.SangCom.chat.dto.ChatRoomRequest;
-import Project.SangCom.chat.dto.ChatRoomResponse;
+import Project.SangCom.chat.dto.*;
 import Project.SangCom.chat.service.ChatService;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.util.exception.SuccessCode;
@@ -123,5 +120,18 @@ public class ChatController {
 
         return ResponseEntity.ok()
                 .body(new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), roomResponse));
+    }
+
+    /**
+     * DM 페이지에서 교사 정보에서 상태 메시지 변경 요청
+     * @param teacherProfileDTO DM 페이지에서 카드영역에 보여지는 정보들을 담은 객체
+     */
+    @PostMapping("/message/status")
+    public ResponseEntity<SingleResponse<TeacherProfileDTO>> changeStatusMessage(@RequestBody TeacherProfileDTO teacherProfileDTO){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        TeacherProfileDTO newProfile = chatService.changeStatusMessage(user, teacherProfileDTO);
+        return ResponseEntity.ok()
+                .body(new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.CREATED.getMessage(), newProfile));
     }
 }

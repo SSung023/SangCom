@@ -1,9 +1,6 @@
 package Project.SangCom.user.service;
 
-import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
-import Project.SangCom.user.domain.embedded.StudentInfo;
-import Project.SangCom.user.domain.embedded.TeacherInfo;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
@@ -45,7 +42,7 @@ public class UserService {
          * nickname이 같은 경우 -> BusinessException 발생
          */
         if (!validateNicknameLength(receivedUser)){
-            throw new BusinessException(ErrorCode.NICKNAME_LENGTH_EXCEED);
+            throw new BusinessException(ErrorCode.LENGTH_EXCEED);
         }
         else if (!validateDuplicateNickname(receivedUser)) {
             throw new BusinessException(ErrorCode.NICKNAME_DUPLICATED);

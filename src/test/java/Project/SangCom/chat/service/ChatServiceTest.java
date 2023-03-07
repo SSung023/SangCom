@@ -4,13 +4,11 @@ package Project.SangCom.chat.service;
 import Project.SangCom.chat.domain.ChatMessage;
 import Project.SangCom.chat.domain.ChatRoom;
 import Project.SangCom.chat.domain.ChatUserMap;
-import Project.SangCom.chat.dto.ChatMessageRequest;
-import Project.SangCom.chat.dto.ChatMessageResponse;
-import Project.SangCom.chat.dto.ChatRoomRequest;
-import Project.SangCom.chat.dto.ChatRoomResponse;
+import Project.SangCom.chat.dto.*;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.domain.embedded.StudentInfo;
+import Project.SangCom.user.domain.embedded.TeacherInfo;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
@@ -350,6 +348,57 @@ class ChatServiceTest {
         //then
         assertThat(chatMessageResponse.getContent()).isEqualTo("줄 바꿈 테스트\n 줄 바꿈 테스트");
     }
+    
+    @Test
+    @DisplayName("Role이 교사인 경우, 본인의 상태메시지를 변경할 수 있다.")
+    public void teacherCanChangeStatusMessage(){
+        //given
+        User teacher = getUser(Role.TEACHER, "teacher1", "nickname", "test1@naver.com", new TeacherInfo("1", "2", "status message"));
+        
+        //when
+        TeacherProfileDTO teacherProfileDTO = TeacherProfileDTO.builder()
+                .id(teacher.getId())
+                .name(teacher.getUsername())
+                .chargeClass(teacher.getTeacherInfo().getChargeGrade() + "학년 N반")
+                .statusMessage("new status message")
+                .build();
+        TeacherProfileDTO newProfile = chatService.changeStatusMessage(teacher, teacherProfileDTO);
+        
+        //then
+        assertThat(newProfile.getStatusMessage()).isEqualTo("new status message");
+    }
+
+    @Test
+    @DisplayName("교사가 아닌 경우, 상태메시지를 변경하는 메서드를 호출하면 예외가 발생한다.")
+    public void studentCannotChangeStatusMessage(){
+        //given
+        User user = getUser("username1", "nickname1", "test1@naver.com");
+
+        //when&then
+        assertThatThrownBy(() -> chatService.changeStatusMessage(user, new TeacherProfileDTO()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(ErrorCode.NO_AUTHORITY.getMessage());
+    }
+    
+    @Test
+    @DisplayName("상태메시지 설정 시, 30자를 넘으면 예외가 발생한다.")
+    public void statusMessageLimit30(){
+        //given
+        User teacher = getUser(Role.TEACHER, "teacher1", "nickname", "test1@naver.com", new TeacherInfo("1", "2", "status message"));
+        
+        //when
+        TeacherProfileDTO teacherProfileDTO = TeacherProfileDTO.builder()
+                .id(teacher.getId())
+                .name(teacher.getUsername())
+                .chargeClass(teacher.getTeacherInfo().getChargeGrade() + "학년 N반")
+                .statusMessage("ooooooooooooooooooooooooooooooo")
+                .build();
+        
+        //then
+        assertThatThrownBy(() -> chatService.changeStatusMessage(teacher, teacherProfileDTO))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(ErrorCode.LENGTH_EXCEED.getMessage());
+    }
 
 
 
@@ -377,6 +426,16 @@ class ChatServiceTest {
                 .email(email)
                 .role(role.getKey())
                 .studentInfo(new StudentInfo("1", "2", "3"))
+                .build();
+        return userRepository.save(user);
+    }
+    private User getUser(Role role, String username, String nickname, String email, TeacherInfo teacherInfo) {
+        User user = User.builder()
+                .username(username)
+                .nickname(nickname)
+                .email(email)
+                .role(role.getKey())
+                .teacherInfo(teacherInfo)
                 .build();
         return userRepository.save(user);
     }

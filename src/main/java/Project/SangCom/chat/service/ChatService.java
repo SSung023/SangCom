@@ -9,6 +9,7 @@ import Project.SangCom.chat.repository.ChatRepositoryImpl;
 import Project.SangCom.chat.repository.ChatRoomRepository;
 import Project.SangCom.chat.repository.ChatUserMapRepository;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.domain.embedded.TeacherInfo;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
@@ -179,11 +180,48 @@ public class ChatService {
     }
 
 
+    /**
+     * 교사가 본인의 상태 메시지를 변경
+     * 교사가 아닌 경우 or 본인이 아닌 경우 예외 발생
+     */
+    @Transactional
+    public TeacherProfileDTO changeStatusMessage(User user, TeacherProfileDTO teacherProfileDTO) {
+        // 교사가 아니거나, 본인이 아니면 예외 발생
+        if (!user.getRole().contains("TEACHER") || !Objects.equals(user.getId(), teacherProfileDTO.getId())){
+            throw new BusinessException(ErrorCode.NO_AUTHORITY);
+        }
+
+        String newStatusMessage = teacherProfileDTO.getStatusMessage();
+
+        // statusMessage가 30을 초과한다면 예외 발생
+        if (newStatusMessage.length() > 30){
+            throw new BusinessException(ErrorCode.LENGTH_EXCEED);
+        }
+
+        // 상태메시지 갱신
+        user.updateStatusMessage(newStatusMessage);
+        return convertToTeacherProfileDTO(user);
+    }
 
 
 
 
 
+
+
+    // User를 TeacherProfileDTO(카드에 필요한 정보)로 변환하여 반환
+    private TeacherProfileDTO convertToTeacherProfileDTO(User user){
+        TeacherInfo teacherInfo = user.getTeacherInfo();
+        String chargeInfo = teacherInfo.getChargeGrade() + "학년 ";
+
+        return TeacherProfileDTO.builder()
+                .id(user.getId())
+                .name(user.getUsername())
+                .chargeClass(chargeInfo)
+                .chargeSubject(teacherInfo.getChargeSubject())
+                .statusMessage(teacherInfo.getStatusMessage())
+                .build();
+    }
 
     // ChatRoom(채팅방)를 ChatRoomResponse(채팅방 응답 DTO)로 변환하여 반환
     public ChatRoomResponse convertToChatRoomResponse(ChatRoom chatRoom){
