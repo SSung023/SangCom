@@ -15,8 +15,6 @@ export default function PrivateRoute({ component }) {
     const location = useLocation();
     const params = useParams();
 
-    const navigate = useNavigate();
-
     const [isAllowed, setAllowed] = useState(true);
     const role = useSelector((state) => state.loginReducer.user.info.role);
 
@@ -31,37 +29,27 @@ export default function PrivateRoute({ component }) {
         .catch(function (error) {
             console.log(error);
         })
+        .then(function () {
+            role && setAllowed(Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
+        })
     }, []);
 
     const unauthorized = () => {
+        console.log(isAllowed);
         window.location.href = '/' ;
-    }
-
-    const render = () => {
-        // console.log(isAllowed);
-        return (
-            isAllowed ? component : unauthorized()
-        );
     }
 
     // category가 undefined면 location으로, 
     // category가 있으면 category로 allowedRole을 검사한다.
     useEffect(() => {
-        if(params.category) {
-            console.log(`category 검사, category: ${params.category}, allowedList: ${allowedRole[params.category]}, role: ${role[0]}`);
-            // setAllowed(allowedRole[params.category].includes(role[0]));
-            role && setAllowed(Object.values(role).every((r) => {return allowedRole[params.category].includes(r)}));
-        }
-        else {
-            console.log(`pathname 검사, pathname: ${location.pathname}, allowedList: ${allowedRole[location.pathname]}, role: ${role[0]}`);
-            // setAllowed(allowedRole[location.pathname].includes(role[0]));
-            role && setAllowed(Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
-        }
-    }, [location, role]);
+        // role && console.log("isAllowed: " + Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
+        role && setAllowed(Object.values(role).every((r) => {return allowedRole[location.pathname].includes(r)}));
+    }, [location, params.category, role]);
 
     return (
         isLogin ?
-        (render())
+        (isAllowed ? component : unauthorized())
         : <Navigate replace to='/login'/>
+        
     );
 }
