@@ -12,6 +12,8 @@ import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.repository.UserRepository;
+import Project.SangCom.util.exception.BusinessException;
+import Project.SangCom.util.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -281,9 +284,50 @@ class ChatServiceTest {
         assertThat(roomResponse.getIsDirect()).isEqualTo(1);
         assertThat(roomResponse.getId()).isEqualTo(savedChatRoomId);
         assertThat(roomResponse.getMessageList()).isNull();
-
     }
 
+    @Test
+    @DisplayName("chatRoomRequest의 content의 값이 null이면 예외가 발생한다.")
+    public void throwException_whenContentIsNull(){
+        //given
+        User user1 = getUser("username1", "nickname1", "test1@naver.com");
+        User user2 = getUser("username2", "nickname2", "test2@naver.com");
+
+        List<Long> userId = new ArrayList<>();
+        userId.add(user2.getId());
+
+        ChatRoomRequest chatRoomRequest = ChatRoomRequest.builder()
+                .receiverId(userId)
+                .isDirect(1)
+                .build();
+
+        //when&then
+        assertThatThrownBy(() -> chatService.saveChatRoom(user1, chatRoomRequest))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(ErrorCode.INVALID_PARAMETER.getMessage());
+    }
+
+    @Test
+    @DisplayName("chatRoomRequest의 content의 값이 담겨져 있지 않으면 예외가 발생한다.")
+    public void throwException_whenContentIsEmpty(){
+        //given
+        User user1 = getUser("username1", "nickname1", "test1@naver.com");
+        User user2 = getUser("username2", "nickname2", "test2@naver.com");
+
+        List<Long> userId = new ArrayList<>();
+        userId.add(user2.getId());
+
+        ChatRoomRequest chatRoomRequest = ChatRoomRequest.builder()
+                .receiverId(userId)
+                .content("")
+                .isDirect(1)
+                .build();
+
+        //when&then
+        assertThatThrownBy(() -> chatService.saveChatRoom(user1, chatRoomRequest))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(ErrorCode.INVALID_PARAMETER.getMessage());
+    }
 
 
 

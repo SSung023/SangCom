@@ -43,6 +43,11 @@ public class ChatService {
      */
     @Transactional
     public Long saveChatRoom(User sender, ChatRoomRequest chatRoomRequest){
+        // chatRoomRequest에 content(첫 채팅 메시지)가 담겨져 있지 않을 때 에러 발생
+        if (Objects.equals(chatRoomRequest.getContent(), "") || chatRoomRequest.getContent() == null) {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER);
+        }
+
         // 첫 메시지
         ChatMessage chatMessage = ChatMessage.builder()
                 .senderId(sender.getId())

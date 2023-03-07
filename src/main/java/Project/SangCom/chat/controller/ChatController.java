@@ -39,7 +39,10 @@ public class ChatController {
      * @param chatRoomRequest ChatRoom 생성에 필요한 정보들
      */
     @PostMapping("/message")
-    public ResponseEntity<SingleResponse<ChatRoomResponse>> createNewChatRoom(@RequestBody ChatRoomRequest chatRoomRequest){
+    public ResponseEntity<SingleResponse<ChatRoomResponse>> createNewChatRoom
+        (@PageableDefault(size = PAGE_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+         @RequestBody ChatRoomRequest chatRoomRequest){
+
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Long joinedChat = chatService.findJoinedChatPK(user, chatRoomRequest);
@@ -50,7 +53,7 @@ public class ChatController {
             chatService.writeChatMessage(user, joinedChat, new ChatMessageRequest(chatRoomRequest.getContent()));
         }
 
-        ChatRoomResponse chatRoomResponse = chatService.convertToChatRoomResponse(chatService.findChatRoomById(joinedChat));
+        ChatRoomResponse chatRoomResponse = chatService.convertToDetailChatResponse(user, chatService.findChatRoomById(joinedChat), pageable);
 
         return ResponseEntity.ok()
                 .body(new SingleResponse<>(SuccessCode.CREATED.getStatus(), SuccessCode.CREATED.getMessage(), chatRoomResponse));
@@ -61,8 +64,7 @@ public class ChatController {
      * 자신이 속해있는 모든 톡방들을 검색하여 반환 - 톡방 미리보기 용으로 반환
      */
     @GetMapping("/message/list")
-    public ResponseEntity<ListResponse<ChatRoomResponse>> getChatList
-        (@PageableDefault(size = PAGE_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<ListResponse<ChatRoomResponse>> getChatList() {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<ChatRoomResponse> chatRoomList = chatService.getJoinedChatRoomList(user);
