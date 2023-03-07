@@ -1,0 +1,60 @@
+.messagePage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.toggle {
+    display: inline-block;
+    padding: 4px;
+    box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--dm-theme-color);
+    border-radius: 16px;
+}
+
+.toggle div {
+    /* 드래그 방지 */
+    -webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+    /* 스타일 */
+    display: inline-block;
+    min-width: 48px;
+    border-radius: 16px;
+    padding: 4px 6px 4px 6px;
+    text-align: center;
+    color: var(--white-color);
+}
+
+.toggle div.active {
+    color: var(--txt-color);
+    background-color: var(--white-color);
+    text-align: center;
+    filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.1));
+    /* transform: translateX(0); */
+    transition: color, background-color 250ms cubic-bezier(.07,.63,.81,1);
+}
+
+.body {
+    animation: show-body 250ms;
+}
+
+@keyframes show-body {
+    from {
+        opacity: 0;
+        margin-top: 1em;
+    }
+    to {
+        opacity: 1;
+        margin-top: 0;
+    }
+}
+
+
+@media screen and (max-width: 786px) {
+    .toggle {
+        font-size: 12px;
+    }
+}

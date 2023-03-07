@@ -8,6 +8,8 @@ import Main from './pages/Main';
 import Board from './pages/Board';
 import TimeTable from './pages/TimeTable';
 import MealOfMonth from './pages/MealOfMonth';
+import Message from './components/message/Message';
+
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Auth from "./pages/Auth";
@@ -33,6 +35,7 @@ const router = createBrowserRouter([
       { path: 'board/:category/:selection/:search', element: <Board />},
       { path: 'timetable', element: <TimeTable />},
       { path: 'mealPage', element: <MealOfMonth />},
+      { path: 'message', element: <Message />},
     ],
   },
   {

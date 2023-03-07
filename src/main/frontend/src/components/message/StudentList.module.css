@@ -1,0 +1,126 @@
+.studentList {
+    margin-top: 1em;
+    width: 100%;
+    max-width: 1000px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.sendBtn {
+    display: none;
+    box-sizing: border-box;
+    border: none;
+    background-color: var(--blue-color);
+    color: white;
+    padding: 12px;
+    border-radius: 30px;
+    font-weight: var(--bold);
+    font-size: 16px;
+
+    position: fixed;
+    bottom: 7em;
+    right: 1em;
+}
+
+/* list 컴포넌트 기본 */
+
+.list {
+    box-sizing: border-box;
+
+    width: 100%;
+    min-width: 250px;
+    max-width: 268px;
+    height: fit-content;
+    padding: 12px;
+    
+    border-radius: 20px;
+    border: 1px solid var(--shadow-line-color);
+    margin: 0 1em 16px 1em;
+    transition: all 1s ease-in-out;
+}
+
+.class {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.classInfo {
+    font-size: 18px;
+    font-weight: var(--bold);
+    margin-left: 4px;
+}
+
+.class svg {
+    font-size: 20px;
+    transition: transform 250ms ease-in;
+}
+
+/* .class svg:hover {
+    transform: rotate(0deg);
+    transition: transform 250ms ease-in;
+}
+
+.class svg.active {
+    transform: rotate(0);
+} */
+
+/* 학생들 */
+
+.classList {
+    box-sizing: border-box;
+    margin-top: 8px;
+    animation: show-list 100ms ease;
+    background-color: var(--btn-bg-color);
+    padding: 0.8em;
+
+    color: var(--txt-color);
+}
+
+@keyframes show-list {
+    from {
+        opacity: 0;
+        margin-top: -0.5em;
+    }
+    to {
+        opacity: 1;
+        margin-top: 0;
+    }
+}
+
+.form {
+    width: 100%;
+    min-width: fit-content;
+    max-width: 238px;
+}
+
+.form label {
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+
+    margin-left: 6px;
+}
+
+.students {
+    margin-top: 8px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-self: center;
+}
+
+@media screen and (max-width: 786px) {
+    .studentList {
+        grid-template-columns: 1fr;
+    }
+    .list {
+        margin: 0 0 16px 0;
+    }
+
+    .classInfo {
+        font-size: 14px;
+    }
+}

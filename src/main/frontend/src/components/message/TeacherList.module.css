@@ -1,0 +1,155 @@
+.teacherList {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    font-size: 16px;
+    margin-top: 20px;
+    max-width: 1000px;
+
+    padding: 0 3em 0 3em;
+}
+
+.card {
+    box-sizing: border-box;
+    width: 30%;
+    min-width: 230px;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border-radius: 20px;
+    border: 1px solid var(--shadow-line-color);
+    padding: 16px;
+    margin-bottom: 2em;
+}
+
+.card:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 250ms ease-out;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* provile */
+
+.card .profile {
+    position: relative;
+}
+
+.card .profile img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 1px solid var(--shadow-line-color);
+}
+
+.card .profile div {
+    position: absolute;
+    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    bottom: 4px;
+    right: -4px;
+    border-radius: 50%;
+    background-color: var(--blue-color);
+}
+
+.card .profile div:hover {
+    cursor: pointer;
+    background-color: var(--dark-blue-color);
+    transition: background-color 250ms ease-in;
+}
+
+.card .profile div svg {
+    margin: 6px;
+    font-size: 14px;
+    color: var(--white-color);
+}
+
+/* basic info */
+
+.basicInfo {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.name {
+    font-weight: var(--bold);
+    margin-right: 8px;
+}
+
+.belong {
+    font-size: 12px;
+    color: var(--light-txt-color);
+}
+
+/* status message */
+.card p {
+    font-size: 14px;
+    color: var(--light-txt-color);
+    margin-top: 8px;
+    text-align: center;
+}
+
+@media screen and (max-width: 909px) {
+    .teacherList {
+        font-size: 14px;
+        margin-top: 16px;
+        justify-content: center;
+        padding: 0 2em;
+    }
+    .card {
+        width: 100%;
+    }
+    .card:nth-child(odd) {
+        margin-right: 1em;
+    }
+    .card img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media screen and (max-width: 687px) {
+    .wrapper {
+        align-items: flex-start;
+        margin-left: 1em;
+    }
+    .card:nth-child(odd) {
+        margin-right: 0;
+    }
+    .card {
+        flex-direction: row;
+        margin-bottom: 8px;
+    }
+
+    .card .profile img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .basicInfo {
+        margin-top: 0;
+    }
+    
+    .card p {
+        font-size: 14px;
+        text-align: left;
+
+        white-space: nowrap;
+        overflow: hidden;
+        line-height: 16px;
+        max-height: 32px;
+        text-overflow: ellipsis;
+    }
+}
