@@ -96,8 +96,6 @@ function CalenderBody({ today }){
                         <MealList active = {isSameMonth(day)}
 
                                   /*
-                                  현재 2월 : 학교 급식 없음
-                                  밑의 코드는 각 달에 1씩 더해 임시로 3월달을 표시함
                                   FROM_YMD : 금월 시작 날짜(8자리 년월일)
                                   TO_YMD : 금월 마지막 날자(8자리 년월일)
                                   */

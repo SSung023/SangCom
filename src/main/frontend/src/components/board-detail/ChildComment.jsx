@@ -8,7 +8,8 @@ import { useParams } from 'react-router-dom';
 
 export default function ChildComment({ childCommentInfo, parentId }) {
     const [commentInfo, setComment] = useState(childCommentInfo);
-    
+
+    const createdTime = new Date(commentInfo.createdDate);
     const params = useParams();
     const category = params.category;
     const id = params.id;
@@ -45,7 +46,7 @@ export default function ChildComment({ childCommentInfo, parentId }) {
             <p className={styles.content}>{commentInfo.content}</p>
 
             <div className={styles.basicInfo}>
-                <p className={styles.time}>{timestamp()}</p>
+                <p className={styles.time}>{timestamp(createdTime)}</p>
                 {commentInfo.isLikePressed ? <MdOutlineFavorite/> : <MdFavoriteBorder/>}
                 <p>{commentInfo.likeCount}</p>
             </div>
