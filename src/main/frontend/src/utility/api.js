@@ -31,16 +31,14 @@ authInstance.interceptors.request.use(function (config) {
 // 요청 후 access token 만료 여부에 따라 토큰 업데이트
 authInstance.interceptors.response.use(async (res) => {
     const grantType = res.headers.get("Grant-Type");
-    console.log(grantType);
+    
     if(grantType === "reissued-grant"){
         // update access token
         const newToken = res.headers.get("Authorization");
         localStorage.setItem("token", newToken);
-        // return authInstance.request(res.config);
     }
     return res;
 }, (err) => {
-
     localStorage.setItem("token", "");
     window.location.reload(window.location.href)
 
