@@ -16,8 +16,6 @@ import TeacherRegister from "./components/register/TeacherRegister";
 import PrivateRoute from './utility/PrivateRoute';
 import PublicRoute from './utility/PublicRoute';
 
-import { allowedRole } from './utility/allowedRole.js';
-
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -26,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <PrivateRoute component={<Root/>} allowedRole={allowedRole}/>,
+    element: <PrivateRoute component={<Root/>} />,
     errorElement: <NotFound />,
     children: [
       { index: true, element: <Main /> } ,
