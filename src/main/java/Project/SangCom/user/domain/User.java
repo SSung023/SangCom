@@ -62,10 +62,6 @@ public class User implements UserDetails {
 
     private String username;
 
-//    @Enumerated(EnumType.STRING)
-//    @NotNull
-//    private Role role;
-
     private String role; // ROLE_STUDENT,ROLE_GRADE1, 이런식으로 쉼표로 구분
 
     @Embedded
@@ -99,8 +95,23 @@ public class User implements UserDetails {
             checkStudentRole();
         }
 
-        if (teacherInfo != null)
-            this.teacherInfo = new TeacherInfo(teacherInfo.getChargeGrade(), teacherInfo.getChargeSubject());
+        if (teacherInfo != null){
+            this.teacherInfo = TeacherInfo.builder()
+                    .chargeGrade(teacherInfo.getChargeGrade())
+                    .chargeSubject(teacherInfo.getChargeSubject())
+                    .statusMessage("")
+                    .build();
+            this.role = "";
+            this.role += givenRole; // role 추가(재설정)
+        }
+    }
+    // 교사의 상태메시지 갱신
+    public void updateStatusMessage(String statusMessage){
+        this.teacherInfo = TeacherInfo.builder()
+                .chargeGrade(teacherInfo.getChargeGrade())
+                .chargeSubject(teacherInfo.getChargeSubject())
+                .statusMessage(statusMessage)
+                .build();
     }
     // role 추가
     public void addRole(Role role){
@@ -143,7 +154,6 @@ public class User implements UserDetails {
         for (String role : role.split(",")) {
             authList.add(new SimpleGrantedAuthority(role));
         }
-//        authList.add(new SimpleGrantedAuthority(this.role.getKey()));
         return authList;
     }
 

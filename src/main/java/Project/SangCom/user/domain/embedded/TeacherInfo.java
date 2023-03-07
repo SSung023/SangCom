@@ -2,6 +2,7 @@ package Project.SangCom.user.domain.embedded;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
@@ -17,11 +18,13 @@ public class TeacherInfo {
 
     private String chargeGrade;
     private String chargeSubject;
+    private String statusMessage; // 상태 메시지
 
     @Builder
-    public TeacherInfo(String chargeGrade, String chargeSubject) {
+    public TeacherInfo(String chargeGrade, String chargeSubject, String statusMessage) {
         this.chargeGrade = chargeGrade;
         this.chargeSubject = chargeSubject;
+        this.statusMessage = statusMessage;
     }
 
     @Override

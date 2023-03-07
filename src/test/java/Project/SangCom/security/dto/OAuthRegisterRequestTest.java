@@ -69,7 +69,7 @@ class OAuthRegisterRequestTest {
         Assertions.assertThat(receivedUser.getEmail()).isEqualTo("test@naver.com");
         Assertions.assertThat(receivedUser.getNickname()).isEqualTo("nickname");
         Assertions.assertThat(receivedUser.getUsername()).isEqualTo("username");
-        Assertions.assertThat(receivedUser.getTeacherInfo()).isEqualTo(new TeacherInfo("1", "Science"));
+        Assertions.assertThat(receivedUser.getTeacherInfo()).isEqualTo(new TeacherInfo("1", "Science", "상태메시지"));
 
     }
 }
