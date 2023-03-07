@@ -329,6 +329,28 @@ class ChatServiceTest {
                 .hasMessageContaining(ErrorCode.INVALID_PARAMETER.getMessage());
     }
 
+    @Test
+    @DisplayName("최근에 작성한 메시지에 줄바꿈 문자가 있을 때, 응답 시 그대로 전달된다.")
+    public void whenNextLineContains(){
+        //given
+        User user1 = getUser("username1", "nickname1", "test1@naver.com");
+        User user2 = getUser("username2", "nickname2", "test2@naver.com");
+
+        List<Long> userId = new ArrayList<>();
+        userId.add(user2.getId());
+
+        ChatRoomRequest chatRoomRequest = getChatRoomRequest(user2.getId());
+        Long roomId = chatService.saveChatRoom(user1, chatRoomRequest);
+        ChatRoom chatRoom = chatService.findChatRoomById(roomId);
+
+        //when
+        ChatMessageRequest request = ChatMessageRequest.builder().content("줄 바꿈 테스트\n 줄 바꿈 테스트").build();
+        ChatMessageResponse chatMessageResponse = chatService.writeChatMessage(user1, roomId, request);
+
+        //then
+        assertThat(chatMessageResponse.getContent()).isEqualTo("줄 바꿈 테스트\n 줄 바꿈 테스트");
+    }
+
 
 
 

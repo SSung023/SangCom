@@ -235,6 +235,7 @@ public class ChatService {
                 .content(chatMessage.getContent())
                 .author(chatMessage.getSenderName())
                 .isOwner(checkIsMessageOwner(user, chatMessage))
+                .createdDate(chatMessage.getCreatedDate())
                 .build();
     }
     private String convertNameFormat(User user){
