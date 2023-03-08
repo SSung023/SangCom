@@ -95,7 +95,7 @@ public class User implements UserDetails {
             checkStudentRole();
         }
 
-        if (teacherInfo != null){
+        if (teacherInfo.getChargeGrade() != ""){
             this.teacherInfo = TeacherInfo.builder()
                     .chargeGrade(teacherInfo.getChargeGrade())
                     .chargeSubject(teacherInfo.getChargeSubject())

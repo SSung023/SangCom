@@ -10,8 +10,10 @@ import {
 } from "react-icons/md";
 import {authInstance} from "../../utility/api";
 import {articleLike, articleDelete, articleScrap, articleUnscrap} from "../../utility/ArticleApi";
-import ArticleEdit from "../board-detail/ArticleEdit";
-import EditModal from "../ui/EditModal";
+// import ArticleEdit from "../board-detail/ArticleEdit";
+// import EditModal from "../ui/EditModal";
+import EditModal from "../ui/Modal";
+
 
 
 export default function ArticleContent({ articleInfo, scrapInfo }){
