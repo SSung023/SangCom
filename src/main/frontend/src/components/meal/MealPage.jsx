@@ -96,15 +96,13 @@ function CalenderBody({ today }){
                         <MealList active = {isSameMonth(day)}
 
                                   /*
-                                  현재 2월 : 학교 급식 없음
-                                  밑의 코드는 각 달에 1씩 더해 임시로 3월달을 표시함
                                   FROM_YMD : 금월 시작 날짜(8자리 년월일)
                                   TO_YMD : 금월 마지막 날자(8자리 년월일)
                                   */
 
-                                  FROM_YMD = {year.toString() + monthString(monthStart.getMonth()+1) + dateString(monthStart.getDate())}
-                                  TO_YMD = {year.toString() + monthString(monthEnd.getMonth()+1) + dateString(monthEnd.getDate())}
-                                  dateOfToday = {day.getFullYear().toString() + monthString(day.getMonth()+1) + dateString(day.getDate())}
+                                  FROM_YMD = {year.toString() + monthString(monthStart.getMonth()) + dateString(monthStart.getDate())}
+                                  TO_YMD = {year.toString() + monthString(monthEnd.getMonth()) + dateString(monthEnd.getDate())}
+                                  dateOfToday = {day.getFullYear().toString() + monthString(day.getMonth()) + dateString(day.getDate())}
                                   name = "meal-page"
                         />
                     </div>

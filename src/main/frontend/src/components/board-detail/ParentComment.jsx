@@ -12,6 +12,7 @@ export default function ParentComment({ parentCommentInfo }) {
     const [childComments, setChildComment] = useState(parentCommentInfo.childComment);
     const [toggle, setToggle] = useState(false);
     // const [isLikePressed, setLike] = useState();
+    const createdTime = new Date(commentInfo.createdDate);
     
     const params = useParams();
     const category = params.category;
@@ -68,7 +69,7 @@ export default function ParentComment({ parentCommentInfo }) {
             <p className={styles.content}>{commentInfo.content}</p>
 
             <div className={styles.basicInfo}>
-                <p className={styles.time}>{timestamp()}</p>
+                <p className={styles.time}>{timestamp(createdTime)}</p>
                 {commentInfo.isLikePressed ? <MdOutlineFavorite/> : <MdFavoriteBorder/>}
                 <p>{commentInfo.likeCount}</p>
             </div>
