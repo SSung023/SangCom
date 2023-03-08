@@ -14,6 +14,8 @@ export default function Board() {
     const category = params.category;
     const id = params.id;
     const search = params.search;
+    const role = useSelector((state) => state.loginReducer.user.info.role);
+
     
     // TODO: 배포 판에서는 지우기
     useEffect(() => {
@@ -27,8 +29,8 @@ export default function Board() {
                 {id ? <BoardDetail /> : (search ? <SearchBody category={category} /> : <BoardBody category={category} />)}
                 {/* BoardRightSide */}
             </div>
-            
-            { !id &&  <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>}
+            {console.log(role)}
+            { !id && role.includes("COUNCIL") && <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>}
         </div>
     );
 }
