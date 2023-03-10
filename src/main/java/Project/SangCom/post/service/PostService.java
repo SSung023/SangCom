@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -166,6 +167,16 @@ public class PostService {
 
         List<Post> posts = postRepository.findMostLikedPost(threshold, category, pageable);
         return posts;
+    }
+
+
+    /**
+     * 원하는 카테고리의 게시판에서 최근에 작성한 5개의 게시글을 반환
+     * @param category 최근 작성된 5개의 게시글을 얻고 싶은 게시판
+     */
+    public List<PostResponse> getPreviewPosts(User user, PostCategory category, Pageable pageable){
+        return postRepository.findRecentPreviewPosts(category, pageable).stream()
+                .map(p -> convertToPreviewResponse(user, p)).toList();
     }
 
     public PostCategory checkCategory(String category){
