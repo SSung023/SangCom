@@ -57,4 +57,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p where p.createdDate > :threshold and p.category = :category and p.isDeleted = 0 order by p.likeCount desc")
     List<Post> findMostLikedPost
                         (@Param("threshold") LocalDateTime threshold, @Param("category") PostCategory category, Pageable pageable);
+
+
+    @Query("select p from Post p where p.category =:category and p.isDeleted = 0")
+    List<Post> findRecentPreviewPosts(@Param("category") PostCategory category, Pageable pageable);
 }

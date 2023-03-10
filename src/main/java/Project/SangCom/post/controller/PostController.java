@@ -13,6 +13,7 @@ import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.user.service.UserService;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
+import Project.SangCom.util.response.dto.ListResponse;
 import Project.SangCom.util.response.dto.PagingResponse;
 import Project.SangCom.util.response.dto.SingleResponse;
 import lombok.RequiredArgsConstructor;
@@ -173,6 +174,21 @@ public class PostController {
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }
+
+
+    @GetMapping("/board/{category}/preview")
+    public ResponseEntity<ListResponse<PostResponse>> getRecentPosts
+                (@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                 @PathVariable String category){
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PostCategory postCategory = postService.checkCategory(category);
+        List<PostResponse> previewPosts = postService.getPreviewPosts(user, postCategory, pageable);
+
+        return ResponseEntity.ok().body
+                (new ListResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), previewPosts));
+    }
+
 
 
 

@@ -130,15 +130,36 @@ public class PostRepositoryTest {
         Assertions.assertThat(content.size()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName("특정 게시판에 작성된 최근 5개의 게시글을 조회할 수 있다.")
+    public void canGetRecent5Posts(){
+        //given
+        Post post1 = getPost("title1", "content1", PostCategory.FREE, 0);
+        Post post2 = getPost("title2", "content2", PostCategory.FREE, 0);
+        Post post3 = getPost("title3", "content3", PostCategory.FREE, 0);
+        Post post4 = getPost("title4", "content4", PostCategory.FREE, 1);
+        Post post5 = getPost("title5", "content5", PostCategory.FREE, 0);
+        Post post6 = getPost("title6", "content6", PostCategory.FREE, 0);
+        Post post7 = getPost("title7", "content7", PostCategory.GRADE1, 0);
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
+        List<Post> posts = repository.findRecentPreviewPosts(PostCategory.FREE, pageRequest);
+
+        //then
+        Assertions.assertThat(posts.size()).isEqualTo(5);
+    }
+
 
 
 
     private Post getPost(String title, String content, PostCategory category, int isDeleted){
-        return Post.builder()
+        Post post =  Post.builder()
                 .title(title)
                 .content(content)
                 .category(category)
                 .isDeleted(isDeleted)
                 .build();
+        return repository.save(post);
     }
 }

@@ -23,6 +23,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @SpringBootTest
 @Transactional
 @Slf4j
@@ -195,8 +197,7 @@ public class PostServiceTest {
         PostRequest request = getPostRequest("content");
         
         //when
-        User save = userRepository.save(user);
-        Long savedId = service.savePost(save.getId(), PostCategory.FREE, request); // 게시글 저장
+        Long savedId = service.savePost(user.getId(), PostCategory.FREE, request); // 게시글 저장
         Post postById = service.findPostById(savedId); // postId(PK)를 통해 특정 게시글 조회
         
         //then
@@ -392,19 +393,52 @@ public class PostServiceTest {
         Assertions.assertThat(wrotePost.getContent().size()).isEqualTo(4);
     }
 
+    @Test
+    @DisplayName("특정 게시판에서 최근에 작성한 게시글 5개를 불러올 수 있다.")
+    public void canGetRecentPosts(){
+        //given
+        User user = getUser();
+
+        Post post1 = getPost("title1", "content1", PostCategory.FREE, 0);
+        Post post2 = getPost("title2", "content2", PostCategory.FREE, 0);
+        Post post3 = getPost("title3", "content3", PostCategory.FREE, 0);
+        Post post4 = getPost("title4", "content4", PostCategory.FREE, 1);
+        Post post5 = getPost("title5", "content5", PostCategory.FREE, 0);
+        Post post6 = getPost("title6", "content6", PostCategory.FREE, 0);
+        Post post7 = getPost("title7", "content7", PostCategory.GRADE1, 0);
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
+        List<PostResponse> previewPosts = service.getPreviewPosts(user, PostCategory.FREE, pageRequest);
+
+        //then
+        Assertions.assertThat(previewPosts.size()).isEqualTo(5);
+
+    }
 
 
 
 
 
 
+
+    private Post getPost(String title, String content, PostCategory category, int isDeleted) {
+        Post post = Post.builder()
+                .title(title)
+                .content(content)
+                .category(category)
+                .isDeleted(isDeleted)
+                .build();
+        return postRepository.save(post);
+    }
     private User getUser() {
-        return User.builder()
+        User user = User.builder()
                 .username("username")
                 .nickname("nickname")
                 .email("test@naver.com")
                 .role(Role.STUDENT.getKey())
                 .build();
+        return userRepository.save(user);
     }
     private Post getPost(PostCategory category, String title, String content, int isDeleted) {
         return Post.builder()
