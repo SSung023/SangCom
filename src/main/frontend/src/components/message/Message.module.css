@@ -38,22 +38,32 @@
 }
 
 .body {
+    box-sizing: border-box;
+
     animation: show-body 250ms;
+    padding: 0 24px;
+    margin-top: 1em;
+
+    flex-direction: column;
+    align-items: center;
 }
 
 @keyframes show-body {
     from {
         opacity: 0;
-        margin-top: 1em;
+        margin-top: 2em;
     }
     to {
         opacity: 1;
-        margin-top: 0;
+        margin-top: 1em;
     }
 }
 
 
 @media screen and (max-width: 786px) {
+    .body {
+        padding: 0 16px;
+    }
     .toggle {
         font-size: 12px;
     }

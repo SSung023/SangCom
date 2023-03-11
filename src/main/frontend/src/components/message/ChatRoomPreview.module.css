@@ -1,0 +1,41 @@
+.preview {
+    box-sizing: border-box;
+    width: 100%;
+    
+    font-size: 16px;
+    border: 1px solid var(--btn-bg-color);
+    padding: 1em;
+}
+
+.preview:hover {
+    cursor: pointer;
+}
+
+.users {
+    color: var(--txt-color);
+    font-weight: var(--bold);
+}
+
+.people{
+    color: var(--light-txt-color);
+}
+
+.content {
+    font-size: 14px;
+    color: var(--light-txt-color);
+    margin-top: 0.5em;
+    
+    overflow: hidden;
+    line-height: 1.4em;
+    max-height: 2.8em;
+    text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 786px) {
+    .preview {
+        font-size: 14px;
+    }
+    .content {
+        font-size: 12px;
+    }
+}

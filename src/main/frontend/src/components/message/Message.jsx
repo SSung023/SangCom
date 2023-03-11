@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import styles from './Message.module.css';
 import StudentList from './StudentList';
 import TeacherList from './TeacherList';
+import MessageList from './MessageList';
 
 export default function Message() {
     const [toggleSwitch, setToggle] = useState(true);
@@ -21,23 +22,12 @@ export default function Message() {
         }
         else {
             setListBody((prev) => ({...prev, display: 'none'}));
-            setDmBody((prev) => ({...prev, display: 'block'}));
+            setDmBody((prev) => ({...prev, display: 'flex'}));
         }
     }, [toggleSwitch]);
 
     return (
         <div className={styles.messagePage}>
-            {/* 
-                <Switch />
-                <TeacherList />
-                    - <Teacher />
-                    - <Teacher />
-                <StudentList />
-                    - <Student />
-                    - <Student />
-                <MessageList />
-                <MessageBody />
-            */}
             <div className={styles.toggle}>
                 <div className={ toggleSwitch ? `${styles.active}` : "" } onClick={() => setToggle(true)}>List</div>
                 <div className={ !toggleSwitch ? `${styles.active}` : "" } onClick={() => setToggle(false)}>Message</div>
@@ -48,7 +38,7 @@ export default function Message() {
                 {/* <StudentList /> */}
             </div>
             <div className={styles.body} style={dmBody}>
-
+                <MessageList />
             </div>
         </div>
     );
