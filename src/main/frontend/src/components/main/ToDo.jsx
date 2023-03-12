@@ -9,12 +9,14 @@ export default function ToDo(props){
                 <div className={styles.todo}>
                     <div className={styles.todaytitle}>{props.title}</div>
                         <div className={styles.cardcontenttodo}>
-                            {todos[0].map((todo)=>(
-                                <ul className={styles.Listul}
-                                    key={todo.id}>
-                                    <li >{`${todo.title}`}</li>
-                                </ul>
-                            ))}
+                            <ul className={styles.Listul}>
+                                {todos && todos[0].map((todo)=>(
+                                    <li key={todo.id}>
+                                        <span className={styles.subject}>{`[${todo.subject}]`}</span>
+                                        <span>{`${todo.title}`}</span>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     <CardButton title = {props.button} name = "todo"/>
                 </div>

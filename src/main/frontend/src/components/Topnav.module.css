@@ -191,6 +191,10 @@ header {
     margin: auto 0;
 }
 
+.iconMenu > a > .dmIcon {
+    font-size: 20px;
+}
+
 .expand {
     display: none;
     color: var(--blue-color);

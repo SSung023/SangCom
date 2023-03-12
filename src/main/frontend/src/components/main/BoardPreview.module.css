@@ -1,9 +1,11 @@
 .preview{
     display: inline-block;
-    width: 440px;
-    margin-left: 42px;
+    width: 48%;
+    min-width: 18em;
     border: 1px solid var(--line-color);
     background-color: var(--light-grey-color);
+
+    margin-bottom: 1em;
 }
 
 .boardTitle{

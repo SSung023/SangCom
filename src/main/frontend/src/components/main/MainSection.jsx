@@ -16,8 +16,10 @@ export default function MainSection() {
             {/** 게시판 미리보기 **/}
             <div className={styles.section}>
                 <p className={styles.title}>게시판 미리보기</p>
-                <BoardPreview boardKey={0}/>
-                <BoardPreview boardKey={1}/>
+                <div className={styles.wrapper}>
+                    <BoardPreview boardKey={0}/>
+                    <BoardPreview boardKey={1}/>
+                </div>
             </div>
             {/** 반 공간 **/}
             <div className={styles.section}>

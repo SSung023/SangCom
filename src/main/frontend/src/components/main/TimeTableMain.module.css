@@ -2,7 +2,7 @@
     display: block;
     font-size: 20px;
     font-weight: var(--bold);
-    margin: 30px 0 12px 42px;
+    margin: 1em 0 12px 42px;
 }
 
 .timeTable{

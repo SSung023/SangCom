@@ -15,23 +15,27 @@ export default function CardButton(props) {
 
     if(props.name === "meal"){
         return (
-            <button type="button" className={styles.btn}
-                    onClick={mealAll}>
-                {props.title}
-            </button>
+            <div className={styles.btnWrapper}>
+                <button type="button" className={styles.btn} onClick={mealAll}>
+                    {props.title}
+                </button>
+            </div>
         );
     } else if (props.name === "course"){
         return (
-            <button type="button" className={styles.btn}
-            onClick={courseAll}>
-                {props.title}
-            </button>
+            <div className={styles.btnWrapper}>
+                <button type="button" className={styles.btn} onClick={courseAll}>
+                    {props.title}
+                </button>
+            </div>
         );
     } else if (props.name === "todo"){
         return (
-            <button type="button" className={styles.btn}>
-                {props.title}
-            </button>
+            <div className={styles.btnWrapper}>
+                <button type="button" className={styles.btn}>
+                    {props.title}
+                </button>
+            </div>
         );
     }
 }

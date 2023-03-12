@@ -13,7 +13,7 @@ class Iconmenu extends Component{
                     <MdNotifications />
                 </a>
                 <a href="/message">
-                    <MdChat />
+                    <MdChat className={styles.dmIcon}/>
                 </a>
             </div>
         )

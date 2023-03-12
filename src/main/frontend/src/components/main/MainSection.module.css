@@ -1,15 +1,29 @@
 .main{
-    width: 1006px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1006px;
     display: inline-block;
+    padding: 0 3em;
 }
 
 .section{
+    width: 100%;
     display: block;
+    margin-bottom: 2em;
+}
+
+.wrapper{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+
+    flex-wrap: wrap;
 }
 
 .title{
     display: block;
     font-size: 20px;
     font-weight: var(--bold);
-    margin: 30px 0 12px 42px;
+    margin-bottom: 12px;
 }
