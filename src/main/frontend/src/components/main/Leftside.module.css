@@ -54,7 +54,7 @@
     display: inline;
 }
 
-.userBelong{
+.userInfo > p:last-child {
     margin-left: 0.75rem;
 }
 

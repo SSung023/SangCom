@@ -2,10 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 import styles from "./Leftside.module.css";
 import defaultProfile from '../../images/defualtProfile.svg';
-import { defaultInstance } from "../../utility/api";
 
 export default function Avatar(){
     const userInfo = useSelector((state) => state.loginReducer.user.info);
+    const role = useSelector((state) => state.loginReducer.user.info.role);
 
     return (
         <div className={styles.avatar}>
@@ -16,17 +16,30 @@ export default function Avatar(){
             />
 
             <p className={styles.userNickname}>
-                {`${userInfo.nickname}`}
+                {role === "STUDENT" ? `${userInfo.nickname}` : `${userInfo.username}`}
             </p>
 
-            <div className={`${styles.userInfo}`}>
-                <p className={styles.userName}>
-                    {`${userInfo.username}`}
-                </p>
-                <p className={styles.userBelong}>
-                    {`${userInfo.grade}학년 ${userInfo.classes}반 ${userInfo.number}번`}
-                </p>
-            </div>
+            {role === "STUDENT" ?
+                <StudentProfile info={userInfo}/> :
+                <TeacherProfile info={userInfo} />}
+        </div>
+    );
+}
+
+function StudentProfile({ info }){
+    return (
+        <div className={styles.userInfo}>
+            <p>{`${info.username}`}</p>
+            <p>{`${info.grade}학년 ${info.classes}반 ${info.number}번`}</p>
+        </div>
+    );
+}
+
+function TeacherProfile({ info }){
+    return (
+        <div className={styles.userInfo}>
+            {info.chargeGrade && <p>{`${info.chargeGrade}학년`}</p>}
+            <p>{`${info.chargeSubject}`}</p>
         </div>
     );
 }
