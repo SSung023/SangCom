@@ -218,30 +218,92 @@ public class PostController {
 
         // Post 저장
         postService.clearAll();
-        for (int i = 0; i < 13; i++){
-            PostRequest postRequest = PostRequest.builder()
-                    .authorNickname("")
-                    .title("title" + i)
-                    .content("content" + i)
-                    .isAnonymous(i % 2)
-                    .build();
-            postRequest.updateAuthor(savedUser.getNickname());
-            postService.savePost(savedUser.getId(), PostCategory.FREE, postRequest);
-        }
-        PostRequest postRequest = PostRequest.builder()
-                .authorNickname("")
-                .title("title13")
-                .content("content13")
-                .isAnonymous(1)
-                .build();
-        postRequest.updateAuthor(mine.getNickname());
-        Long savedPostId = postService.savePost(mine.getId(), PostCategory.FREE, postRequest);
+
+        savePost(savedUser, PostCategory.FREE, "내일 학교 가야되네", "어째서......", 1);
+        savePost(savedUser, PostCategory.FREE, "우와 이게 뭐야", "신기하다", 1);
+        savePost(savedUser, PostCategory.FREE, "여자 봄 옷", "어디서 사?? 온 오프 상관없이 추천해주라 ㅠㅠㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.FREE, "넷플", "보고 싶은게 있는데 ㅠㅠㅠ 혼자 결제하긴 좀 그래서.. 남는 자리 있나요..ㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.FREE, "보드게임카페", "자주 가는 곳 있음 추천해줘!!! 가보고 싶은데 어디가야할지 모르겠어", 1);
+        savePost(savedUser, PostCategory.FREE, "친구들아", "사랑한다", 1);
+        Long savedPostId = savePost(mine, PostCategory.FREE, "솔직히", "이제 방학할 때 되지 않았어?", 1);
+        savePost(savedUser, PostCategory.FREE, "오랜만에", "타자 연습에서 별 헤는 밤 쳐봤는데 추억돋는다 ㅋㅋㅋㅋ", 1);
+        savePost(savedUser, PostCategory.FREE, "우리집 고양이", "너무 귀여워", 1);
+        savePost(savedUser, PostCategory.FREE, "봄 되니까", "수업 들으면서 너무 졸려..", 1);
+        savePost(mine, PostCategory.FREE, "오늘 급식", "진짜 맛있었다 최고야. 짜릿해.", 1);
+
+
+        savePost(savedUser, PostCategory.GRADE1, "친구들아", "사랑한다", 1);
+        savePost(mine, PostCategory.GRADE1, "솔직히", "이제 방학할 때 되지 않았어?", 1);
+        savePost(savedUser, PostCategory.GRADE1, "오랜만에", "타자 연습에서 별 헤는 밤 쳐봤는데 추억돋는다 ㅋㅋㅋㅋ", 1);
+        savePost(savedUser, PostCategory.GRADE1, "우리집 고양이", "너무 귀여워", 1);
+        savePost(savedUser, PostCategory.GRADE1, "봄 되니까", "수업 들으면서 너무 졸려..", 1);
+        Long savedPostId2 = savePost(mine, PostCategory.GRADE1, "오늘 급식", "진짜 맛있었다 최고야. 짜릿해.", 1);
+        savePost(savedUser, PostCategory.GRADE1, "내일 학교 가야되네", "어째서......", 1);
+        savePost(savedUser, PostCategory.GRADE1, "우와 이게 뭐야", "신기하다", 1);
+        savePost(savedUser, PostCategory.GRADE1, "여자 봄 옷", "어디서 사?? 온 오프 상관없이 추천해주라 ㅠㅠㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.GRADE1, "넷플", "보고 싶은게 있는데 ㅠㅠㅠ 혼자 결제하긴 좀 그래서.. 남는 자리 있나요..ㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.GRADE1, "보드게임카페", "자주 가는 곳 있음 추천해줘!!! 가보고 싶은데 어디가야할지 모르겠어", 1);
+
+        savePost(savedUser, PostCategory.GRADE2, "오랜만에", "타자 연습에서 별 헤는 밤 쳐봤는데 추억돋는다 ㅋㅋㅋㅋ", 1);
+        savePost(savedUser, PostCategory.GRADE2, "우리집 고양이", "너무 귀여워", 1);
+        savePost(savedUser, PostCategory.GRADE2, "봄 되니까", "수업 들으면서 너무 졸려..", 1);
+        Long savedPostId3 = savePost(mine, PostCategory.GRADE2, "오늘 급식", "진짜 맛있었다 최고야. 짜릿해.", 1);
+        savePost(savedUser, PostCategory.GRADE2, "내일 학교 가야되네", "어째서......", 1);
+        savePost(savedUser, PostCategory.GRADE2, "우와 이게 뭐야", "신기하다", 1);
+        savePost(savedUser, PostCategory.GRADE2, "여자 봄 옷", "어디서 사?? 온 오프 상관없이 추천해주라 ㅠㅠㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.GRADE2, "넷플", "보고 싶은게 있는데 ㅠㅠㅠ 혼자 결제하긴 좀 그래서.. 남는 자리 있나요..ㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.GRADE2, "보드게임카페", "자주 가는 곳 있음 추천해줘!!! 가보고 싶은데 어디가야할지 모르겠어", 1);
+        savePost(savedUser, PostCategory.GRADE2, "친구들아", "사랑한다", 1);
+        savePost(mine, PostCategory.GRADE2, "솔직히", "이제 방학할 때 되지 않았어?", 1);
+
+        savePost(savedUser, PostCategory.GRADE3, "내일 학교 가야되네", "어째서......", 1);
+        savePost(mine, PostCategory.GRADE3, "솔직히", "이제 방학할 때 되지 않았어?", 1);
+        savePost(savedUser, PostCategory.GRADE3, "오랜만에", "타자 연습에서 별 헤는 밤 쳐봤는데 추억돋는다 ㅋㅋㅋㅋ", 1);
+        savePost(savedUser, PostCategory.GRADE3, "우리집 고양이", "너무 귀여워", 1);
+        savePost(savedUser, PostCategory.GRADE3, "봄 되니까", "수업 들으면서 너무 졸려..", 1);
+        Long savedPostId4 = savePost(mine, PostCategory.GRADE3, "오늘 급식", "진짜 맛있었다 최고야. 짜릿해.", 1);
+        savePost(savedUser, PostCategory.GRADE3, "우와 이게 뭐야", "신기하다", 1);
+        savePost(savedUser, PostCategory.GRADE3, "여자 봄 옷", "어디서 사?? 온 오프 상관없이 추천해주라 ㅠㅠㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.GRADE3, "넷플", "보고 싶은게 있는데 ㅠㅠㅠ 혼자 결제하긴 좀 그래서.. 남는 자리 있나요..ㅠㅠㅠ", 1);
+        savePost(savedUser, PostCategory.GRADE3, "보드게임카페", "자주 가는 곳 있음 추천해줘!!! 가보고 싶은데 어디가야할지 모르겠어", 1);
+        savePost(savedUser, PostCategory.GRADE3, "친구들아", "사랑한다", 1);
+
+        savePost(mine, PostCategory.COUNCIL, "동아리 모집 기간", "동아리 모집 기간은 2023년 3월 10일부터 3월 20일까지 입니다!", 0);
+        savePost(mine, PostCategory.COUNCIL, "2023년 축제 부스 운영", "이번 2023년도 축제 부스 운영에 관한 글입니다.\n부스는 총 8개 운영할 예정이며, 각 특수 활동 실에서 진행됩니다.", 0);
+        savePost(mine, PostCategory.COUNCIL, "학생회장 당선 인사", "안녕하세요, 상명대학교 사범대부속 여자고등학교 2023년도 학생회장에 당선된 홍길동입니다.", 0);
+        savePost(mine, PostCategory.COUNCIL, "아침 간식 행사", "개학하고 적응하시느라 많이 힘드셨죠?! 3월 20일 월요일부터 3월 24일 금요일까지 등교 시간에 간단한 간식을 나누어 드립니다!", 0);
+        savePost(mine, PostCategory.COUNCIL, "교복 규정 변경", "2023년도 3월부터 교복 규정이 바뀝니다!", 0);
+
+        savePost(mine, PostCategory.SUGGESTION, "우천 시 우산 꽃이", "비 왔을 때 우산 꽃이가 반에 하나 씩 있는데 부족합니다 ㅠㅠ 반 당 하나씩 더 있으면 좋을 것 같습니다..", 0);
+
 
         // Like 설정
+        likeService.clearAll();
         likeService.toggleLikePost(mine.getId(), savedPostId);
         likeService.toggleLikePost(savedUser.getId(), savedPostId);
 
+        likeService.toggleLikePost(mine.getId(), savedPostId2);
+        likeService.toggleLikePost(savedUser.getId(), savedPostId2);
+
+        likeService.toggleLikePost(mine.getId(), savedPostId3);
+        likeService.toggleLikePost(savedUser.getId(), savedPostId3);
+
+        likeService.toggleLikePost(mine.getId(), savedPostId4);
+        likeService.toggleLikePost(savedUser.getId(), savedPostId4);
+
+
+
         return ResponseEntity.ok().body
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
+    }
+
+    private Long savePost(User user, PostCategory postCategory, String title, String content, int isAnonymous){
+        PostRequest postRequest = PostRequest.builder()
+                .authorNickname(user.getNickname())
+                .isAnonymous(isAnonymous)
+                .title(title)
+                .content(content)
+                .build();
+        return postService.savePost(user.getId(), postCategory, postRequest);
     }
 }
