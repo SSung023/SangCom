@@ -4,7 +4,7 @@ import { authInstance } from '../../utility/api';
 import ArticlePreview from './ArticlePreview';
 import styles from './BestArticle.module.css';
 
-export default function BestArticle({ api }) {
+export default function BestArticle({ category }) {
     const [article, setArticle] = useState();
     const customStyle = {
         backgroundColor: `var(--btn-bg-color)`,
@@ -13,11 +13,11 @@ export default function BestArticle({ api }) {
     };
     
     useEffect(() => {
-        authInstance.get(api)
+        authInstance.get(`/api/board/${category}/best`)
         .then(function(res) {
             setArticle(res.data.data);
         })
-    }, [api]);
+    }, [category]);
 
     return (
         <div className={styles.wrapper}>

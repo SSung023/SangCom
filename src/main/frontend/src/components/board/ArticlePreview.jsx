@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import styles from './ArticlePreview.module.css';
 import { MdChatBubbleOutline, MdFavoriteBorder, MdOutlineFavorite } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
 
 export default function ArticlePreview({ articleInfo, customStyle }) {
-    const [article, ] = useState(() => articleInfo);
+    const [article, setArticle] = useState(() => articleInfo);
     const params = useParams();
 
     const handleClick = async (e) => {
         window.location.href = `/board/${params.category}/${article.id}`;
     };
 
+    useEffect(() => {
+        setArticle(articleInfo);
+    }, [articleInfo]);
+
     return (
+        article && 
         <div className={styles.article} style={customStyle} onClick={handleClick}>
             
             <p className={styles.articleTitle}>{article.title}</p>
