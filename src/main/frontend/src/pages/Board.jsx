@@ -28,10 +28,11 @@ export default function Board() {
                 {id ? <BoardDetail /> : (search ? <SearchBody category={category} /> : <BoardBody category={category} />)}
                 {/* BoardRightSide */}
             </div>
-            { !id && category === "council" ? 
-                (role.includes("COUNCIL") && <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>) :
-                <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>
-            }
+            { id ? "" :
+                (category === "council" ? 
+                (role && role.includes("COUNCIL") && 
+                    <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>) :
+                    <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>)}
         </div>
     );
 }

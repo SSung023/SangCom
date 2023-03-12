@@ -44,6 +44,8 @@
     color: var(--blue-color);
     margin: 15px 0 0 15px;
     width : 120px;
+
+    font-size: 1em;
 }
 
 .card{

@@ -16,10 +16,10 @@ export default function Avatar(){
             />
 
             <p className={styles.userNickname}>
-                {role.includes("STUDENT") ? `${userInfo.nickname}` : `${userInfo.username}`}
+                {role && role.includes("STUDENT") ? `${userInfo.nickname}` : `${userInfo.username}`}
             </p>
 
-            {role.includes("STUDENT") ?
+            {role && role.includes("STUDENT") ?
                 <StudentProfile info={userInfo}/> :
                 <TeacherProfile info={userInfo} />}
         </div>

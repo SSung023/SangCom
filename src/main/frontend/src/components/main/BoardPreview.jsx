@@ -1,15 +1,47 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import styles from './BoardPreview.module.css';
 import Board from '../../mock/board.json';
-//import BoardEmpty from '../mock/boardFake.json';
+import { boardTitle } from '../../utility/setBoardTitle';
+import { authInstance } from '../../utility/api';
 
-function MakeTitle({ boardKey }){
-    return boardKey === 0 ? <div className={styles.boardTitle}>자유게시판</div> : <div className={styles.boardTitle}>학생회 공지</div>
+// board 종류별로 key가 있다고 가정. 
+// 전달받은 data(배열 형식)에서 id 별로 보여주는 내용을 달리함
+export default function BoardPreview({ category }) {
+    const [db, setDb] = useState(); // JSON 파일을 배열로 변환
+
+    useEffect(() => {
+        authInstance.get(`/api/board/preview/${category}`)
+        .then(function(res) {
+            setDb(res.data.dataList);
+        })
+        .catch(function(err) {
+            console.log(err);
+        })
+    }, []);
+
+    const makePreviews = () => {
+        return Object.values(db).map((article) => {
+            return <MakePost article={article} key={article.id} category={category} id={article.id} title={article.title} date={article.createdDate} />
+        });
+    };
+
+    return (
+        db &&
+        <div className={styles.preview}>
+            <MakeTitle category={category} />
+            { makePreviews() }
+        </div>
+    );
 }
 
-function MakePost( props ){
-    const [db, setDb] = useState(props.data);
+function MakeTitle({ category }){
+    const title = boardTitle(category);
+
+    return <div className={styles.boardTitle}>{title}</div>
+}
+
+function MakePost({ category, id, title, date }){
     const getTime = (time) => {                         // 작성 경과 시간을 구하는 콜백 함수
         let timeTxt = `방금 전`;
         const curTime = new Date();                     
@@ -33,30 +65,15 @@ function MakePost( props ){
         }
         return timeTxt;
     }
-
-    return (
-        <div className={styles.board}>
-            {db[props.boardKey].map((item) => (
-                <div key={item.id} className={styles.list}>
-                    <a href="/board" className={styles.post}>
-                        <p className={styles.postTitle}>{item.title}</p>
-                        <p className={styles.time}>{`${getTime(item.date)}`}</p>
-                    </a>
-                </div>
-            ))}
-        </div>
-    );
-}
-
-// board 종류별로 key가 있다고 가정. 
-// 전달받은 data(배열 형식)에서 id 별로 보여주는 내용을 달리함
-export default function BoardPreview({ boardKey }) {
-    const [db, setDb] = useState(Object.values(Board)); // JSON 파일을 배열로 변환
     
     return (
-        <div className={styles.preview}>
-            <MakeTitle boardKey={boardKey} />
-            <MakePost boardKey={boardKey} data={db} />
+        date && <div className={styles.board}>
+            <div className={styles.list}>
+                <a href={`/board/${category}/${id}`} className={styles.post}>
+                    <p className={styles.postTitle}>{title}</p>
+                    <p className={styles.time}>{`${getTime(date)}`}</p>
+                </a>
+            </div>
         </div>
     );
 }

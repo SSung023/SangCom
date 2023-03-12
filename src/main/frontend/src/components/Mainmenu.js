@@ -35,7 +35,7 @@ export default function Mainmenu() {
                 {Object.keys(mainMenus).map((mainMenu) => {
                     const lnbMenus = mainMenus[mainMenu];
 
-                    if(mainMenu === "게시판" && role.includes("TEACHER")){
+                    if(mainMenu === "게시판" && role && role.includes("TEACHER")){
                         return;
                     }
 
