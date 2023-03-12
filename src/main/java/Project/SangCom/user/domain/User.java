@@ -3,6 +3,7 @@ package Project.SangCom.user.domain;
 import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.dto.PostPinDTO;
 import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.domain.embedded.TeacherInfo;
@@ -106,6 +107,14 @@ public class User implements UserDetails {
                 .statusMessage(statusMessage)
                 .build();
     }
+
+    // 사용자가 설정한 핀으로 재설정
+    public void resetPreviewPin(PostPinDTO postPinDTO){
+        this.previewPin = "";
+        previewPin += postPinDTO.getPinList().get(0) + ",";
+        previewPin += postPinDTO.getPinList().get(1);
+    }
+
     // role 추가
     public void addRole(Role role){
         this.role += ",";
