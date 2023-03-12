@@ -34,8 +34,7 @@ export default function Message() {
             </div>
 
             <div className={styles.body} style={listBody}>
-                {role === "TEACHER" ? <StudentList /> : <TeacherList /> }
-                {/* <StudentList /> */}
+                {role && role.includes("TEACHER") ? <StudentList /> : <TeacherList /> }
             </div>
             <div className={styles.body} style={dmBody}>
                 <MessageList />

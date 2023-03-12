@@ -15,7 +15,6 @@ export default function StudentList() {
             <List classInfo={testData}/>
             <List classInfo={testData}/>
             <List classInfo={testData}/>
-            <button className={styles.sendBtn}>보내기</button>
         </div>
     );
 }
@@ -43,11 +42,16 @@ function List({ classInfo }) {
             {toggle && 
             <div className={styles.classList}>
                 <form className={styles.form}>
-                    <input type="checkbox" name="all" id="all" checked={checkAll} onChange={(e) => setAll(e.target.checked)}/>
-                    <label htmlFor="all">전체 선택</label>
+                    <div className={styles.selectAll}>
+                        <input type="checkbox" name="all" id="all" checked={checkAll} onChange={(e) => setAll(e.target.checked)}/>
+                        <label htmlFor="all">전체 선택</label>
+                    </div>
+                    
                     <div className={styles.students}>
                         {classInfo && renderList(classInfo.students)}
                     </div>
+
+                    <button className={styles.sendBtn}>보내기</button>
                 </form>
             </div>}
         </div>
