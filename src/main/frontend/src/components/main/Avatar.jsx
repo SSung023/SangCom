@@ -7,11 +7,6 @@ import { defaultInstance } from "../../utility/api";
 export default function Avatar(){
     const userInfo = useSelector((state) => state.loginReducer.user.info);
 
-    const handleLogout = () => {
-        defaultInstance.post("/api/auth/logout", {})
-        localStorage.setItem("token", "");
-    };
-
     return (
         <div className={styles.avatar}>
             <img 
@@ -32,13 +27,6 @@ export default function Avatar(){
                     {`${userInfo.grade}학년 ${userInfo.classes}반 ${userInfo.number}번`}
                 </p>
             </div>
-
-            <div className={styles.buttons}>
-                <a href="/my" className={`${styles.button} ${styles.highlight}`}>내 정보</a>
-                <a href="/" className={styles.button} onClick={handleLogout}>로그아웃</a>
-            </div>
-            
-            <div className="horizontalDivider"></div>
         </div>
     );
 }
