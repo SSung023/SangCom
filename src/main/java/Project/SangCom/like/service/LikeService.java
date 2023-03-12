@@ -81,6 +81,11 @@ public class LikeService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND));
     }
 
+    @Transactional
+    public void clearAll(){
+        likeRepository.deleteAllInBatch();
+    }
+
 
     /**
      * 사용자가 좋아요를 누른 게시글인지 여부를 확인한 후, 응답 객체 필드값 설정
