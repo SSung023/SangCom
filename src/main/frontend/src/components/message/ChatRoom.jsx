@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './ChatRoom.module.css';
-import { MdSend } from "react-icons/md";
+import { MdSend, MdKeyboardArrowDown } from "react-icons/md";
 
-export default function ChatRoom({ id }) {
+export default function ChatRoom({ id, setVisible }) {
     const [ newMessage, setMessage ] = useState('');
     const handleSubmit = (e) => {}
 
@@ -14,6 +14,7 @@ export default function ChatRoom({ id }) {
         setMessage(val);
     }, []);
 
+    // 줄바꿈시 text area의 높이가 늘어나게 처리
     useEffect(() => {
         if(textAreaRef.current){
             textAreaRef.current.style.height = `auto`;
@@ -24,6 +25,9 @@ export default function ChatRoom({ id }) {
     return (
         <div className={styles.background}>
             <div className={styles.users}>
+                <div className={styles.down} onClick={() => setVisible(false)}>
+                    <MdKeyboardArrowDown />
+                </div>
                 <p>홍길동</p>
             </div>
             <ChatRoomContent />

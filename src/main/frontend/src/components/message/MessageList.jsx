@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { authInstance } from '../../utility/api';
 import ChatRoom from './ChatRoom';
 import ChatRoomPreview from './ChatRoomPreview';
 import styles from './MessageList.module.css';
 
 export default function MessageList() {
-    const [ curChatRoomId, setChatRoomId ] = useState();
+    const [ visible, setVisible ] = useState(true);
+    const [ curChatRoomId, setChatRoomId ] = useState(1);
     const [ messageList, setMessageList ] = useState([
         {
             id: 1,
@@ -36,10 +37,7 @@ export default function MessageList() {
             ]
         }
     ]);
-
-    const handleChatRoomId = (id) => {
-        setChatRoomId(id);
-    }
+    const chatRoomRef = useRef();
 
     const createChatroomPreviews = () => {
         return (messageList.map((chatRoom) => {
@@ -47,14 +45,27 @@ export default function MessageList() {
         }));
     }
 
+    const handleChatRoomId = (id) => {
+        setChatRoomId(id);
+        setVisible(true);
+        chatRoomRef.current.style.display = `flex`;
+    }
+    const handleChatroomVisibility = (visible) => {
+        setVisible(visible)
+        setTimeout(() => chatRoomRef.current.style.display = `none`, 250);
+    }
+
     return (
         <div className={styles.dmContainer}>
             <div className={styles.lists}>
                 { messageList ? createChatroomPreviews() : '📭 아직 채팅방이 없어요' }
             </div>
-            <div className={styles.chatRoom}>
-                { curChatRoomId ? <ChatRoom id={curChatRoomId} /> : `💬 채팅방을 선택하세요` }
+            <div ref={chatRoomRef} className={`${styles.chatRoom} ${visible ? styles.active : styles.inactive}`}>
+                { curChatRoomId && <ChatRoom id={curChatRoomId} setVisible={handleChatroomVisibility}/>}
             </div>
+            { !visible && <div className={styles.uiInfo}>
+                💬 채팅방을 선택하세요
+            </div> }
         </div>
     );
 }
