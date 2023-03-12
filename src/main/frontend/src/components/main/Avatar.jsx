@@ -33,9 +33,9 @@ export default function Avatar(){
                 </p>
             </div>
 
-            <div>
-                <a href="/my" className={`${styles.buttons} ${styles.highlight}`}>내 정보</a>
-                <a href="/" className={styles.buttons} onClick={handleLogout}>로그아웃</a>
+            <div className={styles.buttons}>
+                <a href="/my" className={`${styles.button} ${styles.highlight}`}>내 정보</a>
+                <a href="/" className={styles.button} onClick={handleLogout}>로그아웃</a>
             </div>
             
             <div className="horizontalDivider"></div>
