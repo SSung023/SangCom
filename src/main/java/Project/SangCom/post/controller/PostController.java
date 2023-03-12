@@ -206,7 +206,7 @@ public class PostController {
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }*/
 
-    @GetMapping("/board/{category}/preview")
+    @GetMapping("/board/preview/{category}")
     public ResponseEntity<ListResponse<PostResponse>> getRecentPosts
                 (@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                  @PathVariable String category){
@@ -218,6 +218,11 @@ public class PostController {
         return ResponseEntity.ok().body
                 (new ListResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), previewPosts));
     }
+
+//    @PostMapping("/board/preview")
+//    public ResponseEntity<CommonResponse> changePreviewPin(){
+//
+//    }
 
 
 
