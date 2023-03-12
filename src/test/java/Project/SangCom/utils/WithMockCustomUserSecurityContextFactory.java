@@ -1,7 +1,10 @@
 package Project.SangCom.utils;
 
 import Project.SangCom.security.service.CustomUserDetailsService;
+import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
+import Project.SangCom.user.domain.embedded.StudentInfo;
+import Project.SangCom.user.domain.embedded.TeacherInfo;
 import Project.SangCom.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +30,38 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
                 .email(customUser.email())
                 .role(customUser.role().getKey())
                 .build();
-        User user = User.builder()
-                .email(customUser.email())
-                .username(customUser.username())
-                .nickname(customUser.nickname())
-                .role(customUser.role().getKey())
-                .build();
+        User user = new User();
+
+        if (customUser.role() == Role.STUDENT){
+            user = User.builder()
+                    .email(customUser.email())
+                    .username(customUser.username())
+                    .nickname(customUser.nickname())
+                    .role(customUser.role().getKey())
+                    .studentInfo(new StudentInfo("1", "2", "23"))
+                    .teacherInfo(new TeacherInfo("", "", ""))
+                    .build();
+        }
+        else if (customUser.role() == Role.TEACHER){
+            user = User.builder()
+                    .email(customUser.email())
+                    .username(customUser.username())
+                    .nickname(customUser.nickname())
+                    .role(customUser.role().getKey())
+                    .studentInfo(new StudentInfo("", "", ""))
+                    .teacherInfo(new TeacherInfo("2", "수학", "테스트 상태메시지"))
+                    .build();
+        }
+        else {
+            user = User.builder()
+                    .email(customUser.email())
+                    .username(customUser.username())
+                    .nickname(customUser.nickname())
+                    .role(customUser.role().getKey())
+                    .studentInfo(new StudentInfo("", "", ""))
+                    .teacherInfo(new TeacherInfo("", "", ""))
+                    .build();
+        }
 
         service.saveUser(tmp);
         service.registerUser(user);
