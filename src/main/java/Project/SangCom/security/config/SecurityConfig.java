@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .antMatchers("/api/scrap/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "TEACHER", "ADMIN")
                 .antMatchers("/api/board/free/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "ADMIN")
                 .antMatchers("/api/board/council/**").hasAnyRole("TEACHER", "STUDENT", "STUDENT_COUNCIL", "ADMIN")
+                .antMatchers("/api/board/suggestion/**").hasAnyRole("STUDENT", "STUDENT_COUNCIL", "ADMIN")
                 .anyRequest().hasAnyRole(permittedRoles) // .authenticated()로 설정하면 인증만 받으면 접근 가능
 
                 // JWT 검증 필터 추가

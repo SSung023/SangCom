@@ -1,5 +1,6 @@
 package Project.SangCom.post.controller;
 
+import Project.SangCom.like.dto.LikeDTO;
 import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
@@ -11,6 +12,8 @@ import Project.SangCom.user.domain.User;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.user.service.UserService;
+import Project.SangCom.util.exception.BusinessException;
+import Project.SangCom.util.exception.ErrorCode;
 import Project.SangCom.util.exception.SuccessCode;
 import Project.SangCom.util.response.dto.CommonResponse;
 import Project.SangCom.util.response.dto.ListResponse;
@@ -53,6 +56,11 @@ public class PostController {
         (@PageableDefault(size = PAGE_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
         , @PathVariable String category){
 
+        /**
+        if(category.equals("SUGGESTION") && category.equals("COUNCIL"))
+            return 예외처리; -> 그냥 api 사용x..?
+        */
+
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PostCategory postCategory = postService.checkCategory(category);
 
@@ -68,6 +76,7 @@ public class PostController {
 
     /**
      * 전체 글 조회
+     * 건의게시판 -> 조회는 가능하나 미리보기 시 isSecret에 따라 감추기
      * ex) /board/free/list?page=0
      */
     @GetMapping("/board/{category}/list")
@@ -116,6 +125,15 @@ public class PostController {
 
         Post postById = postService.findPostById(postId);
         PostResponse postDetailResponse = postService.convertToDetailResponse(user, postById);
+
+        /* 건의게시판 비밀 글 접근 제한 */
+        if (category.equals("suggestion")) {
+            if (user.getRole().equals("student_council") || postService.checkIsPostOwner(user, postId) == 1)
+                return ResponseEntity.ok().body
+                        (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postDetailResponse));
+            else
+                throw new BusinessException(ErrorCode.ACCESS_DENIED);
+        }
 
         return ResponseEntity.ok().body
                 (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postDetailResponse));
@@ -175,6 +193,18 @@ public class PostController {
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }
 
+    /**
+     * 건의게시판 특정 글 해결 여부
+     * ex) /api/board/suggestion/4
+     * @return
+
+    @PatchMapping("/board/suggestion/{postId}/solve")
+    public ResponseEntity<CommonResponse> solvePost(@PathVariable Long postId, @PathVariable String category){
+        postService.solvePost(postId);
+
+        return ResponseEntity.ok().body
+                (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
+    }*/
 
     @GetMapping("/board/{category}/preview")
     public ResponseEntity<ListResponse<PostResponse>> getRecentPosts

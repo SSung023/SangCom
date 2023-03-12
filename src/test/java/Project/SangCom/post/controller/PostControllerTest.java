@@ -356,8 +356,119 @@ class PostControllerTest {
 
     }
 
+    // === 건의 게시판 Test === //
+    @Test
+    @DisplayName("STUDENT ROLE을 가지고 있는 사용자는 건의게시판 api에 접근할 수 있다.")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void studentCanAccessSuggestion() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+
+        //when&then
+        mockMvc.perform(get("/api/board/suggestion")
+                        .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("접근이 가능하지 않은 ROLE의 경우 건의게시판 api에 접근할 수 없다.")
+    @WithMockCustomUser(role = Role.TEACHER)
+    public void cannotAccessSuggestionTeacher() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+
+        //when&then
+        mockMvc.perform(get("/api/board/suggestion")
+                        .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(status().is4xxClientError());
+
+    }
+
+    /**
+     * 익명처럼 isSecret 변수를 사용해서 미리보기 (제목, 내용) 문구 변경
+     * 특정 글 상세 조회 컨트롤러에서 접근 제한
+     * 내용 숨기기는 서비스에서 테스트
+     */
+
+    @Test
+    @DisplayName("건의게시판에서 글을 조회할 수 있다.")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void getSuggestionPosts() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+        Post post1 = getSuggestionPost(PostCategory.SUGGESTION, "title1", "content1", 0, 1, 0);
+        Post post2 = getSuggestionPost(PostCategory.SUGGESTION, "title2", "content2", 0, 0, 0);
+        Post post3 = getSuggestionPost(PostCategory.SUGGESTION, "title3", "content3", 0, 1, 1);
+        Post post4 = getSuggestionPost(PostCategory.SUGGESTION, "title4", "content4", 0, 1, 0);
+
+        postRepository.save(post1);
+        postRepository.save(post2);
+        postRepository.save(post3);
+        postRepository.save(post4);
+
+        //when&then
+        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+                        .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+
+    }
+
+    @Test
+    @DisplayName("작성자는 비밀글에 상세 접근할 수 있다.")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void canAccessSuggestionPosts() throws Exception {
+        //given
+        String accessToken = getAccessToken();
 
 
+        //when&then
+        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+                        .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+
+    }
+
+    @Test
+    @DisplayName("학생회는 비밀글에 상세 접근할 수 있다.")
+    @WithMockCustomUser(role = Role.STUDENT_COUNCIL)
+    public void canAccessSuggestionPostsCouncil() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+
+
+        //when&then
+        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+                        .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+
+    }
+
+    @Test
+    @DisplayName("작성자, 학생회 외 이용자는 비밀글에 상세 접근할 수 없다.")
+    @WithMockCustomUser(role = Role.STUDENT)
+    public void canNotAccessSuggestionPosts() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+
+
+        //when&then
+        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+                        .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+
+    }
 
 
 
@@ -428,6 +539,17 @@ class PostControllerTest {
                 .content(content)
                 .category(category)
                 .isDeleted(isDeleted)
+                .build();
+    }
+
+    private Post getSuggestionPost(PostCategory category, String title, String content, int isDeleted, int isSecret, int isSolved) {
+        return Post.builder()
+                .title(title)
+                .content(content)
+                .category(category)
+                .isDeleted(isDeleted)
+                .isSecret(isSecret)
+                .isSolved(isSolved)
                 .build();
     }
 }
