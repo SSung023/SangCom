@@ -199,7 +199,18 @@ public class PostService {
         throw new BusinessException(ErrorCode.DATA_ERROR_NOT_FOUND);
     }
 
+    /**
+     * 사용자가 해결 버튼 눌렀을 때 - 해결 처리
+     * @param solvedPostId 해결된 게시글(Post)
 
+    @Transactional
+    public Long solvePost(Long solvedPostId) {
+        Post post = findPostById(solvedPostId);
+
+        post.setSolvedPost();
+
+        return solvedPostId;
+    }*/
 
 
 
@@ -212,6 +223,8 @@ public class PostService {
      *    -> id, author, title, content, commentCount, likeCount, isLikePressed에만 유의미한 값
      * 2. 게시글 상세 조회 시 convertToDetailResponse
      *    -> 모든 필드에 유의미한 값 전달
+     *
+     * 상세보기 시 비밀 글 체크x -> 작성자, 학생회 아닐 시 상세보기 불가
      * @param postId PostResponse로 변환하고 싶은 post의 PK
      */
     public PostResponse convertToDetailResponse(User user, Long postId){
@@ -255,8 +268,8 @@ public class PostService {
         return PostResponse.builder()
                 .id(post.getId())
                 .author(checkIsAnonymous(post))
-                .title(post.getTitle())
-                .content(post.getContent())
+                .title(checkIsSecretTitle(post))//.title(post.getTitle())
+                .content(checkIsSecretContent(post))//.content(post.getContent())
                 .commentCount(post.getCommentCount())
                 .likeCount(post.getLikeCount())
                 .isLikePressed(checkIsLikePressed(user, post))
@@ -267,8 +280,8 @@ public class PostService {
         return PostResponse.builder()
                 .id(post.getId())
                 .author(checkIsAnonymous(post))
-                .title(post.getTitle())
-                .content(post.getContent())
+                .title(checkIsSecretTitle(post))//.title(post.getTitle())
+                .content(checkIsSecretContent(post))//.content(post.getContent())
                 .commentCount(post.getCommentCount())
                 .likeCount(post.getLikeCount())
                 .isLikePressed(checkIsLikePressed(user, post))
@@ -292,5 +305,27 @@ public class PostService {
         else {
             return 0;
         }
+    }
+
+    /**
+     * 건의게시판
+     * Secret 여부에 따라 Title 숨김 처리
+     */
+    private String checkIsSecretTitle(Post post){
+        if(post.getIsSecret() == 0)
+            return post.getTitle();
+        else
+            return "비밀 글 입니다.";
+    }
+
+    /**
+     * 건의게시판
+     * Secret 여부에 따라 Content 숨김 처리
+     */
+    private String checkIsSecretContent(Post post){
+        if(post.getIsSecret() == 0)
+            return post.getContent();
+        else
+            return "비밀 글 입니다.";
     }
 }

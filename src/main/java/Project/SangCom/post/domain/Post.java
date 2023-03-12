@@ -101,6 +101,14 @@ public class Post extends BaseTimeEntity {
         this.isDeleted = 1; // true
     }
 
+    // 건의글 해결 처리
+    /*public void setSolvedPost(){
+        if(this.isSolved == 1)
+            this.isSolved = 0;
+        else
+            this.isSolved = 1;
+    }*/
+
     /**
      * 댓글 수 갱신
      * @param changeAmt 댓글 수의 변화량

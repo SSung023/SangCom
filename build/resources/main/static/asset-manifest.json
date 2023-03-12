@@ -1,16 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.073c9b0a.css",
-    "main.js": "/static/js/main.73d48b66.js",
+    "main.css": "/static/css/main.da052a01.css",
+    "main.js": "/static/js/main.de866713.js",
     "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
-    "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "static/media/loginTitle.svg": "/static/media/loginTitle.068c07c8341d39e19b1f3bd56b8e73d6.svg",
+    "static/media/google_gIcon.svg": "/static/media/google_gIcon.ab7caa8c05be78d8388ae25f88ab900e.svg",
     "index.html": "/index.html",
-    "main.073c9b0a.css.map": "/static/css/main.073c9b0a.css.map",
-    "main.73d48b66.js.map": "/static/js/main.73d48b66.js.map",
+    "static/media/kakaoIcon.svg": "/static/media/kakaoIcon.cf89e40de7c0b59f1196e84eabb2d952.svg",
+    "static/media/defualtProfile.svg": "/static/media/defualtProfile.41325004dfa889953de89ce13252c8e0.svg",
+    "static/media/naverIcon.svg": "/static/media/naverIcon.fa576e174d778edf2679d78b3a776fbe.svg",
+    "main.da052a01.css.map": "/static/css/main.da052a01.css.map",
+    "main.de866713.js.map": "/static/js/main.de866713.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.73d48b66.js"
+    "static/css/main.da052a01.css",
+    "static/js/main.de866713.js"
   ]
 }
