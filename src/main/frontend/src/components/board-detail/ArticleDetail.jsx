@@ -16,10 +16,10 @@ export default function ArticleDetail({ category, articleId }){
 
     useEffect(() => {
         authInstance.get(`/api/scrap`)
-            .then(function(res){
-                setScrap(res.data);
-            })
-    })
+        .then(function(res){
+            setScrap(res.data);
+        })
+    }, []);
 
     return(
         <div className={styles.wrapper}>

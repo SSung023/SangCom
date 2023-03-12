@@ -26,7 +26,7 @@ export default function ArticleCreate({ category }) {
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         postArticle(`api/board/${category}`);
     };
 
