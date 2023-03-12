@@ -1,5 +1,4 @@
 .studentList {
-    margin-top: 1em;
     width: 100%;
     max-width: 1000px;
 
@@ -8,19 +7,17 @@
 }
 
 .sendBtn {
-    display: none;
     box-sizing: border-box;
     border: none;
     background-color: var(--blue-color);
     color: white;
-    padding: 12px;
+    padding: 6px 12px;
     border-radius: 30px;
     font-weight: var(--bold);
-    font-size: 16px;
+    font-size: 14px;
 
-    position: fixed;
-    bottom: 7em;
-    right: 1em;
+    width: 80%;
+    margin-top: 0.8em;
 }
 
 /* list 컴포넌트 기본 */
@@ -78,6 +75,16 @@
     color: var(--txt-color);
 }
 
+.classList .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selectAll {
+    width: 100%;
+}
+
 @keyframes show-list {
     from {
         opacity: 0;
@@ -122,5 +129,9 @@
 
     .classInfo {
         font-size: 14px;
+    }
+
+    .sendBtn {
+        font-size: 12px;
     }
 }

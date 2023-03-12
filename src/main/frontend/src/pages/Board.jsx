@@ -25,12 +25,13 @@ export default function Board() {
     return (
         <div>
             <div className='container'>
-                {/* {id ? <BoardDetail /> : search ? <BoardBody category={category} /> : <BoardBody category={category} />} */}
                 {id ? <BoardDetail /> : (search ? <SearchBody category={category} /> : <BoardBody category={category} />)}
                 {/* BoardRightSide */}
             </div>
-            {/* {console.log(role)} */}
-            { !id && role.includes("COUNCIL") && <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>}
+            { !id && category === "council" ? 
+                (role.includes("COUNCIL") && <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>) :
+                <Modal iconName="MdCreate" feature={"글을 작성하세요!"}><ArticleCreate category={category} /></Modal>
+            }
         </div>
     );
 }

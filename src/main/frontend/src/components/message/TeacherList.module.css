@@ -5,10 +5,7 @@
     justify-content: space-between;
 
     font-size: 16px;
-    margin-top: 20px;
     max-width: 1000px;
-
-    padding: 0 3em 0 3em;
 }
 
 .card {
@@ -104,9 +101,7 @@
 @media screen and (max-width: 909px) {
     .teacherList {
         font-size: 14px;
-        margin-top: 16px;
         justify-content: center;
-        padding: 0 2em;
     }
     .card {
         width: 100%;
