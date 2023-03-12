@@ -19,13 +19,15 @@ public class PostResponse {
     private int isLikePressed; // 좋아요 눌렀는지 여부
     private int isOwner; // 게시글 작성자 여부
     private int isAnonymous; // 익명 여부
+    private int isSecret; //비밀 글 여부
+    private int isSolved; //해결 여부
     private LocalDateTime createdDate; // 생성된 날짜
 
     public static int TRUE = 1, FALSE = 0;
 
     @Builder
     public PostResponse(Long id, String boardCategory, String author, String title, String content, int commentCount,
-                        int likeCount, int isLikePressed, int isOwner, int isAnonymous, LocalDateTime createdDate) {
+                        int likeCount, int isLikePressed, int isOwner, int isAnonymous, int isSecret, int isSolved, LocalDateTime createdDate) {
         this.id = id;
         this.boardCategory = boardCategory;
         this.author = author;
@@ -36,6 +38,8 @@ public class PostResponse {
         this.isLikePressed = isLikePressed;
         this.isOwner = isOwner;
         this.isAnonymous = isAnonymous;
+        this.isSecret = isSecret;
+        this.isSolved = isSolved;
         this.createdDate = createdDate;
     }
 
@@ -53,5 +57,25 @@ public class PostResponse {
      */
     public void setIsLikePressed(int isLikePressed){
         this.isLikePressed = isLikePressed;
+    }
+
+    /**
+     * 건의게시판
+     * 게시글 미리보기 (리스트) 조회 전에 isSecret 값이 설정되어 있어야 한다.
+     * @param isSecret 비밀 글 선택 여부
+     */
+    public void setIsSecret(int isSecret) {
+        this.isSecret = isSecret;
+    }
+
+    /**
+     * 게시글 상세 조회 이후의 Response에 isSolved 값이 설정되어 있어야 한다.
+     *
+     * 고민! 상세 조회 이후? or 리스트 조회 시 부터?
+     *
+     * @param isSolved 해결 여부
+     */
+    public void setIsSolved(int isSolved){
+        this.isSolved = isSolved;
     }
 }
