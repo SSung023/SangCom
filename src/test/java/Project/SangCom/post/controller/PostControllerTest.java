@@ -271,10 +271,6 @@ class PostControllerTest {
         Post post3 = getPost(PostCategory.FREE, "title3", "content3", 1);
         Post post4 = getPost(PostCategory.FREE, "title4", "content4", 0);
 
-        postRepository.save(post1);
-        postRepository.save(post2);
-        postRepository.save(post3);
-        postRepository.save(post4);
         
         //when&then
         mockMvc.perform(get("/api/board/free/list?category=free&page=0")
@@ -297,10 +293,6 @@ class PostControllerTest {
         Post post3 = getPost(PostCategory.FREE, "title3", "content3", 1);
         Post post4 = getPost(PostCategory.FREE, "title4", "content4", 0);
 
-        postRepository.save(post1);
-        postRepository.save(post2);
-        postRepository.save(post3);
-        postRepository.save(post4);
 
         //when&then
         mockMvc.perform(get("/api/board/free/search?query=title&keyword=title")
@@ -401,10 +393,6 @@ class PostControllerTest {
         Post post3 = getSuggestionPost(PostCategory.SUGGESTION, "title3", "content3", 0, 1, 1);
         Post post4 = getSuggestionPost(PostCategory.SUGGESTION, "title4", "content4", 0, 1, 0);
 
-        postRepository.save(post1);
-        postRepository.save(post2);
-        postRepository.save(post3);
-        postRepository.save(post4);
 
         //when&then
         mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
@@ -468,6 +456,29 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.data.numberOfElements").value(4))
                 .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
 
+    }
+
+    @Test
+    @DisplayName("특정 카테고리의 게시판에서 최근에 작성된 글 5개를 불러올 수 있다.")
+    @WithMockCustomUser
+    public void canPreviewPosts() throws Exception {
+        //given
+        String accessToken = getAccessToken();
+
+        Post post1 = getPost(PostCategory.FREE, "title1", "content1", 0);
+        Post post2 = getPost(PostCategory.FREE, "title2", "content2", 0);
+        Post post3 = getPost(PostCategory.FREE, "title3", "content3", 0);
+        Post post4 = getPost(PostCategory.FREE, "title4", "content4", 0);
+        Post post5 = getPost(PostCategory.FREE, "title5", "content5", 0);
+        Post post6 = getPost(PostCategory.GRADE1, "title6", "content6", 0);
+
+
+        //when&then
+        mockMvc.perform(get("/api/board/preview/free")
+                .header(AUTHORIZATION_HEADER, accessToken))
+                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.count").value(5));
     }
 
 
@@ -534,12 +545,13 @@ class PostControllerTest {
                 .build();
     }
     private Post getPost(PostCategory category, String title, String content, int isDeleted) {
-        return Post.builder()
+        Post post =  Post.builder()
                 .title(title)
                 .content(content)
                 .category(category)
                 .isDeleted(isDeleted)
                 .build();
+        return postRepository.save(post);
     }
 
     private Post getSuggestionPost(PostCategory category, String title, String content, int isDeleted, int isSecret, int isSolved) {

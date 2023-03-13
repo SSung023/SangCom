@@ -2,6 +2,7 @@ package Project.SangCom.post.service;
 
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
+import Project.SangCom.post.dto.PostPinDTO;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -413,8 +415,52 @@ public class PostServiceTest {
 
         //then
         Assertions.assertThat(previewPosts.size()).isEqualTo(5);
-
     }
+
+    @Test
+    @DisplayName("사용자는 미리 볼 게시판의 카테고리를 지정할 수 있다.")
+    public void setPreviewPostPin(){
+        //given
+        User user = getUser();
+
+        List<String> pinList = new ArrayList<>();
+        pinList.add("free");
+        pinList.add("grade1");
+
+        PostPinDTO pinDTO = new PostPinDTO(pinList);
+
+        //when
+        service.setPreviewPostPin(user, pinDTO);
+
+        //then
+        user.getPreviewPin();
+        Assertions.assertThat(user.getPreviewPin()).isEqualTo("free,grade1");
+    }
+
+    @Test
+    @DisplayName("사용자가 설정한 미리보기 게시판의 카테고리를 확인할 수 있다.")
+    public void getPreviewPostPin(){
+        //given
+        User user = getUser();
+        List<String> pinList = new ArrayList<>();
+        pinList.add("free");
+        pinList.add("grade1");
+
+        PostPinDTO pinDTO = new PostPinDTO(pinList);
+
+        //when
+        service.setPreviewPostPin(user, pinDTO);
+        PostPinDTO previewPin = service.getPreviewPostPin(user);
+
+        //then
+        Assertions.assertThat(previewPin.getPinList().get(0)).isEqualTo("free");
+        Assertions.assertThat(previewPin.getPinList().get(1)).isEqualTo("grade1");
+    }
+
+
+
+
+
 
 
 

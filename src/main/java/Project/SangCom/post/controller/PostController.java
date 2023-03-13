@@ -1,11 +1,11 @@
 package Project.SangCom.post.controller;
 
-import Project.SangCom.like.dto.LikeDTO;
 import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
+import Project.SangCom.post.dto.PostPinDTO;
 import Project.SangCom.post.service.PostService;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
@@ -206,6 +206,10 @@ public class PostController {
                 (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
     }*/
 
+
+    /**
+     * 특정 카테고리에서 최근에 작성된 5개의 게시글을 반환
+     */
     @GetMapping("/board/preview/{category}")
     public ResponseEntity<ListResponse<PostResponse>> getRecentPosts
                 (@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
@@ -219,10 +223,31 @@ public class PostController {
                 (new ListResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), previewPosts));
     }
 
-//    @PostMapping("/board/preview")
-//    public ResponseEntity<CommonResponse> changePreviewPin(){
-//
-//    }
+    /**
+     * 사용자가 게시글 미리보기를 선택한 핀 두 개를 반환
+     * ex) free, grade1 과 같이 카테고리를 소문자로 반환
+     */
+    @GetMapping("/board/preview")
+    public ResponseEntity<SingleResponse<PostPinDTO>> getPreviewPin(){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        PostPinDTO previewPostPin = postService.getPreviewPostPin(user);
+        return ResponseEntity.ok().body
+                (new SingleResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), previewPostPin));
+    }
+
+    /**
+     * 사용자가 지정한 핀 정보를 저장
+     * @param postPinDTO 미리보기 핀으로 지정할 카테고리 정보
+     */
+    @PostMapping("/board/preview")
+    public ResponseEntity<CommonResponse> changePreviewPin(@RequestBody PostPinDTO postPinDTO){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        postService.setPreviewPostPin(user, postPinDTO);
+
+        return ResponseEntity.ok().body
+                (new CommonResponse(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage()));
+    }
 
 
 

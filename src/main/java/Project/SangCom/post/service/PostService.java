@@ -2,9 +2,9 @@ package Project.SangCom.post.service;
 
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.like.repository.LikeRepository;
-import Project.SangCom.like.service.LikeService;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
+import Project.SangCom.post.dto.PostPinDTO;
 import Project.SangCom.post.dto.PostRequest;
 import Project.SangCom.post.dto.PostResponse;
 import Project.SangCom.post.repository.PostRepository;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +24,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static Project.SangCom.post.dto.PostResponse.FALSE;
-import static Project.SangCom.post.dto.PostResponse.TRUE;
 
 @Service
 @Transactional(readOnly = true)
@@ -178,6 +175,26 @@ public class PostService {
         return postRepository.findRecentPreviewPosts(category, pageable).stream()
                 .map(p -> convertToPreviewResponse(user, p)).toList();
     }
+
+    /**
+     * 사용자가 설정한 핀 두개를 설정
+     * @param user 게시판 미리보기 핀을 설정할 사용자
+     * @param postPinDTO 게시판 미리보기 핀 2개를 담은 객체
+     */
+    public void setPreviewPostPin(User user, PostPinDTO postPinDTO){
+        user.resetPreviewPin(postPinDTO);
+    }
+
+    public PostPinDTO getPreviewPostPin(User user){
+        List<String> pin = new ArrayList<>();
+        String previewPin = user.getPreviewPin();
+
+        for (String category : previewPin.split(",")) {
+            pin.add(category);
+        }
+        return new PostPinDTO(pin);
+    }
+
 
     public PostCategory checkCategory(String category){
         switch (category) {

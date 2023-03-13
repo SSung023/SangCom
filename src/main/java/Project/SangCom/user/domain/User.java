@@ -1,9 +1,9 @@
 package Project.SangCom.user.domain;
 
-import Project.SangCom.chat.domain.ChatUserMap;
 import Project.SangCom.comment.domain.Comment;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.post.domain.Post;
+import Project.SangCom.post.dto.PostPinDTO;
 import Project.SangCom.scrap.domain.Scrap;
 import Project.SangCom.user.domain.embedded.StudentInfo;
 import Project.SangCom.user.domain.embedded.TeacherInfo;
@@ -22,14 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * 회원 엔티티
- * email: 소셜 로그인 이후 email을 받아옴
- * nickname, info: 소셜 로그인 이후 자체 회원가입 시 기입
- * role: not_verified, student, student_council, teacher, admin
- */
 
-// 연관관계 편의 메서드 설정 필요
 @Entity
 @ToString(exclude = {"posts", "likes", "scraps", "comments"})
 @Getter
@@ -63,6 +56,7 @@ public class User implements UserDetails {
     private String username;
 
     private String role; // ROLE_STUDENT,ROLE_GRADE1, 이런식으로 쉼표로 구분
+    private String previewPin; // FREE, GRADE1 이런식으로 쉼표로 구분
 
     @Embedded
     private StudentInfo studentInfo = new StudentInfo();
@@ -95,7 +89,7 @@ public class User implements UserDetails {
             checkStudentRole();
         }
 
-        if (teacherInfo.getChargeGrade() != ""){
+        if (teacherInfo != null || teacherInfo.getChargeGrade() != ""){
             this.teacherInfo = TeacherInfo.builder()
                     .chargeGrade(teacherInfo.getChargeGrade())
                     .chargeSubject(teacherInfo.getChargeSubject())
@@ -113,6 +107,14 @@ public class User implements UserDetails {
                 .statusMessage(statusMessage)
                 .build();
     }
+
+    // 사용자가 설정한 핀으로 재설정
+    public void resetPreviewPin(PostPinDTO postPinDTO){
+        this.previewPin = "";
+        previewPin += postPinDTO.getPinList().get(0) + ",";
+        previewPin += postPinDTO.getPinList().get(1);
+    }
+
     // role 추가
     public void addRole(Role role){
         this.role += ",";

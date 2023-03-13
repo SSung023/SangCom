@@ -3,6 +3,7 @@ package Project.SangCom.user.service;
 import Project.SangCom.user.domain.Role;
 import Project.SangCom.user.domain.User;
 import Project.SangCom.user.domain.embedded.StudentInfo;
+import Project.SangCom.user.domain.embedded.TeacherInfo;
 import Project.SangCom.user.repository.UserRepository;
 import Project.SangCom.util.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +83,7 @@ class UserServiceTest {
                 .nickname("nickname2")
                 .username("username2")
                 .studentInfo(new StudentInfo("1", "5", "24"))
+                .teacherInfo(new TeacherInfo("", "", ""))
                 .build();
 
 
@@ -145,6 +147,7 @@ class UserServiceTest {
                 .nickname("nickname")
                 .email("test@naver.com")
                 .studentInfo(StudentInfo.builder().grade("1").classes("2").number("23").build())
+                .teacherInfo(new TeacherInfo("", "", ""))
                 .build();
 
         //when
