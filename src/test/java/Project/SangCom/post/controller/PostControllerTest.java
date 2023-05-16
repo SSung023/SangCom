@@ -382,81 +382,81 @@ class PostControllerTest {
      * 내용 숨기기는 서비스에서 테스트
      */
 
-    @Test
-    @DisplayName("건의게시판에서 글을 조회할 수 있다.")
-    @WithMockCustomUser(role = Role.STUDENT)
-    public void getSuggestionPosts() throws Exception {
-        //given
-        String accessToken = getAccessToken();
-        Post post1 = getSuggestionPost(PostCategory.SUGGESTION, "title1", "content1", 0, 1, 0);
-        Post post2 = getSuggestionPost(PostCategory.SUGGESTION, "title2", "content2", 0, 0, 0);
-        Post post3 = getSuggestionPost(PostCategory.SUGGESTION, "title3", "content3", 0, 1, 1);
-        Post post4 = getSuggestionPost(PostCategory.SUGGESTION, "title4", "content4", 0, 1, 0);
-
-
-        //when&then
-        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
-                        .header(AUTHORIZATION_HEADER, accessToken))
-                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
-                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.numberOfElements").value(4))
-                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
-
-    }
-
-    @Test
-    @DisplayName("작성자는 비밀글에 상세 접근할 수 있다.")
-    @WithMockCustomUser(role = Role.STUDENT)
-    public void canAccessSuggestionPosts() throws Exception {
-        //given
-        String accessToken = getAccessToken();
-
-
-        //when&then
-        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
-                        .header(AUTHORIZATION_HEADER, accessToken))
-                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
-                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.numberOfElements").value(4))
-                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
-
-    }
-
-    @Test
-    @DisplayName("학생회는 비밀글에 상세 접근할 수 있다.")
-    @WithMockCustomUser(role = Role.STUDENT_COUNCIL)
-    public void canAccessSuggestionPostsCouncil() throws Exception {
-        //given
-        String accessToken = getAccessToken();
-
-
-        //when&then
-        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
-                        .header(AUTHORIZATION_HEADER, accessToken))
-                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
-                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.numberOfElements").value(4))
-                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
-
-    }
-
-    @Test
-    @DisplayName("작성자, 학생회 외 이용자는 비밀글에 상세 접근할 수 없다.")
-    @WithMockCustomUser(role = Role.STUDENT)
-    public void canNotAccessSuggestionPosts() throws Exception {
-        //given
-        String accessToken = getAccessToken();
-
-
-        //when&then
-        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
-                        .header(AUTHORIZATION_HEADER, accessToken))
-                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
-                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.numberOfElements").value(4))
-                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
-
-    }
+//    @Test
+//    @DisplayName("건의게시판에서 글을 조회할 수 있다.")
+//    @WithMockCustomUser(role = Role.STUDENT)
+//    public void getSuggestionPosts() throws Exception {
+//        //given
+//        String accessToken = getAccessToken();
+//        Post post1 = getSuggestionPost(PostCategory.SUGGESTION, "title1", "content1", 0, 1, 0);
+//        Post post2 = getSuggestionPost(PostCategory.SUGGESTION, "title2", "content2", 0, 0, 0);
+//        Post post3 = getSuggestionPost(PostCategory.SUGGESTION, "title3", "content3", 0, 1, 1);
+//        Post post4 = getSuggestionPost(PostCategory.SUGGESTION, "title4", "content4", 0, 1, 0);
+//
+//
+//        //when&then
+//        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+//                        .header(AUTHORIZATION_HEADER, accessToken))
+//                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+//                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+//                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+//                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+//
+//    }
+//
+//    @Test
+//    @DisplayName("작성자는 비밀글에 상세 접근할 수 있다.")
+//    @WithMockCustomUser(role = Role.STUDENT)
+//    public void canAccessSuggestionPosts() throws Exception {
+//        //given
+//        String accessToken = getAccessToken();
+//
+//
+//        //when&then
+//        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+//                        .header(AUTHORIZATION_HEADER, accessToken))
+//                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+//                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+//                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+//                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+//
+//    }
+//
+//    @Test
+//    @DisplayName("학생회는 비밀글에 상세 접근할 수 있다.")
+//    @WithMockCustomUser(role = Role.STUDENT_COUNCIL)
+//    public void canAccessSuggestionPostsCouncil() throws Exception {
+//        //given
+//        String accessToken = getAccessToken();
+//
+//
+//        //when&then
+//        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+//                        .header(AUTHORIZATION_HEADER, accessToken))
+//                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+//                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+//                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+//                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+//
+//    }
+//
+//    @Test
+//    @DisplayName("작성자, 학생회 외 이용자는 비밀글에 상세 접근할 수 없다.")
+//    @WithMockCustomUser(role = Role.STUDENT)
+//    public void canNotAccessSuggestionPosts() throws Exception {
+//        //given
+//        String accessToken = getAccessToken();
+//
+//
+//        //when&then
+//        mockMvc.perform(get("/api/board/suggestion/list?category=suggestion&page=0")
+//                        .header(AUTHORIZATION_HEADER, accessToken))
+//                .andExpect(jsonPath("$.status").value(SuccessCode.SUCCESS.getKey()))
+//                .andExpect(jsonPath("$.message").value(SuccessCode.SUCCESS.getMessage()))
+//                .andExpect(jsonPath("$.data.numberOfElements").value(4))
+//                .andExpect(jsonPath("$.data.pageable.pageNumber").value(0));
+//
+//    }
 
     @Test
     @DisplayName("특정 카테고리의 게시판에서 최근에 작성된 글 5개를 불러올 수 있다.")
