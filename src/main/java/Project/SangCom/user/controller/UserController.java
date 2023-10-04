@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/my-page")
@@ -37,7 +39,7 @@ public class UserController {
         Slice<PostResponse> scrapedPost = scrapService.findAllScrapedPost(user, pageable);
 
         return ResponseEntity.ok().body
-                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),scrapedPost));
+                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), scrapedPost));
     }
 
     @GetMapping("/post")
@@ -48,6 +50,17 @@ public class UserController {
         Slice<PostResponse> postList = postService.getAllWritePostList(user, pageable);
 
         return ResponseEntity.ok().body
-                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(),postList));
+                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postList));
+    }
+
+    @GetMapping("/comment")
+    public ResponseEntity<PagingResponse<PostResponse>> getWrittenComment(
+            @PageableDefault(size = PAGE_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Slice<PostResponse> postList = postService.getPostContainsUserComment(user, pageable);
+
+        return ResponseEntity.ok().body
+                (new PagingResponse<>(SuccessCode.SUCCESS.getStatus(), SuccessCode.SUCCESS.getMessage(), postList));
     }
 }

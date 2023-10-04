@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -156,8 +157,6 @@ public class CommentService {
     /**
      * 특정 게시글에 대한 댓글에 전달할 CommentResponse(Comment)객체로 반환
      * @param commentId CommentResponse로 변환하고 싶은 comment의 PK
-     *
-     * 특정 게시글을 구분하려면 postId 필요하지 않나?
      */
     public CommentResponse convertToResponse(User user, Long commentId){
         Comment comment = commentRepository.findById(commentId)
@@ -236,6 +235,6 @@ public class CommentService {
     private List<CommentResponse> checkChildList(User user, Comment comment){
         return comment.getChildList().stream()
                 .map(c -> convertToSingleResponse(user, c))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

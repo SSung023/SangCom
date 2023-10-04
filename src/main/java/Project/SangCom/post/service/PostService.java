@@ -1,5 +1,7 @@
 package Project.SangCom.post.service;
 
+import Project.SangCom.comment.domain.Comment;
+import Project.SangCom.comment.repository.CommentRepository;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.like.repository.LikeRepository;
 import Project.SangCom.post.domain.Post;
@@ -14,6 +16,7 @@ import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,6 +36,7 @@ import java.util.stream.Collectors;
 public class PostService {
     private final UserService userService;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
 
 
@@ -166,6 +170,20 @@ public class PostService {
         List<Post> posts = postRepository.findMostLikedPost(threshold, category, pageable);
         return posts;
     }
+
+
+    public Slice<PostResponse> getPostContainsUserComment(User user, Pageable pageable) {
+        List<PostResponse> postList = commentRepository.findPostContainsUserComment(user.getId(), pageable)
+                .stream()
+                .map(c -> c.getPost())
+                .collect(Collectors.toList())
+                .stream()
+                .map(p -> convertToMyPageResponse(user, p))
+                .collect(Collectors.toList());
+        return new PageImpl<>(postList);
+    }
+
+
 
 
     /**
