@@ -63,8 +63,7 @@ export default function MyPost() {
                         color: `var(--light-txt-color)`,
                     }}
                 >
-                    <p>아직 게시글이 존재하지 않아요</p>
-                    <p>글을 작성해보세요 🌟</p>
+                    <p>아직 게시글이 존재하지 않아요 🌟</p>
                 </div>
             );
         } else {
