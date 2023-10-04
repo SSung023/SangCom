@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -82,8 +83,9 @@ public class ScrapService {
     public Slice<PostResponse> findAllScrapedPost(User user, Pageable pageable){
         List<PostResponse> posts = scrapRepository.findMyScraps(user.getId(), pageable).stream()
                 .map(s -> s.getPost())
-                .toList()
-                .stream().map(p -> postService.convertToPreviewResponse(user, p)).toList();
+                .collect(Collectors.toList())
+                .stream().map(p -> postService.convertToMyPageResponse(user, p))
+                .collect(Collectors.toList());
 
         return new PageImpl<>(posts);
     }

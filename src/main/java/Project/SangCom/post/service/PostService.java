@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -130,7 +131,7 @@ public class PostService {
      */
     public Slice<PostResponse> getAllWritePostList(User user, Pageable pageable){
         Slice<Post> posts = postRepository.findAllWrotePosts(user.getId(), pageable);
-        return posts.map(p -> convertToPreviewResponse(user, p));
+        return posts.map(p -> convertToMyPageResponse(user, p));
     }
 
     /**
@@ -173,7 +174,8 @@ public class PostService {
      */
     public List<PostResponse> getPreviewPosts(User user, PostCategory category, Pageable pageable){
         return postRepository.findRecentPreviewPosts(category, pageable).stream()
-                .map(p -> convertToPreviewResponse(user, p)).toList();
+                .map(p -> convertToPreviewResponse(user, p))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -296,6 +298,20 @@ public class PostService {
     public PostResponse convertToPreviewResponse(User user, Post post){
         return PostResponse.builder()
                 .id(post.getId())
+                .author(checkIsAnonymous(post))
+                .title(checkIsSecretTitle(post))//.title(post.getTitle())
+                .content(checkIsSecretContent(post))//.content(post.getContent())
+                .commentCount(post.getCommentCount())
+                .likeCount(post.getLikeCount())
+                .isLikePressed(checkIsLikePressed(user, post))
+                .createdDate(post.getCreatedDate())
+                .build();
+    }
+
+    public PostResponse convertToMyPageResponse(User user, Post post) {
+        return PostResponse.builder()
+                .id(post.getId())
+                .boardCategory(post.getCategory().toString())
                 .author(checkIsAnonymous(post))
                 .title(checkIsSecretTitle(post))//.title(post.getTitle())
                 .content(checkIsSecretContent(post))//.content(post.getContent())
