@@ -18,7 +18,7 @@ export default function MyPost() {
                 ? `/api/my-page/post?page=${page}`
                 : pathname === "/myscrap"
                 ? `/api/my-page/scrap?page=${page}`
-                : ""
+                : `/api/my-page/comment?page=${page}`
         }`;
 
     const handleClickBtn = async () => {
