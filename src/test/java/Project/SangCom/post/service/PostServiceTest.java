@@ -1,5 +1,7 @@
 package Project.SangCom.post.service;
 
+import Project.SangCom.comment.domain.Comment;
+import Project.SangCom.comment.repository.CommentRepository;
 import Project.SangCom.post.domain.Post;
 import Project.SangCom.post.domain.PostCategory;
 import Project.SangCom.post.dto.PostPinDTO;
@@ -36,6 +38,8 @@ public class PostServiceTest {
     private PostRepository postRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CommentRepository commentRepository;
     @Autowired
     private PostService service;
 
@@ -457,6 +461,23 @@ public class PostServiceTest {
         Assertions.assertThat(previewPin.getPinList().get(1)).isEqualTo("grade1");
     }
 
+    @Test
+    @DisplayName("사용자가 댓글을 작성한 게시글을 모두 불러올 수 있다.")
+    public void getPost_That_UserCommentContains(){
+        //given
+        User user = getUser();
+        Post post = getPost("title", "content", PostCategory.FREE, 0);
+        Comment comment1 = getComment(post, user);
+        Comment comment2 = getComment(post, user);
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<PostResponse> posts = service.getPostContainsUserComment(user, pageRequest);
+
+        //then
+        Assertions.assertThat(posts.getSize()).isEqualTo(2);
+    }
+
 
 
 
@@ -501,5 +522,13 @@ public class PostServiceTest {
                 .title("title")
                 .content(content)
                 .build();
+    }
+
+    private Comment getComment(Post post, User user) {
+        return commentRepository.save(Comment.builder()
+                .content("댓글")
+                .post(post)
+                .user(user)
+                .build());
     }
 }

@@ -1,5 +1,7 @@
 package Project.SangCom.post.service;
 
+import Project.SangCom.comment.domain.Comment;
+import Project.SangCom.comment.repository.CommentRepository;
 import Project.SangCom.like.domain.Likes;
 import Project.SangCom.like.repository.LikeRepository;
 import Project.SangCom.post.domain.Post;
@@ -14,6 +16,7 @@ import Project.SangCom.util.exception.BusinessException;
 import Project.SangCom.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,6 +36,7 @@ import java.util.Optional;
 public class PostService {
     private final UserService userService;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
 
 
@@ -130,7 +135,7 @@ public class PostService {
      */
     public Slice<PostResponse> getAllWritePostList(User user, Pageable pageable){
         Slice<Post> posts = postRepository.findAllWrotePosts(user.getId(), pageable);
-        return posts.map(p -> convertToPreviewResponse(user, p));
+        return posts.map(p -> convertToMyPageResponse(user, p));
     }
 
     /**
@@ -167,13 +172,28 @@ public class PostService {
     }
 
 
+    public Slice<PostResponse> getPostContainsUserComment(User user, Pageable pageable) {
+        List<PostResponse> postList = commentRepository.findPostContainsUserComment(user.getId(), pageable)
+                .stream()
+                .map(c -> c.getPost())
+                .collect(Collectors.toList())
+                .stream()
+                .map(p -> convertToMyPageResponse(user, p))
+                .collect(Collectors.toList());
+        return new PageImpl<>(postList);
+    }
+
+
+
+
     /**
      * 원하는 카테고리의 게시판에서 최근에 작성한 5개의 게시글을 반환
      * @param category 최근 작성된 5개의 게시글을 얻고 싶은 게시판
      */
     public List<PostResponse> getPreviewPosts(User user, PostCategory category, Pageable pageable){
         return postRepository.findRecentPreviewPosts(category, pageable).stream()
-                .map(p -> convertToPreviewResponse(user, p)).toList();
+                .map(p -> convertToPreviewResponse(user, p))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -296,6 +316,20 @@ public class PostService {
     public PostResponse convertToPreviewResponse(User user, Post post){
         return PostResponse.builder()
                 .id(post.getId())
+                .author(checkIsAnonymous(post))
+                .title(checkIsSecretTitle(post))//.title(post.getTitle())
+                .content(checkIsSecretContent(post))//.content(post.getContent())
+                .commentCount(post.getCommentCount())
+                .likeCount(post.getLikeCount())
+                .isLikePressed(checkIsLikePressed(user, post))
+                .createdDate(post.getCreatedDate())
+                .build();
+    }
+
+    public PostResponse convertToMyPageResponse(User user, Post post) {
+        return PostResponse.builder()
+                .id(post.getId())
+                .boardCategory(post.getCategory().toString())
                 .author(checkIsAnonymous(post))
                 .title(checkIsSecretTitle(post))//.title(post.getTitle())
                 .content(checkIsSecretContent(post))//.content(post.getContent())

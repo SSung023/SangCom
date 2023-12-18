@@ -38,18 +38,18 @@ header {
     height: fit-content;
 }
 
-.logo{
+.logo {
     display: flex;
     align-items: center;
 }
 
-.logo img{
+.logo img {
     height: 3em;
     text-align: center;
     margin: 0;
 }
 
-.title{
+.title {
     white-space: nowrap;
 
     color: var(--blue-color);
@@ -59,7 +59,7 @@ header {
 
 /* GNB menu */
 
-.mainMenu{
+.mainMenu {
     display: flex;
     align-items: center;
 
@@ -67,14 +67,14 @@ header {
     height: 100%;
 }
 
-.mainMenu ul{
-    display : flex;
+.mainMenu ul {
+    display: flex;
     align-items: center;
 
     height: 100%;
 }
 
-.item{
+.item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -84,31 +84,31 @@ header {
     white-space: nowrap;
     text-decoration: none;
     font-size: 1em;
-    
+
     color: var(--txt-color);
     margin: 0 2em 0 2em;
 
     height: 100%;
 }
 
-.item:hover{
+.item:hover {
     color: var(--blue-color);
     transition: transform 250ms ease-in-out;
 }
 
-.item:after{
+.item:after {
     position: relative;
     top: 18px;
     box-sizing: border-box;
     margin-top: 0;
     display: block;
     content: "";
-    border-bottom: solid 4px #2D81FF;
+    border-bottom: solid 4px #2d81ff;
     transform: scaleX(0);
     transition: transform 250ms ease-in-out;
 }
 
-.item:hover:after{
+.item:hover:after {
     box-sizing: border-box;
     transform: scaleX(1);
 }
@@ -128,7 +128,7 @@ header {
     padding: 1em;
     border-radius: 5px;
     border: 1px solid var(--shadow-line-color);
-    
+
     z-index: 810;
 }
 
@@ -159,28 +159,28 @@ header {
 
 /* icon menu */
 
-.iconMenu{
+.iconMenu {
     white-space: nowrap;
     text-align: center;
     padding: 0;
     display: flex;
 }
 
-.iconMenu a{
+.iconMenu a {
     display: flex;
     flex-direction: column;
     align-items: center;
 
     width: 2em;
     height: 2em;
-    color : lightsteelblue;
+    color: lightsteelblue;
 
     border-radius: 10px;
     background-color: var(--btn-bg-color);
     margin-right: 0.5em;
 }
 
-.iconMenu a:hover{
+.iconMenu a:hover {
     color: var(--blue-color);
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
     transition: 250ms ease-in-out;
@@ -203,14 +203,15 @@ header {
 }
 
 @media screen and (max-width: 786px) {
-    .mainMenu, .iconMenu {
+    .mainMenu,
+    .iconMenu {
         display: none;
     }
-    
+
     .inner {
         width: fit-content;
     }
-    
+
     .title {
         display: none;
     }
@@ -228,7 +229,7 @@ header {
         /* border: none; */
         margin-bottom: 0.5em;
     }
-    
+
     .expand {
         display: block;
     }

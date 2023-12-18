@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -119,7 +120,8 @@ public class ChatService {
     public List<ChatRoomResponse> getJoinedChatRoomList(User user){
         List<ChatRoom> chatRooms = chatUserMapRepository.getMapListByUserId(user.getId());
 
-        return chatRooms.stream().map(c -> convertToChatRoomResponse(c)).toList();
+        return chatRooms.stream().map(c -> convertToChatRoomResponse(c))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -231,7 +233,7 @@ public class ChatService {
                         .userId(u.getId())
                         .displayName(u.getUsername())
                         .build())
-                .toList();
+                .collect(Collectors.toList());
 
         List<ChatMessage> chatMessages = chatRoom.getChatMessages();
 
@@ -250,7 +252,7 @@ public class ChatService {
                         .userId(u.getId())
                         .displayName(u.getUsername())
                         .build())
-                .toList();
+                .collect(Collectors.toList());
 
         // ChatRoom의 ChatMessage를 변환
         Slice<ChatMessageResponse> messageList = getChatMessageList(user, chatRoom.getId(), pageable);
